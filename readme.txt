@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.3
 Stable tag: 0.5
 
-An easy way to add custom fields to your object types (post, pages, custom post types, users) & to generate option pages
+An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
 == Description ==
 
@@ -228,7 +228,5 @@ Stuff we have planned for the future:
 * Additional field types (multi-select, multi-checkbox.)
 * Limit or exclude groups and fields using a custom callback
 * Autosave support for fields on post types
-* Improve option page behaviour & performance
 * Client- and server-side validation support
 * Add groups and fields to Quick Edit
-
