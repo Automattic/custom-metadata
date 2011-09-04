@@ -4,7 +4,7 @@ Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 0.5
+Stable tag: 0.5.1
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -56,6 +56,10 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 
 == Changelog ==
 
+= 0.5.1 =
+* Bug fix with group context on add meta box 
+* Remove few lines of old code left-over from 0.4
+
 = 0.5 =
 * Making the changes from 0.4 public
 * Removed ability to generate option pages; after further consideration this is out of scope for this project
@@ -93,7 +97,6 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 = Object Types =
 
 The main idea behind this plugin is to have a single API to work with regardless of the object type. Currently, Custom Metadata Manager works with `user`, `comment` and any built-in or custom post types, e.g. `post`, `page`, etc. Since version 0.4 of the plugin, option pages are also supported. 
-
 
 = Registering your fields = 
 

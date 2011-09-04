@@ -4,7 +4,7 @@ Plugin Name: Custom Metadata Manager
 Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
 Author: Mohammad Jangda, Joachim Kudish, Colin Vernon, stresslimit
-Version: 0.5
+Version: 0.5.1
 Author URI: http://digitalize.ca/
 
 Copyright 2010 Mohammad Jangda, Joachim Kudish, Colin Vernon
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 if( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) ) define( 'CUSTOM_METADATA_MANAGER_DEBUG', false );
-define( 'CUSTOM_METADATA_MANAGER_VERSION', 0.5 );
+define( 'CUSTOM_METADATA_MANAGER_VERSION', 0.5.1 );
 define( 'CUSTOM_METADATA_MANAGER_URL' , plugins_url(plugin_basename(dirname(__FILE__)).'/') );
 
 if( CUSTOM_METADATA_MANAGER_DEBUG ) require_once( 'custom_metadata_examples.php' );
@@ -109,7 +109,7 @@ class custom_metadata_manager {
 			$this->metadata[$object_type] = array();
 	}
 
-	function init_metadata( $options = false ) {
+	function init_metadata() {
 		$object_type = $this->_get_object_type_context();
 		
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
@@ -126,10 +126,6 @@ class custom_metadata_manager {
 			// Allow user-editable fields on "Your Profile"
 			add_action( 'show_user_profile', array( &$this, 'add_user_metadata_groups' ) );
 			add_action( 'personal_options_update', array( &$this, 'save_user_metadata' ) );
-
-		} elseif ($options)	 {
-			
-			$this->add_options_metadata_groups();
 
 		} else {
 			
@@ -396,9 +392,9 @@ class custom_metadata_manager {
 	function add_post_metadata_group( $group_slug, $group, $object_type, $object_id ) {
 		
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
-		
+
 		if( ! empty( $fields ) && $this->is_thing_added_to_object( $group_slug, $group, $object_type, $object_id ) ) {
-			add_meta_box( $group_slug, $group->label, array( &$this, '_display_post_metadata_box' ), $object_type, 'main', $group->priority, array( 'group' => $group, 'fields' => $fields));
+			add_meta_box( $group_slug, $group->label, array( &$this, '_display_post_metadata_box' ), $object_type, $group->context, $group->priority, array( 'group' => $group, 'fields' => $fields));
 		}
 	}
 	

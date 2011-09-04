@@ -1,4 +1,4 @@
-# SLD Register Post Types & Taxonomies for WordPress
+# Custom Metada Manager for WordPress
 
 This code-only developer WordPress plugin allows you to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -35,6 +35,10 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 There are usage instructions in the readme.txt file
 
 # Changelog
+
+= 0.5.1 =
+* Bug fix with group context on add meta box 
+* Remove few lines of old code left-over from 0.4
 
 = 0.5 =
 
