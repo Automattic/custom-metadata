@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 if( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) ) define( 'CUSTOM_METADATA_MANAGER_DEBUG', false );
-define( 'CUSTOM_METADATA_MANAGER_VERSION', 0.5.1 );
+define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.1' );
 define( 'CUSTOM_METADATA_MANAGER_URL' , plugins_url(plugin_basename(dirname(__FILE__)).'/') );
 
 if( CUSTOM_METADATA_MANAGER_DEBUG ) require_once( 'custom_metadata_examples.php' );
