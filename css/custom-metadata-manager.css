@@ -9,6 +9,8 @@
 .custom-metadata-field.datepicker input {width: 200px;}
 .custom-metadata-field textarea {width:99%; height:4em;}
 
+.custom-metadata-field.checkbox {background: transparent}
+
 .custom-metadata-field .error {color: red; font-style: italic;}
 
 .customEditor {margin: 10px 0 40px 0;}
