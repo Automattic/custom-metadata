@@ -56,7 +56,7 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 
 == Changelog ==
 
-= 0.5.2 =
+= 0.5.2 (upcoming) =
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =
