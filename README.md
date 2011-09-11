@@ -36,6 +36,9 @@ There are usage instructions in the readme.txt file
 
 # Changelog
 
+= 0.5.2 (upcoming) =
+* moved DEFINEs in to admin_init() so that they can be filtered more easily
+
 = 0.5.1 =
 * Bug fix with group context on add meta box 
 * Remove few lines of old code left-over from 0.4
