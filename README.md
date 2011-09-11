@@ -36,7 +36,9 @@ There are usage instructions in the readme.txt file
 
 # Changelog
 
-= 0.5.2 (upcoming) =
+= 0.5.2 =
+* better tiny mce implementation and added html/visual switch
+* small css fixes and added inline documentation
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =

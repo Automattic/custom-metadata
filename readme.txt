@@ -4,7 +4,7 @@ Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 0.5.1
+Stable tag: 0.5.2
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -56,7 +56,9 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 
 == Changelog ==
 
-= 0.5.2 (upcoming) =
+= 0.5.2 =
+* better tiny mce implementation and added html/visual switch
+* small css fixes and added inline documentation
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =
@@ -231,7 +233,7 @@ For examples, please see the [custom_metadata_examples.php](http://svn.wp-plugin
 Stuff we have planned for the future:
 
 * Ability Pass in attributes for built-in fields (e.g. class, data-*, etc.)
-* Additional field types (multi-select, multi-checkbox.)
+* Additional field types (multi-select, multi-checkbox)
 * Limit or exclude groups and fields using a custom callback
 * Autosave support for fields on post types
 * Client- and server-side validation support

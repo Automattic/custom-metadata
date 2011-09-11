@@ -3,8 +3,8 @@
 Plugin Name: Custom Metadata Manager
 Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
-Author: Mohammad Jangda, Joachim Kudish, Colin Vernon, stresslimit
-Version: 0.5.1
+Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
+Version: 0.5.2
 Author URI: http://digitalize.ca/
 
 Copyright 2010 Mohammad Jangda, Joachim Kudish, Colin Vernon
@@ -44,7 +44,6 @@ TODO:
 -- default for custom posts: check custom post type object
 -- user: edit_user
 
-- wysiwyg allow switch visual/html [started but broken]
 - validation (pass in array of validation types, or string that references function)
 - quick edit
 - Links support (?)
@@ -76,8 +75,12 @@ class custom_metadata_manager {
 		// We need to run these as late as possible!
 		add_action( 'init', array( &$this, 'init' ), 1000, 0 );
 		add_action( 'admin_init', array( &$this, 'admin_init' ), 1000, 0 );
-
-		// add_action( 'admin_head', array( &$this, 'admin_head' ));	
+		
+		// tinymce
+		// add_action('admin_print_footer_scripts', 'wp_tiny_mce', 25);
+		
+		// head
+		// add_action('admin_head', array(&$this, 'admin_head'));
 	}
 				
 	function init() {
@@ -87,7 +90,7 @@ class custom_metadata_manager {
 	function admin_init() {
 		global $pagenow; 
 		
-		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.1' );
+		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.2' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , plugins_url(plugin_basename(dirname(__FILE__)).'/') );
 		
 		// Hook into load to initialize custom columns
@@ -100,11 +103,7 @@ class custom_metadata_manager {
 			add_action( 'admin_notices', array( &$this, '_display_registration_errors' ) );
 			
 	}
-	
-	// function admin_head() {
-	//  		wp_editor();
-	// }
-	
+		
 	function init_object_types() {
 		foreach( array_merge( get_post_types(), $this->_builtin_object_types ) as $object_type )
 			$this->metadata[$object_type] = array();
@@ -178,10 +177,10 @@ class custom_metadata_manager {
 		wp_enqueue_script('postbox');
 		wp_enqueue_script('media-upload');
 		wp_enqueue_script('thickbox');
-		wp_enqueue_style('jquery-custom-ui');		
+		wp_enqueue_style('jquery-custom-ui');
 		wp_enqueue_script('word-count');
 		wp_enqueue_script('post');
-		wp_enqueue_script('editor');		
+		wp_enqueue_script('editor');
 		wp_enqueue_script('custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_VERSION, true); 
 		wp_enqueue_script('jquery-ui-datepicker', apply_filters('custom-metadata-manager-datepicker-js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-datepicker.min.js'), array('jquery', 'jquery-ui-core'));		
 	}
@@ -925,9 +924,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>
-							<div class="customEditor">
-								<textarea name="<?php echo $field_id; ?>" id="<?php echo $field_slug; ?>" cols="60" rows="7" style="width:97%"><?php if ($v) echo wpautop($v); else echo ''; ?></textarea>
-							</div>
+							<?php the_editor($v, $field_id); ?>
 						<?php break; ?>
 
 						<?php case 'upload': ?>
