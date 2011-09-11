@@ -75,12 +75,6 @@ class custom_metadata_manager {
 		// We need to run these as late as possible!
 		add_action( 'init', array( &$this, 'init' ), 1000, 0 );
 		add_action( 'admin_init', array( &$this, 'admin_init' ), 1000, 0 );
-		
-		// tinymce
-		// add_action('admin_print_footer_scripts', 'wp_tiny_mce', 25);
-		
-		// head
-		// add_action('admin_head', array(&$this, 'admin_head'));
 	}
 				
 	function init() {
