@@ -36,6 +36,9 @@ There are usage instructions in the readme.txt file
 
 # Changelog
 
+= 0.5.3 =
+* removed php opening shorttags `<?` in favor of regular `<?php` tags, which caused parse errors on some servers
+
 = 0.5.2 =
 * better tiny mce implementation and added html/visual switch
 * small css fixes and added inline documentation

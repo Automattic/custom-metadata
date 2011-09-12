@@ -4,7 +4,7 @@ Plugin Name: Custom Metadata Manager
 Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
 Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
-Version: 0.5.2
+Version: 0.5.3
 Author URI: http://digitalize.ca/
 
 Copyright 2010 Mohammad Jangda, Joachim Kudish, Colin Vernon
@@ -84,7 +84,7 @@ class custom_metadata_manager {
 	function admin_init() {
 		global $pagenow; 
 		
-		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.2' );
+		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.3' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , plugins_url(plugin_basename(dirname(__FILE__)).'/') );
 		
 		// Hook into load to initialize custom columns
@@ -932,7 +932,7 @@ class custom_metadata_manager {
 							$terms = get_terms( $field->taxonomy, array('hide_empty' => false));
 							foreach ( $terms as $term ) { ?>
 								<option value="<?php echo $term->slug ?>"<?php if ($term->slug == $v) echo ' selected' ?>><?php echo $term->name ?></option>
-							<? }
+							<?php }
 							?>	
 							</select>
 						<?php break; ?>
@@ -951,14 +951,14 @@ class custom_metadata_manager {
 				
 					<?php if ($count > 1) : ?>
 						<a href="#" class="del-multiple hide-if-no-js" style="color:red;">Delete</a>
-					<? endif; $count++ ?>
+					<?php endif; $count++ ?>
 
 				</div>
 			
 			<?php endforeach; ?>	
-		<? if (isset($field->multiple) && $field->multiple) : ?>
+		<?php if (isset($field->multiple) && $field->multiple) : ?>
 			<p><a href="#" class="add-multiple hide-if-no-js" id="add-<?php echo $field_slug ?>">+ Add New</a></p>
-		<? endif;?>	
+		<?php endif;?>	
 		
 		<?php $this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value ); ?>
 
