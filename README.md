@@ -36,6 +36,9 @@ There are usage instructions in the readme.txt file
 
 # Changelog
 
+= 0.5.4 =
+* fix display_callback for fields
+
 = 0.5.3 =
 * removed php opening shorttags `<?` in favor of regular `<?php` tags, which caused parse errors on some servers
 
@@ -98,7 +101,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy of the GNU General Public License along with this program; if not, write to:
 
-Free Software Foundation, Inc.  
-51 Franklin Street, Fifth Floor,   
-Boston, MA  
+Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor,
+Boston, MA
 02110-1301, USA.
