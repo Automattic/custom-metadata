@@ -4,7 +4,7 @@ Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 0.5.4
+Stable tag: 0.5.5
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -55,6 +55,10 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 4. Adding custom columns is also easy. You can go with a default display, or specify your own output callback
 
 == Changelog ==
+
+= 0.5.5 =
+* remove all whitespace
+* fix some bugs with the tinymce field
 
 = 0.5.4 =
 * fix display_callback for fields

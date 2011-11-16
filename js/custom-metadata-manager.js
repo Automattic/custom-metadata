@@ -13,8 +13,8 @@ jQuery(document).ready(function($) {
 			$clone.attr('id',idName);
 			$clone.insertAfter($last).hide().fadeIn().find(':input[type=text]').val('');
 		});
-	} 
-	
+	}
+
 	if ( $('.del-multiple').length )	 {
 		$('.del-multiple').live('click', function(e) {
 			e.preventDefault();
@@ -24,24 +24,16 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	if ( $('.customEditor').length ) {
-		$('.customEditor textarea').each(function(e) {
-			var id = $(this).attr('id');
-				if (!id) {
-				id = 'customEditor-' + i++;
-				$(this).attr('id',id);
-			}					
-			if ( typeof( tinyMCE ) == "object" && typeof( tinyMCE.execCommand ) == "function" ) {
-				tinyMCE.settings.theme_advanced_buttons1 += ",|,add_image,add_video,add_audio,add_media";	
-				tinyMCE.execCommand("mceAddControl", false, id);
-			}
-		});	
-	} 
-	
-	if ( $('.editorbuttons > a').length )	{
-		$('.editorbuttons > a').click(function(){
+	if ( $('.custom-metadata-field.wysiwyg #editor-toolbar a').length )	{
+		$('.custom-metadata-field.wysiwyg #editor-toolbar a').click(function(){
 			$(this).siblings().removeClass('active');
 			$(this).addClass('active');
+			var parent_id = $(this).parent().parent().attr('id');
+			if ($('#'+parent_id+' #edButtonHTML').hasClass('active')){
+				$('#'+parent_id+' #quicktags').show();
+			} else {
+				$('#'+parent_id+' #quicktags').hide();
+			}
 		});
 	}
 
@@ -57,12 +49,12 @@ jQuery(document).ready(function($) {
 				file_url = jQuery('img',html).attr('src');
 				if (!file_url) { imgurl = jQuery(html).attr('href'); }
 				tb_remove();
-				jQuery('#'+formfield+' .upload_field').val(file_url);						
-			}		
+				jQuery('#'+formfield+' .upload_field').val(file_url);
+			}
  	}
 
 	if ( $('.datepicker').length ) {
 		$( '.datepicker input' ).datepicker();
 	}
-	
-});	
+
+});

@@ -3,7 +3,7 @@
 .inside > .custom-metadata-field:first-child {margin-top: 20px;}
 .custom-metadata-field > label {display:block; font-size:13px; line-height:18px; font-weight: bold; margin: 5px 0;}
 .custom-metadata-field .description {display:block; font-size:11px; margin-top:3px;}
-.custom-metadata-field > div > label {display: block; margin: 5px 0;} 
+.custom-metadata-field > div > label {display: block; margin: 5px 0;}
 .custom-metadata-field .error {color: red; font-style: italic;}
 
 /* text feilds */
@@ -29,6 +29,7 @@
 .custom-metadata-field .mceIframeContainer {background: #fff;}
 .custom-metadata-field .wp-editor-wrap {clear: both;}
 .custom-metadata-field.wysiwyg textarea.wp-editor-area {width: 99%;}
+.custom-metadata-field.wysiwyg #quicktags {display: none;}
 
 /* user fields */
 .user-metadata-group .custom-metadata-field label {color:#222; display:block; text-align:left; vertical-align:top; width:200px; font-size:13px; line-height:24px; float:left;}

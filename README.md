@@ -36,6 +36,10 @@ There are usage instructions in the readme.txt file
 
 # Changelog
 
+= 0.5.5 =
+* remove all whitespace
+* fix some bugs with the tinymce field
+
 = 0.5.4 =
 * fix display_callback for fields
 
@@ -48,7 +52,7 @@ There are usage instructions in the readme.txt file
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =
-* Bug fix with group context on add meta box 
+* Bug fix with group context on add meta box
 * Remove few lines of old code left-over from 0.4
 
 = 0.5 =
@@ -58,7 +62,7 @@ There are usage instructions in the readme.txt file
 * Removed attachment_list field, useless
 * Dates now save as unix timestamp
 * Taxonomy fields now save as both a custom field and as their proper taxonomy (will consider adding the ability to enable/disable this in a future version)
-* Multiplied fields no longer save as a serialized array, instead they save as multiple metadata with the same key (metadata api supports multiples!) - remember to set the last param to false to get multiple values. 
+* Multiplied fields no longer save as a serialized array, instead they save as multiple metadata with the same key (metadata api supports multiples!) - remember to set the last param to false to get multiple values.
 * NOTE: currently multiplied fields will display out of order after saving, however this should not affect anything else other than the admin, should be fixed soon
 * Other small improvements
 
