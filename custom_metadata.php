@@ -4,7 +4,7 @@ Plugin Name: Custom Metadata Manager
 Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
 Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
-Version: 0.5.5
+Version: 0.5.6
 Author URI: http://digitalize.ca/
 
 Copyright 2010 Mohammad Jangda, Joachim Kudish, Colin Vernon
@@ -84,7 +84,7 @@ class custom_metadata_manager {
 	function admin_init() {
 		global $pagenow;
 
-		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.4' );
+		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.6' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , plugins_url(plugin_basename(dirname(__FILE__)).'/') );
 
 		// Hook into load to initialize custom columns
@@ -842,7 +842,7 @@ class custom_metadata_manager {
 
 	function _display_metadata_field( $field_slug, $field, $object_type, $object_id ) {
 		if (isset($field->display_callback) && function_exists($field->display_callback)) :
-			call_user_func($field->display_callback);
+			call_user_func($field->display_callback, $field_slug, $field, $object_type, $object_id);
 		else :
 		?>
 		<div class="custom-metadata-field <?php echo $field->field_type ?>">
@@ -917,7 +917,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo date('m/d/Y', $v); ?>"/>
+							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo @date('m/d/Y', $v); ?>"/>
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>

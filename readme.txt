@@ -4,7 +4,7 @@ Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 0.5.5
+Stable tag: 0.5.7
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -12,7 +12,7 @@ An easy way to add custom fields to your object types (post, pages, custom post 
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users) & to generate option pages.
 
-The goal of this plugin is to help you rapidly build familiar, intuitive interfaces for your users in a very WordPress-native way. 
+The goal of this plugin is to help you rapidly build familiar, intuitive interfaces for your users in a very WordPress-native way.
 
 The custom field panel is nice, but not quite the easiest thing for users to work with. Adding your own metaboxes and fields involves a lot of time and repetitive code that could be better used elsewhere.
 
@@ -56,6 +56,12 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 
 == Changelog ==
 
+= 0.5.7 =
+* pass additional params for display_callback
+
+= 0.5.6 =
+* fix bugs with datepicker
+
 = 0.5.5 =
 * remove all whitespace
 * fix some bugs with the tinymce field
@@ -72,7 +78,7 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =
-* Bug fix with group context on add meta box 
+* Bug fix with group context on add meta box
 * Remove few lines of old code left-over from 0.4
 
 = 0.5 =
@@ -81,7 +87,7 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * Removed attachment_list field, useless
 * Dates now save as unix timestamp
 * Taxonomy fields now save as both a custom field and as their proper taxonomy (will consider adding the ability to enable/disable this in a future version)
-* Multiplied fields no longer save as a serialized array, instead they save as multiple metadata with the same key (metadata api supports multiples!) - remember to set the last param to false to get multiple values. 
+* Multiplied fields no longer save as a serialized array, instead they save as multiple metadata with the same key (metadata api supports multiples!) - remember to set the last param to false to get multiple values.
 * NOTE: currently multiplied fields will display out of order after saving, however this should not affect anything else other than the admin, should be fixed soon
 * Other small improvements
 
@@ -111,9 +117,9 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 
 = Object Types =
 
-The main idea behind this plugin is to have a single API to work with regardless of the object type. Currently, Custom Metadata Manager works with `user`, `comment` and any built-in or custom post types, e.g. `post`, `page`, etc. Since version 0.4 of the plugin, option pages are also supported. 
+The main idea behind this plugin is to have a single API to work with regardless of the object type. Currently, Custom Metadata Manager works with `user`, `comment` and any built-in or custom post types, e.g. `post`, `page`, etc. Since version 0.4 of the plugin, option pages are also supported.
 
-= Registering your fields = 
+= Registering your fields =
 
 For the sake of performance (and to avoid potential race conditions), always register your custom fields in the `admin_menu` hook. This way your front-end doesn't get bogged down with unnecessary processing and you can be sure that your fields will be registered safely. Here's a code sample:
 
@@ -128,7 +134,7 @@ function my_theme_init_custom_fields() {
 `
 
 
-= Getting the data = 
+= Getting the data =
 
 You can get the data as you normally would using the `get_metadata` function. Custom Metadata manager stores all data using the WordPress metadata APIs using the slug name you provide. That way, even if you decide to deactivate this wonderful plugin, your data is safe and accessible. For options, you can use `get_option`.
 
@@ -178,7 +184,7 @@ $args = array(
 
 **Options and Overrides**
 `
-$args = array( 
+$args = array(
 	'group' => '' // The slug of group the field should be added to. This needs to be registered with x_add_metadata_group first.
 	, 'field_type' => 'text' // The type of field; possible values: text, textarea, checkbox, radio, select
 	, 'label' => '' // Label for the field
@@ -199,7 +205,7 @@ $args = array(
 With v0.3, you can exclude fields and groups from specific object. For example, with the following, field-1 will show up for all posts except post #123:
 
 `
-$args = array( 
+$args = array(
 	'exclude' => 123
 );
 x_add_metadata_field( 'field-1', 'post', $args );
@@ -208,7 +214,7 @@ x_add_metadata_field( 'field-1', 'post', $args );
 Alternatively, you can limit ("include") fields and groups to specific objects. The following will ''only'' show group-1 to post #456:
 
 `
-$args = array( 
+$args = array(
 	'include' => 123
 );
 x_add_metadata_group( 'group-1', 'post', $args );
@@ -217,14 +223,14 @@ x_add_metadata_group( 'group-1', 'post', $args );
 You can pass in an array of IDs:
 
 `
-$args = array( 
+$args = array(
 	'include' => array( 123, 456, 789 );
 );
 
 With multiple object types, you can pass in an associative array:
 
 `
-$args = array( 
+$args = array(
 	'exclude' => array(
 		'post' => 123
 		, 'user' => array( 123, 456, 789 )
@@ -233,7 +239,7 @@ $args = array(
 
 
 = Examples =
- 
+
 For examples, please see the [custom_metadata_examples.php](http://svn.wp-plugins.org/custom-metadata/trunk/custom_metadata_examples.php) file included with the plugin. Add a constant to your wp-config.php called `CUSTOM_METADATA_MANAGER_DEBUG` with a value of `true` to see it in action:
 
 `define( 'CUSTOM_METADATA_MANAGER_DEBUG', true );`

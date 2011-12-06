@@ -36,22 +36,35 @@ There are usage instructions in the readme.txt file
 
 # Changelog
 
+= 0.5.7 =
+
+* pass additional params for display_callback
+
+= 0.5.6 =
+
+* fix bugs with datepicker
+
 = 0.5.5 =
+
 * remove all whitespace
 * fix some bugs with the tinymce field
 
 = 0.5.4 =
+
 * fix display_callback for fields
 
 = 0.5.3 =
+
 * removed php opening shorttags `<?` in favor of regular `<?php` tags, which caused parse errors on some servers
 
 = 0.5.2 =
+
 * better tiny mce implementation and added html/visual switch
 * small css fixes and added inline documentation
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =
+
 * Bug fix with group context on add meta box
 * Remove few lines of old code left-over from 0.4
 

@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
  	}
 
 	if ( $('.datepicker').length ) {
-		$( '.datepicker input' ).datepicker();
+		$( '.datepicker input' ).datepicker({changeMonth: true, changeYear: true});
 	}
 
 });
