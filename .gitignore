@@ -124,3 +124,8 @@ css/images/.svn/prop-base/ui-bg_glass_55_fbf9ee_1x400.png.svn-base
 .svn/tmp/text-base/readme.txt.svn-base
 
 .svn/dir-prop-base
+
+.DS_store
+.DS_Store
+js/.DS_Store
+css/.DS_Store

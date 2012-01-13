@@ -3,7 +3,7 @@ Contributors: batmoo, jkudish, cvernon, stresslimit
 Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.0
-Tested up to: 3.3
+Tested up to: 3.3.1
 Stable tag: 0.5.7
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
