@@ -151,7 +151,9 @@ You can get the data as you normally would using the `get_metadata` function. Cu
 
 Example:
 
-`$value = get_metadata( 'post', get_the_ID(), 'featured', true ); // Returns post metadata value for the field 'featured'`
+```php
+$value = get_metadata( 'post', get_the_ID(), 'featured', true ); // Returns post metadata value for the field 'featured'
+```
 
 ### Adding Metadata Groups
 
