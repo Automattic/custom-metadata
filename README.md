@@ -14,7 +14,7 @@ NOTE: This is a WordPress Plugin. We sync changes between github and the [WordPr
 # Frequently Asked Questions
 
 
-### Why a code-based approach instead of a UI?
+## Why a code-based approach instead of a UI?
 
 Because the UI thing has [been](http://wordpress.org/extend/plugins/verve-meta-boxes/) [done](http://wordpress.org/extend/plugins/fresh-page/) [before](http://wordpress.org/extend/plugins/pods/). And this more closely aligns with the existing WordPress approach of registering new types of content (post types, taxonomies, etc.)
 
@@ -25,12 +25,12 @@ This is also a developer feature, aimed towards site builders. And real develope
 For another really well-done, really powerful code-based plugin for managing custom fields, check out [Easy Custom Fields](http://wordpress.org/extend/plugins/easy-custom-fields/) and the [Custom Metaboxes and Fields For WordPress Class](https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress).
 
 
-### Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`? =
+## Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`? =
 
 We're being good and ["namespacing" our public functions](http://andrewnacin.com/2010/05/11/in-wordpress-prefix-everything/). You should too.
 
 
-### How do I use this plugin?
+## How do I use this plugin?
 
 There are usage instructions in the readme.txt file
 
