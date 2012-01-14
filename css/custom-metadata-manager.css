@@ -6,7 +6,7 @@
 .custom-metadata-field > div > label {display: block; margin: 5px 0;}
 .custom-metadata-field .error {color: red; font-style: italic;}
 
-/* text feilds */
+/* text fields */
 .custom-metadata-field input[type=text], .custom-metadata-field input[type=url], .custom-metadata-field input[type=password], .custom-metadata-field input[type=email] {width:75%; margin: 3px 0;}
 
 /* radio fields */
@@ -24,16 +24,12 @@
 /* textarea fields */
 .custom-metadata-field textarea {width:99%; height:4em;}
 
-/* tiny mce */
-.customEditor {margin: 10px 0 40px 0;}
-.custom-metadata-field .mceIframeContainer {background: #fff;}
-.custom-metadata-field .wp-editor-wrap {clear: both;}
-.custom-metadata-field.wysiwyg textarea.wp-editor-area {width: 99%;}
-.custom-metadata-field.wysiwyg #quicktags {display: none;}
+/* wysiwyg fields */
+.custom-metadata-field.wysiwyg > label, .user-metadata-group .custom-metadata-field.wysiwyg > label {display: block; width: 100%; float: none;}
+.custom-metadata-field.wysiwyg .wp-editor-container {background: #fff}
 
 /* user fields */
-.user-metadata-group .custom-metadata-field label {color:#222; display:block; text-align:left; vertical-align:top; width:200px; font-size:13px; line-height:24px; float:left;}
+.user-metadata-group .custom-metadata-field > label {color:#222; display:block; text-align:left; vertical-align:top; width:200px; font-size:13px; line-height:24px; float:left;}
 .user-metadata-group .custom-metadata-field input[type=text], .user-metadata-group .custom-metadata-field input[type=url], .user-metadata-group .custom-metadata-field input[type=password], .user-metadata-group .custom-metadata-field input[type=email] {width:25em;}
 .user-metadata-group .custom-metadata-field textarea {width:25em;}
 .user-metadata-group .custom-metadata-field .description {margin-left:200px;}
-#profile-page .user-metadata-group .custom-metadata-field.wysiwyg textarea.wp-editor-area {width: 99%;}

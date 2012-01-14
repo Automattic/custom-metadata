@@ -2,9 +2,9 @@
 Contributors: batmoo, jkudish, cvernon, stresslimit
 Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
-Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 0.5.7
+Requires at least: 3.3
+Tested up to: 3.4-alpha
+Stable tag: 0.6
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -41,7 +41,7 @@ This is also a developer feature, aimed towards site builders. And real develope
 
 (But really, though, the main benefit of this fact comes into play when you're working with multiple environments, i.e. development/local, qa/staging, production. This approach makes it easy to replicate UIs and features without having to worry about database synchronization and other crazy things.)
 
-For another really well-done, really powerful code-based plugin for managing custom fields, check out [Easy Custom Fields](http://wordpress.org/extend/plugins/easy-custom-fields/).
+For another really well-done, really powerful code-based plugin for managing custom fields, check out [Easy Custom Fields](http://wordpress.org/extend/plugins/easy-custom-fields/) and the [Custom Metaboxes and Fields For WordPress Class](https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress).
 
 = Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`? =
 
@@ -50,38 +50,63 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 == Screenshots ==
 
 1. Write easy, intuitive and WordPress-like code to add new fields.
-2. Custom Metadata Manager supports basic field types with an way to render your own.
-3. An example of what's possible with only 40 lines of code.
-4. Adding custom columns is also easy. You can go with a default display, or specify your own output callback
+2. Custom Metadata Manager supports many field types with an easy way to render your own.
+3. Adding custom columns is also easy. You can go with a default display, or specify your own output callback
 
 == Changelog ==
 
+= 0.6 =
+
+* note: the plugin now requires WordPress 3.3+ (chiefly for the wysiwyg + datepicker fields)
+* update/clean-up the examples file
+* properly enqueue admin css for WP 3.3+
+* added a filter for the CUSTOM_METADATA_MANAGER_URL constant
+* fix fields not appearing when editing users in WP 3.3+ (props @FolioVision)
+* now passing the $value for a display_callback (props @FolioVision)
+* use the new 'wp_editor()' function (since WP 3.3+) instead of 'the_editor()' (now deprecated)
+* wysiwyg fields are no longer cloneable (may be revisited in a future version)
+* note: metaboxes that have a wysiwyg field will break when moved, this is not a bug per-se (may be revisited in a future version)
+* password fields are now cloneable
+* added filters for most of the plugin's internal variables
+* now using WordPress' built-in jQuery UI for the datepicker field
+* updated the screenshots
+* updated the instructions in readme.txt
+
+
 = 0.5.7 =
+
 * pass additional params for display_callback
 
 = 0.5.6 =
+
 * fix bugs with datepicker
 
 = 0.5.5 =
+
 * remove all whitespace
 * fix some bugs with the tinymce field
 
 = 0.5.4 =
+
 * fix display_callback for fields
 
 = 0.5.3 =
+
 * removed php opening shorttags `<?` in favor of regular `<?php` tags, which caused parse errors on some servers
 
 = 0.5.2 =
+
 * better tiny mce implementation and added html/visual switch
 * small css fixes and added inline documentation
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
 = 0.5.1 =
+
 * Bug fix with group context on add meta box
 * Remove few lines of old code left-over from 0.4
 
 = 0.5 =
+
 * Making the changes from 0.4 public
 * Removed ability to generate option pages; after further consideration this is out of scope for this project
 * Removed attachment_list field, useless
@@ -92,6 +117,7 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * Other small improvements
 
 = 0.4 =
+
 * Enhanced the code which generates the different field types
 * Added new types: password, upload, wysiwyg, datepicker, taxonomy_select, taxonomy_radio, attachment_list
 * Added field multiplication ability
@@ -99,6 +125,7 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * Can now also generate option pages which use a metabox interface
 
 = 0.3 =
+
 * Can now limit or exclude fields or groups from specific ids
 * Added updated screenshots and new code samples!
 * Bug fix: the custom display examples weren't working well
@@ -106,18 +133,20 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * Bug fix: fields not showing on "My Profile" page. Thanks Mike Tew!
 
 = 0.2 =
+
 * Added a textarea field type
 * Added support for comments (you can now specify comments as an object type)
 * Added basic styling for fields so that they look nice
 
 = 0.1 =
+
 * Initial release
 
 == Usage ==
 
 = Object Types =
 
-The main idea behind this plugin is to have a single API to work with regardless of the object type. Currently, Custom Metadata Manager works with `user`, `comment` and any built-in or custom post types, e.g. `post`, `page`, etc. Since version 0.4 of the plugin, option pages are also supported.
+The main idea behind this plugin is to have a single API to work with regardless of the object type. Currently, Custom Metadata Manager works with `user`, `comment` and any built-in or custom post types, e.g. `post`, `page`, etc.
 
 = Registering your fields =
 
@@ -132,7 +161,6 @@ function my_theme_init_custom_fields() {
 	}
 }
 `
-
 
 = Getting the data =
 
@@ -161,12 +189,12 @@ x_add_metadata_group( $slug, $object_types, $args );
 **Options and Overrides**
 `
 $args = array(
-	'label' => $group_slug // Label for the group
-	, 'context' => 'normal' // (post only)
-	, 'priority' => 'default' // (post only)
-	, 'autosave' => false // (post only) Should the group be saved in autosave? NOT IMPLEMENTED YET!
-	, 'exclude' => '' // see below for details
-	, 'include' => '' // see below for details
+	'label' => $group_slug, // Label for the group
+	'context' => 'normal', // (post only)
+	'priority' => 'default', // (post only)
+	'autosave' => false, // (post only) Should the group be saved in autosave? NOT IMPLEMENTED YET!
+	'exclude' => '', // see below for details
+	'include' => '', // see below for details
 );
 `
 
@@ -185,24 +213,25 @@ $args = array(
 **Options and Overrides**
 `
 $args = array(
-	'group' => '' // The slug of group the field should be added to. This needs to be registered with x_add_metadata_group first.
-	, 'field_type' => 'text' // The type of field; possible values: text, textarea, checkbox, radio, select
-	, 'label' => '' // Label for the field
-	, 'description' => '' // Description of the field, displayed below the input
-	, 'values' => array() // Values for select and radio buttons. Associative array
-	, 'display_callback' => '' // Callback to custom render the field
-	, 'sanitize_callback' => '' // Callback to sanitize data before it's saved
-	, 'display_column' => false // Add the field to the columns when viewing all posts
-	, 'display_column_callback' => '' // Callback to render output for the custom column
-	, 'required_cap' => '' // The cap required to view and edit the field
-	, 'exclude' => '' // see below for details
-	, 'include' => '' // see below for details
+	'group' => '', // The slug of group the field should be added to. This needs to be registered with x_add_metadata_group first.
+	'field_type' => 'text', // The type of field; 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio'
+	'label' => '', // Label for the field
+	'description' => '', // Description of the field, displayed below the input
+	'values' => array(), // Values for select and radio buttons. Associative array
+	'display_callback' => '', // Callback to custom render the field
+	'sanitize_callback' => '', // Callback to sanitize data before it's saved
+	'display_column' => false, // Add the field to the columns when viewing all posts
+	'display_column_callback' => '', // Callback to render output for the custom column
+	'required_cap' => '', // The cap required to view and edit the field
+	'exclude' => '', // see below for details
+	'include' => '', // see below for details
+	'multiple' => false, // true or false, can the field be duplicated with a click of a button?
 );
 `
 
 = Include / Exclude =
 
-With v0.3, you can exclude fields and groups from specific object. For example, with the following, field-1 will show up for all posts except post #123:
+You can exclude fields and groups from specific object. For example, with the following, field-1 will show up for all posts except post #123:
 
 `
 $args = array(
@@ -232,8 +261,8 @@ With multiple object types, you can pass in an associative array:
 `
 $args = array(
 	'exclude' => array(
-		'post' => 123
-		, 'user' => array( 123, 456, 789 )
+		'post' => 123,
+		'user' => array( 123, 456, 789 )
 	)
 );
 
@@ -254,3 +283,9 @@ Stuff we have planned for the future:
 * Autosave support for fields on post types
 * Client- and server-side validation support
 * Add groups and fields to Quick Edit
+
+== Upgrade Notice ==
+
+= 0.6 =
+
+Version 0.6 and higher of the plugin uses new APIs available in WordPress 3.3+, so please make sure you're running WordPress 3.3 or higher before upgrading this plugin.

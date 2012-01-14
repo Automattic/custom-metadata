@@ -4,10 +4,10 @@ Plugin Name: Custom Metadata Manager
 Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
 Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
-Version: 0.5.7
-Author URI: http://digitalize.ca/
+Version: 0.6
+Author URI: http://digitalize.ca/wordpress-plugins/custom-metadata/
 
-Copyright 2010 Mohammad Jangda, Joachim Kudish, Colin Vernon
+Copyright 2010-2012 Mohammad Jangda, Joachim Kudish, Colin Vernon
 
 GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 
@@ -26,15 +26,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
-if( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) ) define( 'CUSTOM_METADATA_MANAGER_DEBUG', false );
 
-if( CUSTOM_METADATA_MANAGER_DEBUG ) require_once( 'custom_metadata_examples.php' );
+/**
+ * set this to true in your wp-config.php file to enable debug/test mode
+ */
+if ( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) )
+	define( 'CUSTOM_METADATA_MANAGER_DEBUG', false );
+
+if ( CUSTOM_METADATA_MANAGER_DEBUG )
+	include_once( 'custom_metadata_examples.php' );
 
 /*
 TODO:
 - Additional Field types (multi-select, multi-checkboxes, taxonomy checkbox)
 - Group description field
-- Update custom metadata examples test file
 - Multiple display in the same order as saved
 
 - Limit group based on caps?
@@ -64,14 +69,28 @@ class custom_metadata_manager {
 	// field types
 	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio' );
 	// field types that are cloneable
-	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'wysiwyg');
+	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password');
 	// Object types whose columns are generated through apply_filters instead of do_action
 	var $_column_filter_object_types = array( 'user' );
 	// Whitelisted pages that get stylesheets and scripts
 	var $_pages_whitelist = array( 'edit.php', 'post.php', 'post-new.php', 'users.php', 'profile.php', 'user-edit.php', 'edit-comments.php', 'comment.php');
+	// the default args used for the wp_editor function
+	var $default_editor_args = array();
 
 
 	function __construct( ) {
+
+		// filter our vars
+		$this->_non_post_types = apply_filters( 'custom_metadata_manager_non_post_types', $this->_non_post_types );
+		$this->_builtin_object_types = apply_filters( 'custom_metadata_manager_builtin_object_types', $this->_builtin_object_types );
+		$this->_column_types = apply_filters( 'custom_metadata_manager_column_types', $this->_column_types);
+		$this->_field_types = apply_filters( 'custom_metadata_manager_field_types', $this->_field_types);
+		$this->_cloneable_field_types = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_cloneable_field_types);
+		$this->_column_filter_object_types = apply_filters( 'custom_metadata_manager_column_filter_object_types', $this->_column_filter_object_types);
+		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist);
+		$this->default_editor_args = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
+
+
 		// We need to run these as late as possible!
 		add_action( 'init', array( &$this, 'init' ), 1000, 0 );
 		add_action( 'admin_init', array( &$this, 'admin_init' ), 1000, 0 );
@@ -84,8 +103,8 @@ class custom_metadata_manager {
 	function admin_init() {
 		global $pagenow;
 
-		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.5.7' );
-		define( 'CUSTOM_METADATA_MANAGER_URL' , plugins_url(plugin_basename(dirname(__FILE__)).'/') );
+		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.6' );
+		define( 'CUSTOM_METADATA_MANAGER_URL' , apply_filters('custom_metadata_manager_url', trailingslashit(plugins_url('', __FILE__))) );
 
 		// Hook into load to initialize custom columns
 		if( in_array( $pagenow, $this->_pages_whitelist ) ) {
@@ -107,12 +126,11 @@ class custom_metadata_manager {
 		$object_type = $this->_get_object_type_context();
 
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
-		add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
 
 		$this->init_columns();
 
 		// Handle actions related to users
-		// TODO: I really don't like hard-coding this...
 		if( $object_type == 'user' ) {
 			// Editing another user's profile
 			add_action( 'edit_user_profile', array( &$this, 'add_user_metadata_groups' ) );
@@ -166,17 +184,9 @@ class custom_metadata_manager {
 
 	function enqueue_scripts() {
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('jquery-ui-core');
-		wp_enqueue_script('common');
-		wp_enqueue_script('postbox');
-		wp_enqueue_script('media-upload');
-		wp_enqueue_script('thickbox');
-		wp_enqueue_style('jquery-custom-ui');
-		wp_enqueue_script('word-count');
-		wp_enqueue_script('post');
-		wp_enqueue_script('editor');
+		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_VERSION, true);
-		wp_enqueue_script('jquery-ui-datepicker', apply_filters('custom-metadata-manager-datepicker-js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-datepicker.min.js'), array('jquery', 'jquery-ui-core'));
+		// wp_enqueue_script('jquery-ui-datepicker', apply_filters('custom-metadata-manager-datepicker-js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-datepicker.min.js'), array('jquery', 'jquery-ui-core'));
 	}
 
 	function enqueue_styles() {
@@ -225,19 +235,18 @@ class custom_metadata_manager {
 	function add_metadata_field( $field_slug, $object_types = array( 'post' ), $args = array() ) {
 
 		$defaults = array(
-			'group' => '' // To which meta_box the field should be added
-			, 'field_type' => 'text' // The type of field; possibly values: text, checkbox, radio, select, image
-			, 'label' => $field_slug // Label for the field
-			, 'description' => '' // Description of the field, displayed below the input
-			, 'values' => array() // values for select, checkbox, radio buttons
-			, 'display_callback' => '' // function to custom render the input
-			, 'sanitize_callback' => ''
-			//, 'client_validation_callback' => '' // function name for client-side validation
-			//, 'server_validation_callback' => '' // function name for server-side validation
-			, 'display_column' => false // Add the field to the columns when viewing all posts
-			, 'display_column_callback' => ''
-			, 'add_to_quick_edit' => false // (post only) Add the field to Quick edit
-			, 'required_cap' => '' // the cap required to view and edit the field
+			'group' => '', // To which meta_box the field should be added
+			'field_type' => 'text', // The type of field; possibly values: text, checkbox, radio, select, image
+			'label' => $field_slug, // Label for the field
+			'description' => '', // Description of the field, displayed below the input
+			'values' => array(), // values for select, checkbox, radio buttons
+			'display_callback' => '', // function to custom render the input
+			'sanitize_callback' => '',
+			'display_column' => false, // Add the field to the columns when viewing all posts
+			'display_column_callback' => '',
+			'add_to_quick_edit' => false, // (post only) Add the field to Quick edit
+			'required_cap' => '', // the cap required to view and edit the field
+			'multiple' => false, // can the field be duplicated with a click of a button
 		);
 
 		// Merge defaults with args
@@ -263,11 +272,11 @@ class custom_metadata_manager {
 	function add_metadata_group( $group_slug, $object_types, $args = array() ) {
 
 		$defaults = array(
-			'label' => $group_slug // Label for the group
-			, 'description' => '' // Description of the group
-			, 'context' => 'normal' // (post only)
-			, 'priority' => 'default' // (post only)
-			, 'autosave' => false // (post only) Should the group be saved in autosave?
+			'label' => $group_slug, // Label for the group
+			'description' => '', // Description of the group
+			'context' => 'normal', // (post only)
+			'priority' => 'default', // (post only)
+			'autosave' => false, // (post only) Should the group be saved in autosave?
 		);
 
 		// Merge defaults with args
@@ -704,8 +713,7 @@ class custom_metadata_manager {
 
 		$object_type = '';
 
-		// This is a hack!
-		if( $pagenow == 'profile.php' ) {
+		if( $pagenow == 'profile.php' || $pagenow == 'user-edit.php' || $pagenow == 'users.php' ) {
 			return 'user';
 		}
 
@@ -841,14 +849,13 @@ class custom_metadata_manager {
 	}
 
 	function _display_metadata_field( $field_slug, $field, $object_type, $object_id ) {
+		$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 		if (isset($field->display_callback) && function_exists($field->display_callback)) :
-			call_user_func($field->display_callback, $field_slug, $field, $object_type, $object_id);
+			call_user_func($field->display_callback, $field_slug, $field, $object_type, $object_id, $value);
 		else :
 		?>
 		<div class="custom-metadata-field <?php echo $field->field_type ?>">
 			<?php
-			$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
-
 			if (!in_array($object_type, $this->_non_post_types)) global $post;
 			if (isset($field->multiple) && $field->multiple && @!in_array($field->field_type, $this->_cloneable_field_types)) {
 				$field->multiple = false;
@@ -921,7 +928,10 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>
-							<?php the_editor($v, $field_id); ?>
+							<?php
+								$args = apply_filters('custom_metadata_manager_wysiwyg_args_field_'.$field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
+							 	wp_editor($v, $field_id, $args);
+							?>
 						<?php break; ?>
 
 						<?php case 'upload': ?>

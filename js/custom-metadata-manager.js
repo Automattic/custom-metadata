@@ -1,6 +1,7 @@
 var formfield;
 jQuery(document).ready(function($) {
 
+	// duplicating fields
 	if ( $('.add-multiple').length ) {
 		$('.add-multiple').live('click', function(e) {
 			e.preventDefault();
@@ -15,6 +16,7 @@ jQuery(document).ready(function($) {
 		});
 	}
 
+	// deleting fields
 	if ( $('.del-multiple').length )	 {
 		$('.del-multiple').live('click', function(e) {
 			e.preventDefault();
@@ -24,19 +26,7 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	if ( $('.custom-metadata-field.wysiwyg #editor-toolbar a').length )	{
-		$('.custom-metadata-field.wysiwyg #editor-toolbar a').click(function(){
-			$(this).siblings().removeClass('active');
-			$(this).addClass('active');
-			var parent_id = $(this).parent().parent().attr('id');
-			if ($('#'+parent_id+' #edButtonHTML').hasClass('active')){
-				$('#'+parent_id+' #quicktags').show();
-			} else {
-				$('#'+parent_id+' #quicktags').hide();
-			}
-		});
-	}
-
+	// init the upload fields
 	if ( $('.upload_button').length ) {
 		$('.upload_button').live('click', function(e) {
 			formfield = $(this).parent().attr('id');
@@ -53,6 +43,7 @@ jQuery(document).ready(function($) {
 			}
  	}
 
+ 	// init the datepicker fields
 	if ( $('.datepicker').length ) {
 		$( '.datepicker input' ).datepicker({changeMonth: true, changeYear: true});
 	}
