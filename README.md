@@ -28,7 +28,7 @@ This is also a developer feature, aimed towards site builders. And real develope
 For another really well-done, really powerful code-based plugin for managing custom fields, check out [Easy Custom Fields](http://wordpress.org/extend/plugins/easy-custom-fields/) and the [Custom Metaboxes and Fields For WordPress Class](https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress).
 
 
-## Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`? =
+## Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`?
 
 We're being good and ["namespacing" our public functions](http://andrewnacin.com/2010/05/11/in-wordpress-prefix-everything/). You should too.
 
@@ -46,8 +46,8 @@ There are usage instructions below
 * properly enqueue admin css for WP 3.3+
 * added a filter for the CUSTOM_METADATA_MANAGER_URL constant
 * fix fields not appearing when editing users in WP 3.3+ (props @FolioVision)
-* now passing the $value for a display_callback (props @FolioVision)
-* use the new 'wp_editor()' function (since WP 3.3+) instead of 'the_editor()' (now deprecated)
+* now passing the `$value` for a `display_callback` (props @FolioVision)
+* use the new `wp_editor()` function (since WP 3.3+) instead of `the_editor()` (now deprecated)
 * wysiwyg fields are no longer cloneable (may be revisited in a future version)
 * note: metaboxes that have a wysiwyg field will break when moved, this is not a bug per-se (may be revisited in a future version)
 * password fields are now cloneable
@@ -58,7 +58,7 @@ There are usage instructions below
 
 ## 0.5.7
 
-* pass additional params for display_callback
+* pass additional params for `display_callback`
 
 ## 0.5.6
 
@@ -135,7 +135,7 @@ The main idea behind this plugin is to have a single API to work with regardless
 
 For the sake of performance (and to avoid potential race conditions), always register your custom fields in the `admin_menu` hook. This way your front-end doesn't get bogged down with unnecessary processing and you can be sure that your fields will be registered safely. Here's a code sample:
 
-`
+```php
 add_action( 'admin_menu', 'my_theme_init_custom_fields' );
 
 function my_theme_init_custom_fields() {
@@ -143,24 +143,24 @@ function my_theme_init_custom_fields() {
 		x_add_metadata_field( 'my_field', array( 'user', 'post' ) );
 	}
 }
-`
+```
 
 ### Getting the data
 
 You can get the data as you normally would using the `get_metadata` function. Custom Metadata manager stores all data using the WordPress metadata APIs using the slug name you provide. That way, even if you decide to deactivate this wonderful plugin, your data is safe and accessible. For options, you can use `get_option`.
 
 Example:
-`
+```php
 $value = get_metadata( 'post', get_the_ID(), 'featured', true ); // Returns post metadata value for the field 'featured'
-`
+```
 
 ### Adding Metadata Groups
 
 A group is essentially a metabox that groups together multiple fields. Register the group before any fields
 
-`
+```php
 x_add_metadata_group( $slug, $object_types, $args );
-`
+```
 
 
 #### Parameters
@@ -171,7 +171,7 @@ x_add_metadata_group( $slug, $object_types, $args );
 
 #### Options and Overrides
 
-`
+```php
 $args = array(
 	'label' => $group_slug, // Label for the group
 	'context' => 'normal', // (post only)
@@ -180,7 +180,7 @@ $args = array(
 	'exclude' => '', // see below for details
 	'include' => '', // see below for details
 );
-`
+```
 
 ### Adding Metadata Fields
 
@@ -195,7 +195,7 @@ $args = array(
 
 ####  Options and Overrides
 
-`
+```php
 $args = array(
 	'group' => '', // The slug of group the field should be added to. This needs to be registered with x_add_metadata_group first.
 	'field_type' => 'text', // The type of field; 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio'
@@ -211,49 +211,50 @@ $args = array(
 	'include' => '', // see below for details
 	'multiple' => false, // true or false, can the field be duplicated with a click of a button?
 );
-`
+```
 
 ####  Include / Exclude
 
 You can exclude fields and groups from specific object. For example, with the following, field-1 will show up for all posts except post #123:
 
-`
+```php
 $args = array(
 	'exclude' => 123
 );
 x_add_metadata_field( 'field-1', 'post', $args );
-`
+```
 
 Alternatively, you can limit ("include") fields and groups to specific objects. The following will ''only'' show group-1 to post #456:
 
-`
+```php
 $args = array(
 	'include' => 123
 );
 x_add_metadata_group( 'group-1', 'post', $args );
-`
+```
 
 You can pass in an array of IDs:
 
-`
+```php
 $args = array(
 	'include' => array( 123, 456, 789 );
 );
+```
 
 With multiple object types, you can pass in an associative array:
 
-`
+```php
 $args = array(
 	'exclude' => array(
 		'post' => 123,
 		'user' => array( 123, 456, 789 )
 	)
 );
-
+```
 
 # Examples
 
-For examples, please see the [custom_metadata_examples.php](http://svn.wp-plugins.org/custom-metadata/trunk/custom_metadata_examples.php) file included with the plugin. Add a constant to your wp-config.php called `CUSTOM_METADATA_MANAGER_DEBUG` with a value of `true` to see it in action:
+For examples, please see the [custom_metadata_examples.php](https://github.com/jkudish/custom-metadata/blob/master/custom_metadata_examples.php) file included with the plugin. Add a constant to your wp-config.php called `CUSTOM_METADATA_MANAGER_DEBUG` with a value of `true` to see it in action:
 
 `define( 'CUSTOM_METADATA_MANAGER_DEBUG', true );`
 

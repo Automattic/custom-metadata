@@ -62,8 +62,8 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * properly enqueue admin css for WP 3.3+
 * added a filter for the CUSTOM_METADATA_MANAGER_URL constant
 * fix fields not appearing when editing users in WP 3.3+ (props @FolioVision)
-* now passing the $value for a display_callback (props @FolioVision)
-* use the new 'wp_editor()' function (since WP 3.3+) instead of 'the_editor()' (now deprecated)
+* now passing the `$value` for a `display_callback` (props @FolioVision)
+* use the new `wp_editor()` function (since WP 3.3+) instead of `the_editor()` (now deprecated)
 * wysiwyg fields are no longer cloneable (may be revisited in a future version)
 * note: metaboxes that have a wysiwyg field will break when moved, this is not a bug per-se (may be revisited in a future version)
 * password fields are now cloneable
@@ -72,10 +72,10 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 * updated the screenshots
 * updated the instructions in readme.txt
 
-
 = 0.5.7 =
 
-* pass additional params for display_callback
+* pass additional params for `display_callback`
+
 
 = 0.5.6 =
 
@@ -269,7 +269,7 @@ $args = array(
 
 = Examples =
 
-For examples, please see the [custom_metadata_examples.php](http://svn.wp-plugins.org/custom-metadata/trunk/custom_metadata_examples.php) file included with the plugin. Add a constant to your wp-config.php called `CUSTOM_METADATA_MANAGER_DEBUG` with a value of `true` to see it in action:
+For examples, please see the [custom_metadata_examples.php](https://github.com/jkudish/custom-metadata/blob/master/custom_metadata_examples.php) file included with the plugin. Add a constant to your wp-config.php called `CUSTOM_METADATA_MANAGER_DEBUG` with a value of `true` to see it in action:
 
 `define( 'CUSTOM_METADATA_MANAGER_DEBUG', true );`
 
