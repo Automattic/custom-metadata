@@ -57,7 +57,7 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 
 = 0.6 =
 
-* note: the plugin now requires WordPress 3.3+ (chiefly for the wysiwyg + datepicker fields)
+* note: the plugin now requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
 * update/clean-up the examples file
 * properly enqueue admin css for WP 3.3+
 * added a filter for the CUSTOM_METADATA_MANAGER_URL constant
