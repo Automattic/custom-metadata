@@ -2,7 +2,7 @@
 
 This code-only developer WordPress plugin allows you to add custom fields to your object types (post, pages, custom post types, users)
 
-**NOTE**: This is a WordPress Plugin. We sync changes between github and the [WordPress.org plugin repository](http://wordpress.org/extend/plugins/custom-metadata/). Why? Because collaboration is made much easier on github :)
+This is a WordPress Plugin. We sync changes between github and the [WordPress.org plugin repository](http://wordpress.org/extend/plugins/custom-metadata/). Why? Because collaboration is made much easier on github :)
 
 **NOTE**: The plugin now requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
 
