@@ -150,9 +150,8 @@ function my_theme_init_custom_fields() {
 You can get the data as you normally would using the `get_metadata` function. Custom Metadata manager stores all data using the WordPress metadata APIs using the slug name you provide. That way, even if you decide to deactivate this wonderful plugin, your data is safe and accessible. For options, you can use `get_option`.
 
 Example:
-```php
-$value = get_metadata( 'post', get_the_ID(), 'featured', true ); // Returns post metadata value for the field 'featured'
-```
+
+`$value = get_metadata( 'post', get_the_ID(), 'featured', true ); // Returns post metadata value for the field 'featured'`
 
 ### Adding Metadata Groups
 
