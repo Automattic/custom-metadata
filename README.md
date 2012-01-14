@@ -2,7 +2,7 @@
 
 This code-only developer WordPress plugin allows you to add custom fields to your object types (post, pages, custom post types, users)
 
-NOTE: This is a WordPress Plugin. We will sync changes between github and the [WordPress.org plugin repository](http://wordpress.org/extend/plugins/custom-metadata/).
+NOTE: This is a WordPress Plugin. We sync changes between github and the [WordPress.org plugin repository](http://wordpress.org/extend/plugins/custom-metadata/). Why? Because collaboration is made much easier on github :)
 
 # Installation
 
@@ -14,7 +14,7 @@ NOTE: This is a WordPress Plugin. We will sync changes between github and the [W
 # Frequently Asked Questions
 
 
-#### Why a code-based approach instead of a UI?
+### Why a code-based approach instead of a UI?
 
 Because the UI thing has [been](http://wordpress.org/extend/plugins/verve-meta-boxes/) [done](http://wordpress.org/extend/plugins/fresh-page/) [before](http://wordpress.org/extend/plugins/pods/). And this more closely aligns with the existing WordPress approach of registering new types of content (post types, taxonomies, etc.)
 
@@ -25,18 +25,18 @@ This is also a developer feature, aimed towards site builders. And real develope
 For another really well-done, really powerful code-based plugin for managing custom fields, check out [Easy Custom Fields](http://wordpress.org/extend/plugins/easy-custom-fields/) and the [Custom Metaboxes and Fields For WordPress Class](https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress).
 
 
-#### Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`? =
+### Why isn't the function just `add_metadata_field`? Do you really need the stupid `x_`? =
 
 We're being good and ["namespacing" our public functions](http://andrewnacin.com/2010/05/11/in-wordpress-prefix-everything/). You should too.
 
 
-#### How do I use this plugin?
+### How do I use this plugin?
 
 There are usage instructions in the readme.txt file
 
 # Changelog
 
-= 0.6 =
+## 0.6
 
 * note: the plugin now requires WordPress 3.3+ (chiefly for the wysiwyg + datepicker fields)
 * update/clean-up the examples file
@@ -53,39 +53,39 @@ There are usage instructions in the readme.txt file
 * updated the screenshots
 * updated the instructions in readme.txt
 
-= 0.5.7 =
+## 0.5.7
 
 * pass additional params for display_callback
 
-= 0.5.6 =
+## 0.5.6
 
 * fix bugs with datepicker
 
-= 0.5.5 =
+## 0.5.5
 
 * remove all whitespace
 * fix some bugs with the tinymce field
 
-= 0.5.4 =
+## 0.5.4
 
 * fix display_callback for fields
 
-= 0.5.3 =
+## 0.5.3
 
 * removed php opening shorttags `<?` in favor of regular `<?php` tags, which caused parse errors on some servers
 
-= 0.5.2 =
+## 0.5.2
 
 * better tiny mce implementation and added html/visual switch
 * small css fixes and added inline documentation
 * moved DEFINEs in to admin_init() so that they can be filtered more easily
 
-= 0.5.1 =
+## 0.5.1
 
 * Bug fix with group context on add meta box
 * Remove few lines of old code left-over from 0.4
 
-= 0.5 =
+## 0.5
 
 * Making the changes from 0.4 public
 * Removed ability to generate option pages; after further consideration this is out of scope for this project
@@ -96,7 +96,7 @@ There are usage instructions in the readme.txt file
 * NOTE: currently multiplied fields will display out of order after saving, however this should not affect anything else other than the admin, should be fixed soon
 * Other small improvements
 
-= 0.4 =
+## 0.4
 
 * Enhanced the code which generates the different field types
 * Added new types: password, upload, wysiwyg, datepicker, taxonomy_select, taxonomy_radio, attachment_list
@@ -104,7 +104,7 @@ There are usage instructions in the readme.txt file
 * Metadata is now deleted if a value is empty
 * Can now also generate option pages which use a metabox interface
 
-= 0.3 =
+## 0.3
 
 * Can now limit or exclude fields or groups from specific ids
 * Added updated screenshots and new code samples!
@@ -112,23 +112,23 @@ There are usage instructions in the readme.txt file
 * Bug fix: fields not showing on "Add New" page. Thanks Jan Fabry!
 * Bug fix: fields not showing on "My Profile" page. Thanks Mike Tew!
 
-= 0.2 =
+## 0.2
 
 * Added a textarea field type
 * Added support for comments (you can now specify comments as an object type)
 * Added basic styling for fields so that they look nice
 
-= 0.1 =
+## 0.1
 
 * Initial release
 
 # Usage
 
-#### Object Types
+### Object Types
 
 The main idea behind this plugin is to have a single API to work with regardless of the object type. Currently, Custom Metadata Manager works with `user`, `comment` and any built-in or custom post types, e.g. `post`, `page`, etc.
 
-#### Registering your fields
+### Registering your fields
 
 For the sake of performance (and to avoid potential race conditions), always register your custom fields in the `admin_menu` hook. This way your front-end doesn't get bogged down with unnecessary processing and you can be sure that your fields will be registered safely. Here's a code sample:
 
@@ -142,7 +142,7 @@ function my_theme_init_custom_fields() {
 }
 `
 
-#### Getting the data
+### Getting the data
 
 You can get the data as you normally would using the `get_metadata` function. Custom Metadata manager stores all data using the WordPress metadata APIs using the slug name you provide. That way, even if you decide to deactivate this wonderful plugin, your data is safe and accessible. For options, you can use `get_option`.
 
@@ -151,7 +151,7 @@ Example:
 $value = get_metadata( 'post', get_the_ID(), 'featured', true ); // Returns post metadata value for the field 'featured'
 `
 
-#### Adding Metadata Groups
+### Adding Metadata Groups
 
 A group is essentially a metabox that groups together multiple fields. Register the group before any fields
 
@@ -160,13 +160,13 @@ x_add_metadata_group( $slug, $object_types, $args );
 `
 
 
-= Parameters =
+#### Parameters
 
 * `$slug` (string) The key under which the metadata will be stored.
 * `$object_types` (string|array) The object types to which this field should be added. Supported: post, page, any custom post type, user, comment.
 
 
-= Options and Overrides =
+#### Options and Overrides
 
 `
 $args = array(
@@ -179,18 +179,18 @@ $args = array(
 );
 `
 
-#### Adding Metadata Fields
+### Adding Metadata Fields
 
 `x_add_metadata_field( $slug, $object_types, $args );`
 
 
-= Parameters =
+#### Parameters
 
 * `$slug` (string) The key under which the metadata will be stored. For post_types, prefix the slug with an underscore (e.g. `_hidden`) to hide it from the the Custom Fields box.
 * `$object_types` (string|array) The object types to which this field should be added. Supported: post, page, any custom post type, user, comment.
 
 
-= Options and Overrides =
+####  Options and Overrides
 
 `
 $args = array(
@@ -210,7 +210,7 @@ $args = array(
 );
 `
 
-= Include / Exclude =
+####  Include / Exclude
 
 You can exclude fields and groups from specific object. For example, with the following, field-1 will show up for all posts except post #123:
 
