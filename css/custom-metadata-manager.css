@@ -23,6 +23,7 @@
 
 /* textarea fields */
 .custom-metadata-field textarea {width:99%; height:4em;}
+.custom-metadata-field textarea[readonly="readonly"] {background-color: #eee}
 
 /* wysiwyg fields */
 .custom-metadata-field.wysiwyg > label, .user-metadata-group .custom-metadata-field.wysiwyg > label {display: block; width: 100%; float: none;}

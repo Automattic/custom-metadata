@@ -87,7 +87,7 @@ function x_init_custom_fields() {
 		x_add_metadata_field('x_fieldName1', 'x_test', array(
 			'group' => 'x_metaBox1', // the group name
 			'description' => 'This is field #1. It\'s a simple text field.', // description for the field
-			'label' => 'Field #1', // field label
+			'label' => 'Text Field', // field label
 			'display_column' => true // show this field in the column listings
 		));
 
@@ -95,7 +95,8 @@ function x_init_custom_fields() {
 		x_add_metadata_field('x_fieldName2', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'display_column' => 'My Column (with Custom Callback)', // show this field in the column listings
-			'display_column_callback' => 'fieldName2_columnCallback' // custom function to display the column results (see below)
+			'display_column_callback' => 'fieldName2_columnCallback', // custom function to display the column results (see below)
+			'label' => 'Text with Custom Callback',
 		));
 
 
@@ -104,6 +105,7 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'textarea',
 			'multiple' => true,
+			'label' => 'Repeatable Text Area',
 		));
 
 		// adds a readonly textarea field to the 1st group
@@ -111,36 +113,42 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'textarea',
 			'readonly' => true,
+			'label' => 'Read Only Text Area',
 		));
 
 		// adds a readonly text field to the 1st group
 		x_add_metadata_field('x_fieldTextReadOnly1', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'readonly' => true,
+			'label' => 'Read Only Text Area',
 		));
 
 		// adds a wysiwyg (full editor) field to the 2nd group
 		x_add_metadata_field('x_fieldWysiwyg1', array('x_test', 'user'), array(
 			'group' => 'x_metaBox2',
 			'field_type' => 'wysiwyg',
+			'label' => 'TinyMCE / Wysiwyg field',
 		));
 
 		// adds a datepicker field to the 1st group
 		x_add_metadata_field('x_fieldDatepicker1', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'field_type' => 'datepicker',
+			'label' => 'Datepicker field',
 		));
 
 		// adds an upload field to the 1st group
 		x_add_metadata_field('x_fieldUpload1', 'x_test', array(
 			'group' => 'x_metaBox1',
-			'field_type' => 'upload'
+			'field_type' => 'upload',
+			'label' => 'Upload field',
 		));
 
 		// adds a checkbox field to the first group
 		x_add_metadata_field('x_fieldCheckbox1', 'x_test', array(
 			'group' => 'x_metaBox1',
-			'field_type' => 'checkbox'
+			'field_type' => 'checkbox',
+			'label' => 'Checkbox field',
 		));
 
 		// adds a radio button field to the first group
@@ -150,7 +158,8 @@ function x_init_custom_fields() {
 			'values' => array(					// set possible value/options
 				'option1' => 'Option #1', // key => value pair (value is stored in DB)
 				'option2' => 'Option #2',
-			)
+			),
+		'label' => 'Radio field',
 		));
 
 		// adds a select box in the first group
@@ -160,18 +169,21 @@ function x_init_custom_fields() {
 			'values' => array(					// set possible value/options
 				'option1' => 'Option #1', // key => value pair (value is stored in DB)
 				'option2' => 'Option #2'
-			)
+			),
+		'label' => 'Select field',
 		));
 
 		// adds a field to posts and users
 		x_add_metadata_field('x_fieldName2', array( 'post', 'user' ), array(
-			'group' => 'x_metaBox2'
+			'group' => 'x_metaBox2',
+			'label' => 'Text field',
 		));
 
 		// adds a field with a custom display callback (see below)
 		x_add_metadata_field('x_fieldCustomHidden1', 'x_test', array(
 			'group' => 'x_metaBox1',
-			'display_callback' => 'fieldCustomHidden1_display' // this function is defined below
+			'display_callback' => 'fieldCustomHidden1_display', // this function is defined below
+			'label' => 'Hidden field',
 		));
 
 

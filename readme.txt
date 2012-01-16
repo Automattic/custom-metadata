@@ -4,7 +4,7 @@ Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.3
 Tested up to: 3.4-alpha
-Stable tag: 0.6
+Stable tag: 0.7
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)
 
@@ -292,6 +292,10 @@ Stuff we have planned for the future:
 * Add groups and fields to Quick Edit
 
 == Upgrade Notice ==
+
+= 0.7 =
+
+Version 0.6 and higher of the plugin uses new APIs available in WordPress 3.3+, so please make sure you're running WordPress 3.3 or higher before upgrading this plugin. Version 0.7 adds the ability to have readonly fields.
 
 = 0.6 =
 
