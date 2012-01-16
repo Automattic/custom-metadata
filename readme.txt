@@ -20,7 +20,9 @@ This plugin handles all that heavy-lifting for you behind-the-scenes, so that yo
 
 The API is similar to that used for registering custom post types and taxonomies so it should be familiar territory.
 
-Like what you see? Want more field types and features added? [Get in touch](mailto:batmoo@gmail.com)
+**NOTE**: The plugin now requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
+
+Like what you see? Want more field types and features added? [Get in touch](mailto:tech@stresslimitdesign.com) or [contribute on github](https://github.com/jkudish/custom-metadata)
 
 > *See "Other Notes" section for usage information*
 
@@ -54,6 +56,10 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 3. Adding custom columns is also easy. You can go with a default display, or specify your own output callback
 
 == Changelog ==
+
+= 0.7 =
+
+* added the ability to have readonly fields with the new `readonly` paramater
 
 = 0.6 =
 
@@ -226,6 +232,7 @@ $args = array(
 	'exclude' => '', // see below for details
 	'include' => '', // see below for details
 	'multiple' => false, // true or false, can the field be duplicated with a click of a button?
+	'readonly' => false, // makes the field be readonly (works with text, textarea, password, upload and datepicker fields)
 );
 `
 

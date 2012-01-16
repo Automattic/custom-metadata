@@ -106,6 +106,19 @@ function x_init_custom_fields() {
 			'multiple' => true,
 		));
 
+		// adds a readonly textarea field to the 1st group
+		x_add_metadata_field('x_fieldTextareaReadOnly1', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'textarea',
+			'readonly' => true,
+		));
+
+		// adds a readonly text field to the 1st group
+		x_add_metadata_field('x_fieldTextReadOnly1', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'readonly' => true,
+		));
+
 		// adds a wysiwyg (full editor) field to the 2nd group
 		x_add_metadata_field('x_fieldWysiwyg1', array('x_test', 'user'), array(
 			'group' => 'x_metaBox2',

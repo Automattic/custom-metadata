@@ -4,7 +4,7 @@ Plugin Name: Custom Metadata Manager
 Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
 Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
-Version: 0.6
+Version: 0.7
 Author URI: http://digitalize.ca/wordpress-plugins/custom-metadata/
 
 Copyright 2010-2012 Mohammad Jangda, Joachim Kudish, Colin Vernon
@@ -103,7 +103,7 @@ class custom_metadata_manager {
 	function admin_init() {
 		global $pagenow;
 
-		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.6' );
+		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.7' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , apply_filters('custom_metadata_manager_url', trailingslashit(plugins_url('', __FILE__))) );
 
 		// Hook into load to initialize custom columns
@@ -247,6 +247,7 @@ class custom_metadata_manager {
 			'add_to_quick_edit' => false, // (post only) Add the field to Quick edit
 			'required_cap' => '', // the cap required to view and edit the field
 			'multiple' => false, // can the field be duplicated with a click of a button
+			'readonly' => false, // makes the field be readonly
 		);
 
 		// Merge defaults with args
@@ -849,9 +850,13 @@ class custom_metadata_manager {
 	}
 
 	function _display_metadata_field( $field_slug, $field, $object_type, $object_id ) {
+
 		$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
+
 		if (isset($field->display_callback) && function_exists($field->display_callback)) :
+
 			call_user_func($field->display_callback, $field_slug, $field, $object_type, $object_id, $value);
+
 		else :
 		?>
 		<div class="custom-metadata-field <?php echo $field->field_type ?>">
@@ -864,6 +869,8 @@ class custom_metadata_manager {
 
 			if (isset($field->multiple) && $field->multiple) $field_id = $field_slug.'[]';
 			else $field_id = $field_slug;
+
+			$readonly_str = ($field->readonly) ? 'readonly="readonly" ' : '';
 
 			if (get_post_type()) $numb = $post->ID; else $numb = 1; ?>
 			<script>var numb = '<?php echo $numb ?>'; </script>
@@ -880,15 +887,15 @@ class custom_metadata_manager {
 
 					<?php switch ($field->field_type) :
 							case 'text': ?>
-							<input type="text" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr( $v ); ?>" />
+							<input type="text" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr( $v ); ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'textarea': ?>
-							<textarea id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>"><?php echo esc_attr($v); ?></textarea>
+							<textarea id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php echo $readonly_str ?>><?php echo esc_attr($v); ?></textarea>
 						<?php break; ?>
 
 						<?php case 'password': ?>
-							<input type="password" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr($v); ?>" />
+							<input type="password" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr($v); ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'checkbox': ?>
@@ -924,7 +931,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo @date('m/d/Y', $v); ?>"/>
+							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo @date('m/d/Y', $v); ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>
@@ -935,7 +942,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'upload': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo $v; ?>" class="upload_field"/>
+							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo $v; ?>" class="upload_field" <?php echo $readonly_str ?>/>
 							<input type="button" title="<?php echo $post->ID ?>" class="button upload_button" value="Upload" />
 						<?php break; ?>
 
