@@ -904,11 +904,11 @@ class custom_metadata_manager {
 				$count = 1;
 				foreach( $value as $v ) :	?>
 
-				<div class="<?php echo $field_slug ?> cloneable" id="<?php echo $field_slug ?>-<?php echo $count;?>">
+				<div class="<?php echo $field_slug ?><?php echo ( $cloneable ) ? ' cloneable' : ''; ?>" id="<?php echo $field_slug ?>-<?php echo $count;?>">
 
 					<?php switch ($field->field_type) :
 							case 'text': ?>
-							<input type="text" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr( $v ); ?>" <?php echo $readonly_str ?>/>
+							<input type="text" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr($v); ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'textarea': ?>
@@ -949,7 +949,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo @date('m/d/Y', $v); ?>" <?php echo $readonly_str ?>/>
+							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo (isset($v)) ? date('m/d/Y', $v) : ''; ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>
@@ -968,21 +968,20 @@ class custom_metadata_manager {
 							<select name="<?php echo $field_id; ?>" id="<?php echo $field_slug; ?>">
 							<?php
 							$terms = get_terms( $field->taxonomy, array('hide_empty' => false));
-							foreach ( $terms as $term ) { ?>
-							<?php }
-							?>
+							foreach ( $terms as $term ) : ?>
 								<option value="<?php echo $term->slug ?>"<?php selected($term->slug == $v) ?>><?php echo $term->name ?></option>
+							<?php endforeach; ?>
 							</select>
 						<?php break; ?>
 
 						<?php case 'taxonomy_radio':
 							$terms = get_terms( $field->taxonomy, array('hide_empty' => false) );
-							foreach ( $terms as $term ) { ?>
+							foreach ( $terms as $term ) : ?>
 								<label for="<?php echo $term->slug; ?>" class="selectit">
 									<input type="radio" name="<?php echo $field_id ?>" value="<?php echo $term->slug ?>" id="<?php echo $term->slug ?>"<?php checked($term->slug == $v) ?>>
 									<?php echo $term->name ?>
 								</label>
-						<?php } ?>
+						<?php endforeach; ?>
 						<?php break; ?>
 
 					<?php endswitch; ?>
