@@ -39,7 +39,7 @@ There are usage instructions below
 
 # Changelog
 
-## 0.8
+## 0.8 (currently under development)
 
 * allow fieldtypes that save as multiples but don't display as cloneable or multiples
 * added the taxonomy_checkbox field
