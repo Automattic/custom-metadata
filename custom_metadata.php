@@ -920,18 +920,16 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'checkbox': ?>
-							<?php $checked = $v ? ' checked="checked"' : ''; ?>
-							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php echo $checked; ?> />
+							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php checked($checked = $v ); ?> />
 						<?php break; ?>
 
 						<?php case 'radio': ?>
 							<?php foreach( $field->values as $value_slug => $value_label ) : ?>
 								<?php
-								$checked = ( $v == $value_slug ) ? ' checked="checked"' : '';
 								$value_id = sprintf( '%s_%s', $field_slug, $value_slug );
 								?>
 								<label for="<?php echo $value_id; ?>" class="selectit">
-									<input type="radio" id="<?php echo $value_id; ?>" name="<?php echo $field_id; ?>" id="<?php echo $value_id; ?>" value="<?php echo $value_slug ?>" <?php echo $checked; ?> />
+									<input type="radio" id="<?php echo $value_id; ?>" name="<?php echo $field_id; ?>" id="<?php echo $value_id; ?>" value="<?php echo $value_slug ?>" <?php checked($checked = $v ); ?> />
 									<?php echo $value_label; ?>
 								</label>
 							<?php endforeach; ?>
@@ -941,10 +939,9 @@ class custom_metadata_manager {
 							<select id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>">
 								<?php foreach( $field->values as $value_slug => $value_label ) : ?>
 									<?php
-									$selected = ( $v == $value_slug ) ? ' selected="selected"' : '';
 									$value_id = $field_slug . $value_slug;
 									?>
-									<option value="<?php echo $value_slug ?>" <?php echo $selected; ?>>
+									<option value="<?php echo $value_slug ?>" <?php selected($v == $value_slug); ?>>
 										<?php echo $value_label; ?>
 									</option>
 								<?php endforeach; ?>
@@ -972,9 +969,9 @@ class custom_metadata_manager {
 							<?php
 							$terms = get_terms( $field->taxonomy, array('hide_empty' => false));
 							foreach ( $terms as $term ) { ?>
-								<option value="<?php echo $term->slug ?>"<?php if ($term->slug == $v) echo ' selected' ?>><?php echo $term->name ?></option>
 							<?php }
 							?>
+								<option value="<?php echo $term->slug ?>"<?php selected($term->slug == $v) ?>><?php echo $term->name ?></option>
 							</select>
 						<?php break; ?>
 
@@ -982,7 +979,7 @@ class custom_metadata_manager {
 							$terms = get_terms( $field->taxonomy, array('hide_empty' => false) );
 							foreach ( $terms as $term ) { ?>
 								<label for="<?php echo $term->slug; ?>" class="selectit">
-									<input type="radio" name="<?php echo $field_id ?>" value="<?php echo $term->slug ?>" id="<?php echo $term->slug ?>"<?php if ($term->slug == $v) echo ' checked' ?>>
+									<input type="radio" name="<?php echo $field_id ?>" value="<?php echo $term->slug ?>" id="<?php echo $term->slug ?>"<?php checked($term->slug == $v) ?>>
 									<?php echo $term->name ?>
 								</label>
 						<?php } ?>
