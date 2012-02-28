@@ -4,7 +4,7 @@ This code-only developer WordPress plugin allows you to add custom fields to you
 
 This is a WordPress Plugin. We sync changes between github and the [WordPress.org plugin repository](http://wordpress.org/extend/plugins/custom-metadata/). Why? Because collaboration is made much easier on github :)
 
-**NOTE**: The plugin now requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
+**NOTE**: The plugin requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
 
 
 # Installation
@@ -38,6 +38,12 @@ We're being good and ["namespacing" our public functions](http://andrewnacin.com
 There are usage instructions below
 
 # Changelog
+
+## 0.8
+
+* allow fieldtypes that save as multiples but don't display as cloneable or multiples
+* added the taxonomy_checkbox field
+* made use of the selected() and checked() functions in WordPress instead of clumsy if statements
 
 ## 0.7
 
