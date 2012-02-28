@@ -38,7 +38,7 @@ if ( CUSTOM_METADATA_MANAGER_DEBUG )
 
 /*
 TODO:
-- Additional Field types (multi-select, multi-checkboxes, taxonomy checkbox)
+- Additional Field types (multi-select, multi-checkboxes)
 - Group description field
 - Multiple display in the same order as saved
 
@@ -60,20 +60,38 @@ if (!class_exists('custom_metadata_manager')) :
 class custom_metadata_manager {
 
 	var $errors = array();
+
 	var $metadata = array();
+
 	var $_non_post_types = array( 'user', 'comment');
+
 	// Object types that come "built-in" with WordPress
 	var $_builtin_object_types = array( 'post', 'page', 'user', 'comment' );
+
 	// Column filter names
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
+
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
+
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password');
+
+	// taxonomy types
+	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
+
+	// filed types that are saved as multiples but not cloneable
+	var $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
+
+	// fields that always save as an array
+	var $_always_multiple_fields = array( 'taxonomy_checkbox' );
+
 	// Object types whose columns are generated through apply_filters instead of do_action
 	var $_column_filter_object_types = array( 'user' );
+
 	// Whitelisted pages that get stylesheets and scripts
 	var $_pages_whitelist = array( 'edit.php', 'post.php', 'post-new.php', 'users.php', 'profile.php', 'user-edit.php', 'edit-comments.php', 'comment.php');
+
 	// the default args used for the wp_editor function
 	var $default_editor_args = array();
 
@@ -86,6 +104,7 @@ class custom_metadata_manager {
 		$this->_column_types = apply_filters( 'custom_metadata_manager_column_types', $this->_column_types);
 		$this->_field_types = apply_filters( 'custom_metadata_manager_field_types', $this->_field_types);
 		$this->_cloneable_field_types = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_cloneable_field_types);
+		$this->_taxonomy_fields = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_taxonomy_fields);
 		$this->_column_filter_object_types = apply_filters( 'custom_metadata_manager_column_filter_object_types', $this->_column_filter_object_types);
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist);
 		$this->default_editor_args = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
@@ -788,7 +807,7 @@ class custom_metadata_manager {
 		$field_slug = sanitize_key( $field_slug );
 
 		// save the taxonomy as a taxonomy [as well as a custom field]
-		if (($field->field_type == 'taxonomy_select' || $field->field_type == 'taxonomy_radio') && !in_array( $object_type, $this->_non_post_types ))	{
+		if ( in_array($field->field_type, $this->_taxonomy_fields) && !in_array( $object_type, $this->_non_post_types ) )	{
 			wp_set_object_terms($object_id, $value, $field->taxonomy);
 		}
 
@@ -867,8 +886,10 @@ class custom_metadata_manager {
 				echo '<p class="error"><strong>Note:</strong> this field type cannot be multiplied</p>';
 			}
 
-			if (isset($field->multiple) && $field->multiple) $field_id = $field_slug.'[]';
+			if ( (isset($field->multiple) && $field->multiple) || in_array($field->field_type, $this->_always_multiple_fields) ) $field_id = $field_slug.'[]';
 			else $field_id = $field_slug;
+
+			$cloneable = (isset($field->multiple) && $field->multiple);
 
 			$readonly_str = ($field->readonly) ? 'readonly="readonly" ' : '';
 
@@ -969,16 +990,27 @@ class custom_metadata_manager {
 
 					<?php endswitch; ?>
 
-					<?php if ($count > 1) : ?>
+					<?php if ( $cloneable && $count > 1) : ?>
 						<a href="#" class="del-multiple hide-if-no-js" style="color:red;">Delete</a>
 					<?php endif; $count++ ?>
 
 				</div>
 
 			<?php endforeach; ?>
-		<?php if (isset($field->multiple) && $field->multiple) : ?>
+
+			<?php if ($field->field_type == 'taxonomy_checkbox') :
+				$terms = get_terms( $field->taxonomy, array('hide_empty' => false) );
+				foreach ( $terms as $term ) : ?>
+					<label for="<?php echo $term->slug; ?>" class="selectit">
+						<input type="checkbox" name="<?php echo $field_id ?>" value="<?php echo $term->slug ?>" id="<?php echo $term->slug ?>"<?php checked(in_array($term->slug, $value)) ?>>
+						<?php echo $term->name ?>
+					</label>
+				<?php endforeach; ?>
+			<?php endif; ?>
+
+		<?php if ($cloneable) : ?>
 			<p><a href="#" class="add-multiple hide-if-no-js" id="add-<?php echo $field_slug ?>">+ Add New</a></p>
-		<?php endif;?>
+		<?php endif ?>
 
 		<?php $this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value ); ?>
 
