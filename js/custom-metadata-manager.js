@@ -37,7 +37,7 @@ jQuery(document).ready(function($) {
 		window.original_send_to_editor = window.send_to_editor;
 		window.send_to_editor_clone = function(html){
 				file_url = jQuery('img',html).attr('src');
-				if (!file_url) { imgurl = jQuery(html).attr('href'); }
+				if (!file_url) { file_url = jQuery(html).attr('href'); }
 				tb_remove();
 				jQuery('#'+formfield+' .upload_field').val(file_url);
 			}
