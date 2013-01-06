@@ -34,3 +34,9 @@
 .user-metadata-group .custom-metadata-field input[type=text], .user-metadata-group .custom-metadata-field input[type=url], .user-metadata-group .custom-metadata-field input[type=password], .user-metadata-group .custom-metadata-field input[type=email] {width:25em;}
 .user-metadata-group .custom-metadata-field textarea {width:25em;}
 .user-metadata-group .custom-metadata-field .description {margin-left:200px;}
+
+/* chosen fields */
+.custom-metadata-field select { min-width: 200px; max-width: 400px; }
+.custom-metadata-field select[multiple] { width: 400px; }
+.chzn-container-multi .chzn-choices .search-field input { box-sizing: inherit !important; }
+#wpbody-content { overflow: visible !important; } /* otherwise the chosen selector gets cut off at the bottom */

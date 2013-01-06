@@ -48,4 +48,9 @@ jQuery(document).ready(function($) {
 		$( '.datepicker input' ).datepicker({changeMonth: true, changeYear: true});
 	}
 
+	// chosen
+	$(".custom-metadata-field select").each(function(index) { 
+		$(this).chosen();
+	});
+
 });
