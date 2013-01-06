@@ -72,7 +72,7 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password');
@@ -887,6 +887,7 @@ class custom_metadata_manager {
 			}
 
 			if ( (isset($field->multiple) && $field->multiple) || in_array($field->field_type, $this->_always_multiple_fields) ) $field_id = $field_slug.'[]';
+			elseif ($field->field_type=='multi_select') $field_id = $field_slug.'[]';
 			else $field_id = $field_slug;
 
 			$cloneable = (isset($field->multiple) && $field->multiple);
@@ -993,6 +994,20 @@ class custom_metadata_manager {
 				</div>
 
 			<?php endforeach; ?>
+
+			<?php if( $field->field_type=='multi_select' ) : ?>
+				<select id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" multiple>
+					<?php foreach( $field->values as $value_slug => $value_label ) : ?>
+						<?php
+						$selected = ( in_array($value_slug, $value) ) ? ' selected="selected"' : '';
+						$value_id = $field_slug . $value_slug;
+						?>
+						<option value="<?php echo $value_slug ?>" <?php echo $selected; ?>>
+							<?php echo $value_label; ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			<?php endif; ?>
 
 			<?php if ($field->field_type == 'taxonomy_checkbox') :
 				$terms = get_terms( $field->taxonomy, array('hide_empty' => false) );
