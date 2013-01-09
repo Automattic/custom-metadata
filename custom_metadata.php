@@ -36,6 +36,8 @@ if ( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) )
 if ( CUSTOM_METADATA_MANAGER_DEBUG )
 	include_once( 'custom_metadata_examples.php' );
 
+define( 'CUSTOM_METADATA_MANAGER_CHOSEN_VERSION', '0.9.11' ); // version for included chosen.js
+
 /*
 TODO:
 - Additional Field types (multi-select, multi-checkboxes)
@@ -72,7 +74,7 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password');
@@ -84,7 +86,7 @@ class custom_metadata_manager {
 	var $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
 
 	// fields that always save as an array
-	var $_always_multiple_fields = array( 'taxonomy_checkbox' );
+	var $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select' );
 
 	// Object types whose columns are generated through apply_filters instead of do_action
 	var $_column_filter_object_types = array( 'user' );
@@ -201,16 +203,18 @@ class custom_metadata_manager {
 
 	}
 
-	function enqueue_scripts() {
+	function enqueue_scripts() {		
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_VERSION, true);
+		wp_enqueue_script('chosen-js', apply_filters( 'custom-metadata-manager-chosen-js', CUSTOM_METADATA_MANAGER_URL .'js/chosen.jquery.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION, true);
 		// wp_enqueue_script('jquery-ui-datepicker', apply_filters('custom-metadata-manager-datepicker-js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-datepicker.min.js'), array('jquery', 'jquery-ui-core'));
 	}
 
 	function enqueue_styles() {
 		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom-metadata-manager-default-css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'jquery-ui-css', apply_filters( 'custom-metadata-manager-jquery-ui-css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
+		wp_enqueue_style( 'chosen-css', apply_filters( 'custom-metadata-manager-chosen-css', CUSTOM_METADATA_MANAGER_URL .'css/chosen.css' ), array(), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION );
 	}
 
 	function add_metadata_column_headers( $columns ) {
@@ -267,6 +271,7 @@ class custom_metadata_manager {
 			'required_cap' => '', // the cap required to view and edit the field
 			'multiple' => false, // can the field be duplicated with a click of a button
 			'readonly' => false, // makes the field be readonly
+			'chosen' => false, // applies chosen.js (only when 'field_type' => 'multi_select')
 		);
 
 		// Merge defaults with args
@@ -994,7 +999,17 @@ class custom_metadata_manager {
 
 			<?php endforeach; ?>
 
-			<?php if ($field->field_type == 'taxonomy_checkbox') :
+			<?php if( 'multi_select' == $field->field_type ) : ?>
+				<select id="<?php echo $field_slug; ?>" <?php if( true == $field->chosen ) { echo( 'class="chosen" ' ); } ?>name="<?php echo $field_id; ?>" multiple>
+					<?php foreach( $field->values as $value_slug => $value_label ) : ?>
+						<option value="<?php echo esc_attr( $value_slug ); ?>" <?php selected( in_array($value_slug, $value) ) ?>>
+							<?php echo $value_label; ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			<?php endif; ?>
+
+			<?php if ( 'taxonomy_checkbox' == $field->field_type ) :
 				$terms = get_terms( $field->taxonomy, array('hide_empty' => false) );
 				foreach ( $terms as $term ) : ?>
 					<label for="<?php echo $term->slug; ?>" class="selectit">
