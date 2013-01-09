@@ -48,4 +48,9 @@ jQuery(document).ready(function($) {
 		$( '.datepicker input' ).datepicker({changeMonth: true, changeYear: true});
 	}
 
+	// chosen
+	$("select.chosen").each(function(index) { 
+		$(this).chosen();
+	});
+
 });
