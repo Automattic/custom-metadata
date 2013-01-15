@@ -926,7 +926,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'checkbox': ?>
-							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php checked($checked = $v ); ?> />
+							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php checked($checked = $v, 'on' ); ?> />
 						<?php break; ?>
 
 						<?php case 'radio': ?>
