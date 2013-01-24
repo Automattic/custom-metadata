@@ -100,6 +100,7 @@ class custom_metadata_manager {
 
 	function init() {
 		$this->init_object_types();
+		do_action( 'custom_metadata_manager_init' );
 	}
 
 	function admin_init() {
@@ -117,6 +118,7 @@ class custom_metadata_manager {
 		if( current_user_can( 'manage_options' ) )
 			add_action( 'admin_notices', array( &$this, '_display_registration_errors' ) );
 
+		do_action( 'custom_metadata_manager_admin_init' );
 	}
 
 	function init_object_types() {
