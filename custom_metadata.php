@@ -38,25 +38,6 @@ if ( CUSTOM_METADATA_MANAGER_DEBUG )
 
 define( 'CUSTOM_METADATA_MANAGER_CHOSEN_VERSION', '0.9.11' ); // version for included chosen.js
 
-/*
-TODO:
-- Additional Field types (multi-select, multi-checkboxes)
-- Group description field
-- Multiple display in the same order as saved
-
-- Limit group based on caps?
-- Limit view of custom column based on caps?
-- Limit view and save to specific caps based on object type?
--- default for posts: edit_posts
--- default for custom posts: check custom post type object
--- user: edit_user
-
-- validation (pass in array of validation types, or string that references function)
-- quick edit
-- Links support (?)
-
-*/
-
 if (!class_exists('custom_metadata_manager')) :
 
 class custom_metadata_manager {
