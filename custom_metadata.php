@@ -905,7 +905,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'textarea': ?>
-							<textarea id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php echo $readonly_str ?>><?php echo esc_attr( $v ); ?></textarea>
+							<textarea id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php echo $readonly_str ?>><?php echo esc_textarea( $v ); ?></textarea>
 						<?php break; ?>
 
 						<?php case 'password': ?>
