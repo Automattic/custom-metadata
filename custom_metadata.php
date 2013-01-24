@@ -94,8 +94,8 @@ class custom_metadata_manager {
 
 
 		// We need to run these as late as possible!
-		add_action( 'init', array( &$this, 'init' ), 1000, 0 );
-		add_action( 'admin_init', array( &$this, 'admin_init' ), 1000, 0 );
+		add_action( 'init', array( $this, 'init' ), 1000, 0 );
+		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
 	}
 
 	function init() {
@@ -111,12 +111,12 @@ class custom_metadata_manager {
 
 		// Hook into load to initialize custom columns
 		if( in_array( $pagenow, $this->_pages_whitelist ) ) {
-			add_action( 'load-' . $pagenow, array( &$this, 'init_metadata' ) );
+			add_action( 'load-' . $pagenow, array( $this, 'init_metadata' ) );
 		}
 
 		// Hook into admin_notices to show errors
 		if( current_user_can( 'manage_options' ) )
-			add_action( 'admin_notices', array( &$this, '_display_registration_errors' ) );
+			add_action( 'admin_notices', array( $this, '_display_registration_errors' ) );
 
 		do_action( 'custom_metadata_manager_admin_init' );
 	}
@@ -129,28 +129,28 @@ class custom_metadata_manager {
 	function init_metadata() {
 		$object_type = $this->_get_object_type_context();
 
-		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
 		$this->init_columns();
 
 		// Handle actions related to users
 		if( $object_type == 'user' ) {
 			// Editing another user's profile
-			add_action( 'edit_user_profile', array( &$this, 'add_user_metadata_groups' ) );
-			add_action( 'edit_user_profile_update', array( &$this, 'save_user_metadata' ) );
+			add_action( 'edit_user_profile', array( $this, 'add_user_metadata_groups' ) );
+			add_action( 'edit_user_profile_update', array( $this, 'save_user_metadata' ) );
 			// Allow user-editable fields on "Your Profile"
-			add_action( 'show_user_profile', array( &$this, 'add_user_metadata_groups' ) );
-			add_action( 'personal_options_update', array( &$this, 'save_user_metadata' ) );
+			add_action( 'show_user_profile', array( $this, 'add_user_metadata_groups' ) );
+			add_action( 'personal_options_update', array( $this, 'save_user_metadata' ) );
 
 		} else {
 
 			// Hook in to metaboxes
-			add_action( 'add_meta_boxes', array( &$this, "add_post_metadata_groups" ) );
+			add_action( 'add_meta_boxes', array( $this, "add_post_metadata_groups" ) );
 
 			// Hook in to save
-			add_action( 'save_post', array( &$this, 'save_post_metadata' ) );
-			add_action( 'edit_comment', array( &$this, 'save_comment_metadata' ) );
+			add_action( 'save_post', array( $this, 'save_post_metadata' ) );
+			add_action( 'edit_comment', array( $this, 'save_comment_metadata' ) );
 		}
 
 		do_action( 'custom_metadata_manager_init_metadata' );
@@ -174,12 +174,12 @@ class custom_metadata_manager {
 		}
 
 		// Hook into Column Headers
-		add_filter( "manage_{$column_header_name}_columns", array( &$this, 'add_metadata_column_headers' ) );
+		add_filter( "manage_{$column_header_name}_columns", array( $this, 'add_metadata_column_headers' ) );
 
 		// User and Posts have different functions
-		$custom_column_content_function = array( &$this, "add_{$object_type}_metadata_column_content" );
+		$custom_column_content_function = array( $this, "add_{$object_type}_metadata_column_content" );
 		if( ! is_callable( $custom_column_content_function ) )
-			$custom_column_content_function = array( &$this, 'add_metadata_column_content' );
+			$custom_column_content_function = array( $this, 'add_metadata_column_content' );
 
 		// Hook into Column Content. Users get filtered, others get actioned.
 		if( ! in_array( $object_type, $this->_column_filter_object_types ) )
@@ -407,7 +407,7 @@ class custom_metadata_manager {
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 
 		if( ! empty( $fields ) && $this->is_thing_added_to_object( $group_slug, $group, $object_type, $object_id ) ) {
-			add_meta_box( $group_slug, $group->label, array( &$this, '_display_post_metadata_box' ), $object_type, $group->context, $group->priority, array( 'group' => $group, 'fields' => $fields));
+			add_meta_box( $group_slug, $group->label, array( $this, '_display_post_metadata_box' ), $object_type, $group->context, $group->priority, array( 'group' => $group, 'fields' => $fields));
 		}
 	}
 
