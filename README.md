@@ -44,6 +44,7 @@ There are usage instructions below
 * allow fieldtypes that save as multiples but don't display as cloneable or multiples
 * added the taxonomy_checkbox field
 * made use of the selected() and checked() functions in WordPress instead of clumsy if statements
+* Limit or exclude groups and fields using a custom callback
 
 ## 0.7
 
@@ -263,6 +264,26 @@ $args = array(
 	)
 );
 ```
+You can also pass in a callback to programattically include or exclude posts:
+
+```php
+$args = array(
+	'exclude' => function( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+		// exclude from all posts that are in the aside category.
+		return in_category( 'aside', $object_id );
+	}
+);
+```
+
+```php
+$args = array(
+	'include' => function( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+		// include for posts that are not published.
+		$post = get_post( $object_id );
+		return 'publish' != $post->post_status;
+	}
+);
+```
 
 # Examples
 
@@ -276,7 +297,6 @@ Stuff we have planned for the future:
 
 * Ability Pass in attributes for built-in fields (e.g. class, data-*, etc.)
 * Additional field types (multi-select, multi-checkbox)
-* Limit or exclude groups and fields using a custom callback
 * Autosave support for fields on post types
 * Client- and server-side validation support
 * Add groups and fields to Quick Edit
