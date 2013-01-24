@@ -53,4 +53,46 @@ jQuery(document).ready(function($) {
 		$(this).chosen();
 	});
 
+	if ( $('.link-selector').length ) {
+		
+		var link_selector_open = false;
+		var target = null;
+
+		$('.link-selector').live('click', function(e) {
+			e.preventDefault();
+			var caller = $(this);
+			target = caller.parent().find('input');
+			
+			link_selector_open = true;
+
+			wpActiveEditor = true;
+			wpLink.open();
+		});
+
+		$('#wp-link-submit').click(function(e) {
+			
+			if(target === null) return;
+
+			e.preventDefault();
+
+			var linkAtts = wpLink.getAttrs();
+			target.val(linkAtts.href);
+			wpLink.textarea = target;
+			wpLink.close();
+			target = null;
+		});
+
+		$('#wp-link-cancel').click(function(e) {
+
+			if(target === null) return;
+
+			e.preventDefault();
+
+			wpLink.textarea = target;
+			wpLink.close();
+			target = null;
+			link_selector_open = false;
+		});
+	}
+
 });

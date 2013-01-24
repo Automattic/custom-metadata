@@ -130,7 +130,7 @@ class custom_metadata_manager {
 		$object_type = $this->_get_object_type_context();
 
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_styles', array( &$this, 'enqueue_styles' ) );
 
 		$this->init_columns();
 
@@ -186,7 +186,8 @@ class custom_metadata_manager {
 
 	}
 
-	function enqueue_scripts() {		
+	function enqueue_scripts() {
+		wp_enqueue_script('wp-link');
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_VERSION, true);
@@ -912,7 +913,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'checkbox': ?>
-							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php checked($checked = $v ); ?> />
+							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php checked($checked = $v, 'on' ); ?> />
 						<?php break; ?>
 
 						<?php case 'radio': ?>
@@ -941,7 +942,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo (isset($v)) ? date('m/d/Y', $v) : ''; ?>" <?php echo $readonly_str ?>/>
+							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo (isset($v) && trim($v) != '') ? date('m/d/Y', $v) : ''; ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>
@@ -974,6 +975,10 @@ class custom_metadata_manager {
 									<?php echo $term->name ?>
 								</label>
 						<?php endforeach; ?>
+						<?php break; ?>
+						
+						<?php case 'link': ?>
+							<input type="text" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr( $v ); ?>" <?php echo $readonly_str ?>/> <a href="#" class="link-selector"><? _e('Select', 'custom-metadata-manager') ?></a>
 						<?php break; ?>
 
 					<?php endswitch; ?>
