@@ -1050,16 +1050,6 @@ class custom_metadata_manager {
 			<?php
 		}
 	}
-
-	function debug($msg, $object) {
-		if( CUSTOM_METADATA_MANAGER_DEBUG ) {
-			echo '<hr />';
-			echo sprintf('<p>%s</p>', $msg);
-			echo '<pre>';
-			var_dump($object);
-			echo '</pre>';
-		}
-	}
 }
 
 global $custom_metadata_manager;
