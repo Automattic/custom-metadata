@@ -661,10 +661,14 @@ class custom_metadata_manager {
 	function is_thing_added_to_object( $thing_slug, $thing, $object_type, $object_id, $object_slug = '' ) {
 
 		if( isset( $thing->exclude ) ) {
+			if ( is_callable( $thing->exclude ) )
+				return ! (bool) call_user_func( $thing->exclude, $thing_slug, $thing, $object_type, $object_id, $object_slug );
 			return ! $this->does_id_array_match_object( $thing->exclude, $object_type, $object_id, $object_slug );
 		}
 
 		if( isset( $thing->include ) ) {
+			if ( is_callable( $thing->include ) )
+				return (bool) call_user_func( $thing->include, $thing_slug, $thing, $object_type, $object_id, $object_slug );
 			return $this->does_id_array_match_object( $thing->include, $object_type,  $object_id, $object_slug );
 		}
 
@@ -699,13 +703,14 @@ class custom_metadata_manager {
 	}
 
 	function does_id_match_object( $id, $object_id, $object_slug = '' ) {
-		if( is_int( $id ) ) {
+		if ( is_int( $id ) ) {
 			// 123
 			return $id == $object_id;
-		} else {
+		} elseif ( is_string( $id ) ) {
 			// 'postname' || 'username' || 'comment-name' ??
 			return $id == $object_slug;
 		}
+		return false;
 	}
 
 	function is_restricted_field( $field_slug, $object_type ) {

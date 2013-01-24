@@ -217,7 +217,36 @@ function x_init_custom_fields() {
 			'description' => 'This field is only included on Post ID#2476',
 			'label' => 'Included Field',
 			'include' => 2476
-		));
+		) );
+
+		x_add_metadata_field('x_fieldExcludeCallback', 'post', array(
+			'description' => 'This field is excluded using a custom callback; will be excluded from posts in the "aside" category',
+			'label' => 'Excluded Field (with callback)',
+			'exclude' => 'x_custom_exclude_callback',
+		) );
+
+		/**
+		 * @param $thing_slug string Slug of the field or group
+		 * @param $thing object Field or Group args set up when registering
+		 * @param $object_type string What type of object (post, comment, user)
+		 * @param $object_id int|string ID of the object
+		 * @param $object_slug string 
+		 */
+		function x_custom_exclude_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+			// exclude from all posts that are in the aside category
+			return in_category( 'aside', $object_id );
+		}
+
+		x_add_metadata_field('x_fieldIncludedCallback', 'post', array(
+			'description' => 'This field is included using a custom callback; will only be included for posts that are not published',
+			'label' => 'Included Field (with callback)',
+			'include' => 'x_custom_include_callback',
+		) );
+
+		function x_custom_include_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+			$post = get_post( $object_id );
+			return 'publish' != $post->post_status;
+		}
 
 	}
 }
