@@ -67,187 +67,182 @@ $labels = array(
  * make sure to use the 'admin_init' hook as below
  * @return void
  */
-add_action( 'admin_init', 'x_init_custom_fields' );
+add_action( 'custom_metadata_manager_admin_init', 'x_init_custom_fields' );
 function x_init_custom_fields() {
 
-	// check that the metadata manager plugin is active by checking if the two functions we need exist
-	if( function_exists( 'x_add_metadata_group' ) && function_exists( 'x_add_metadata_field' ) ) {
+	// adds a new group to the test post type
+	x_add_metadata_group( 'x_metaBox1', 'x_test', array(
+		'label' => 'Group with Multiple Fields'
+	) );
 
-		// adds a new group to the test post type
-		x_add_metadata_group( 'x_metaBox1', 'x_test', array(
-			'label' => 'Group with Multiple Fields'
-		) );
+	// adds another group to the test post type + posts + users
+	x_add_metadata_group( 'x_metaBox2', array( 'x_test', 'post', 'user' ), array(
+		'label' => 'Group for Post and User'
+	) );
 
-		// adds another group to the test post type + posts + users
-		x_add_metadata_group( 'x_metaBox2', array( 'x_test', 'post', 'user' ), array(
-			'label' => 'Group for Post and User'
-		) );
+	// adds a text field to the first group
+	x_add_metadata_field('x_fieldName1', 'x_test', array(
+		'group' => 'x_metaBox1', // the group name
+		'description' => 'This is field #1. It\'s a simple text field.', // description for the field
+		'label' => 'Text Field', // field label
+		'display_column' => true // show this field in the column listings
+	));
 
-		// adds a text field to the first group
-		x_add_metadata_field('x_fieldName1', 'x_test', array(
-			'group' => 'x_metaBox1', // the group name
-			'description' => 'This is field #1. It\'s a simple text field.', // description for the field
-			'label' => 'Text Field', // field label
-			'display_column' => true // show this field in the column listings
-		));
-
-		// adds a text field to the 2nd group
-		x_add_metadata_field('x_fieldName2', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'display_column' => 'My Column (with Custom Callback)', // show this field in the column listings
-			'display_column_callback' => 'fieldName2_columnCallback', // custom function to display the column results (see below)
-			'label' => 'Text with Custom Callback',
-		));
+	// adds a text field to the 2nd group
+	x_add_metadata_field('x_fieldName2', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'display_column' => 'My Column (with Custom Callback)', // show this field in the column listings
+		'display_column_callback' => 'fieldName2_columnCallback', // custom function to display the column results (see below)
+		'label' => 'Text with Custom Callback',
+	));
 
 
-		// adds a cloneable textarea field to the 1st group
-		x_add_metadata_field('x_fieldTextarea1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'textarea',
-			'multiple' => true,
-			'label' => 'Repeatable Text Area',
-		));
+	// adds a cloneable textarea field to the 1st group
+	x_add_metadata_field('x_fieldTextarea1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'textarea',
+		'multiple' => true,
+		'label' => 'Repeatable Text Area',
+	));
 
-		// adds a readonly textarea field to the 1st group
-		x_add_metadata_field('x_fieldTextareaReadOnly1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'textarea',
-			'readonly' => true,
-			'label' => 'Read Only Text Area',
-		));
+	// adds a readonly textarea field to the 1st group
+	x_add_metadata_field('x_fieldTextareaReadOnly1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'textarea',
+		'readonly' => true,
+		'label' => 'Read Only Text Area',
+	));
 
-		// adds a readonly text field to the 1st group
-		x_add_metadata_field('x_fieldTextReadOnly1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'readonly' => true,
-			'label' => 'Read Only Text Area',
-		));
+	// adds a readonly text field to the 1st group
+	x_add_metadata_field('x_fieldTextReadOnly1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'readonly' => true,
+		'label' => 'Read Only Text Area',
+	));
 
-		// adds a wysiwyg (full editor) field to the 2nd group
-		x_add_metadata_field('x_fieldWysiwyg1', array('x_test', 'user'), array(
-			'group' => 'x_metaBox2',
-			'field_type' => 'wysiwyg',
-			'label' => 'TinyMCE / Wysiwyg field',
-		));
+	// adds a wysiwyg (full editor) field to the 2nd group
+	x_add_metadata_field('x_fieldWysiwyg1', array('x_test', 'user'), array(
+		'group' => 'x_metaBox2',
+		'field_type' => 'wysiwyg',
+		'label' => 'TinyMCE / Wysiwyg field',
+	));
 
-		// adds a datepicker field to the 1st group
-		x_add_metadata_field('x_fieldDatepicker1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'datepicker',
-			'label' => 'Datepicker field',
-		));
+	// adds a datepicker field to the 1st group
+	x_add_metadata_field('x_fieldDatepicker1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'datepicker',
+		'label' => 'Datepicker field',
+	));
 
-		// adds an upload field to the 1st group
-		x_add_metadata_field('x_fieldUpload1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'upload',
-			'label' => 'Upload field',
-		));
+	// adds an upload field to the 1st group
+	x_add_metadata_field('x_fieldUpload1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'upload',
+		'label' => 'Upload field',
+	));
 
-		// adds a checkbox field to the first group
-		x_add_metadata_field('x_fieldCheckbox1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'checkbox',
-			'label' => 'Checkbox field',
-		));
+	// adds a checkbox field to the first group
+	x_add_metadata_field('x_fieldCheckbox1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'checkbox',
+		'label' => 'Checkbox field',
+	));
 
-		// adds a radio button field to the first group
-		x_add_metadata_field('x_fieldRadio1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'radio',
-			'values' => array(					// set possible value/options
-				'option1' => 'Option #1', // key => value pair (value is stored in DB)
-				'option2' => 'Option #2',
-			),
-		'label' => 'Radio field',
-		));
+	// adds a radio button field to the first group
+	x_add_metadata_field('x_fieldRadio1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'radio',
+		'values' => array(					// set possible value/options
+			'option1' => 'Option #1', // key => value pair (value is stored in DB)
+			'option2' => 'Option #2',
+		),
+	'label' => 'Radio field',
+	));
 
-		// adds a select box in the first group
-		x_add_metadata_field('x_fieldSelect1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'field_type' => 'select',
-			'values' => array(					// set possible value/options
-				'option1' => 'Option #1', // key => value pair (value is stored in DB)
-				'option2' => 'Option #2'
-			),
-		'label' => 'Select field',
-		));
+	// adds a select box in the first group
+	x_add_metadata_field('x_fieldSelect1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'field_type' => 'select',
+		'values' => array(					// set possible value/options
+			'option1' => 'Option #1', // key => value pair (value is stored in DB)
+			'option2' => 'Option #2'
+		),
+	'label' => 'Select field',
+	));
 
-		// adds a field to posts and users
-		x_add_metadata_field('x_fieldName2', array( 'post', 'user' ), array(
-			'group' => 'x_metaBox2',
-			'label' => 'Text field',
-		));
+	// adds a field to posts and users
+	x_add_metadata_field('x_fieldName2', array( 'post', 'user' ), array(
+		'group' => 'x_metaBox2',
+		'label' => 'Text field',
+	));
 
-		// adds a field with a custom display callback (see below)
-		x_add_metadata_field('x_fieldCustomHidden1', 'x_test', array(
-			'group' => 'x_metaBox1',
-			'display_callback' => 'fieldCustomHidden1_display', // this function is defined below
-			'label' => 'Hidden field',
-		));
+	// adds a field with a custom display callback (see below)
+	x_add_metadata_field('x_fieldCustomHidden1', 'x_test', array(
+		'group' => 'x_metaBox1',
+		'display_callback' => 'fieldCustomHidden1_display', // this function is defined below
+		'label' => 'Hidden field',
+	));
 
 
-		// field with capabilities limited
-		x_add_metadata_field('x_cap-limited-field', 'x_test', array(
-			'label' => 'Cap Limited Field (edit_posts)',
-			'required_cap' => 'edit_posts' // limit to users who can edit posts
-		));
+	// field with capabilities limited
+	x_add_metadata_field('x_cap-limited-field', 'x_test', array(
+		'label' => 'Cap Limited Field (edit_posts)',
+		'required_cap' => 'edit_posts' // limit to users who can edit posts
+	));
 
-		// field with role limited
-		x_add_metadata_field('x_author-cap-limited-field', 'user', array(
-			'label' => 'Cap Limited Field (author)',
-			'required_cap' => 'author' // limit to authors
-		));
+	// field with role limited
+	x_add_metadata_field('x_author-cap-limited-field', 'user', array(
+		'label' => 'Cap Limited Field (author)',
+		'required_cap' => 'author' // limit to authors
+	));
 
-		// comment field
-		x_add_metadata_field('x_commentField1', 'comment', array(
-			'label' => 'Field for Comment',
-			'display_column' => true
-		));
+	// comment field
+	x_add_metadata_field('x_commentField1', 'comment', array(
+		'label' => 'Field for Comment',
+		'display_column' => true
+	));
 
-		// field that exludes posts
-		x_add_metadata_field('x_fieldNameExcluded1', 'post', array(
-			'description' => 'This field is excluded from Post ID#2476',
-			'label' => 'Excluded Field',
-			'exclude' => 2476
-		));
+	// field that exludes posts
+	x_add_metadata_field('x_fieldNameExcluded1', 'post', array(
+		'description' => 'This field is excluded from Post ID#2476',
+		'label' => 'Excluded Field',
+		'exclude' => 2476
+	));
 
-		// field that includes certain posts only
-		x_add_metadata_field('x_fieldNameIncluded1', 'post', array(
-			'description' => 'This field is only included on Post ID#2476',
-			'label' => 'Included Field',
-			'include' => 2476
-		) );
+	// field that includes certain posts only
+	x_add_metadata_field('x_fieldNameIncluded1', 'post', array(
+		'description' => 'This field is only included on Post ID#2476',
+		'label' => 'Included Field',
+		'include' => 2476
+	) );
 
-		x_add_metadata_field('x_fieldExcludeCallback', 'post', array(
-			'description' => 'This field is excluded using a custom callback; will be excluded from posts in the "aside" category',
-			'label' => 'Excluded Field (with callback)',
-			'exclude' => 'x_custom_exclude_callback',
-		) );
+	x_add_metadata_field('x_fieldExcludeCallback', 'post', array(
+		'description' => 'This field is excluded using a custom callback; will be excluded from posts in the "aside" category',
+		'label' => 'Excluded Field (with callback)',
+		'exclude' => 'x_custom_exclude_callback',
+	) );
 
-		/**
-		 * @param $thing_slug string Slug of the field or group
-		 * @param $thing object Field or Group args set up when registering
-		 * @param $object_type string What type of object (post, comment, user)
-		 * @param $object_id int|string ID of the object
-		 * @param $object_slug string 
-		 */
-		function x_custom_exclude_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
-			// exclude from all posts that are in the aside category
-			return in_category( 'aside', $object_id );
-		}
+	/**
+	 * @param $thing_slug string Slug of the field or group
+	 * @param $thing object Field or Group args set up when registering
+	 * @param $object_type string What type of object (post, comment, user)
+	 * @param $object_id int|string ID of the object
+	 * @param $object_slug string 
+	 */
+	function x_custom_exclude_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+		// exclude from all posts that are in the aside category
+		return in_category( 'aside', $object_id );
+	}
 
-		x_add_metadata_field('x_fieldIncludedCallback', 'post', array(
-			'description' => 'This field is included using a custom callback; will only be included for posts that are not published',
-			'label' => 'Included Field (with callback)',
-			'include' => 'x_custom_include_callback',
-		) );
+	x_add_metadata_field('x_fieldIncludedCallback', 'post', array(
+		'description' => 'This field is included using a custom callback; will only be included for posts that are not published',
+		'label' => 'Included Field (with callback)',
+		'include' => 'x_custom_include_callback',
+	) );
 
-		function x_custom_include_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
-			$post = get_post( $object_id );
-			return 'publish' != $post->post_status;
-		}
-
+	function x_custom_include_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+		$post = get_post( $object_id );
+		return 'publish' != $post->post_status;
 	}
 }
 
