@@ -208,7 +208,6 @@ class custom_metadata_manager {
 		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_VERSION, true);
 		wp_enqueue_script('chosen-js', apply_filters( 'custom-metadata-manager-chosen-js', CUSTOM_METADATA_MANAGER_URL .'js/chosen.jquery.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION, true);
-		// wp_enqueue_script('jquery-ui-datepicker', apply_filters('custom-metadata-manager-datepicker-js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-datepicker.min.js'), array('jquery', 'jquery-ui-core'));
 	}
 
 	function enqueue_styles() {
