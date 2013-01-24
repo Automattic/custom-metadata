@@ -541,12 +541,19 @@ class custom_metadata_manager {
 	}
 
 	function save_metadata_field( $field_slug, $field, $object_type, $object_id ) {
-		if( isset( $_POST[$field_slug] ) ) {
-			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[$field_slug] );
-			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
-		} else {
-			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
-		}
+          $value = null;
+          if( isset( $_POST[$field_slug] ) )
+            $value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[$field_slug] );
+
+          $save_callback = $this->_get_save_callback( $field );
+          if( $save_callback )
+            return call_user_func( $save_callback, $field_slug, $field, $object_type, $object_id, $value );
+
+          if( isset( $value ) ){
+            $this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
+          } else {
+            $this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
+          }
 	}
 
 	function get_metadata_field_value( $field_slug, $field, $object_type, $object_id ) {
@@ -788,10 +795,7 @@ class custom_metadata_manager {
 
 	function _save_field_value( $field_slug, $field, $object_type, $object_id, $value ) {
 
-		$save_callback = $this->_get_save_callback( $field );
-
-		if( $save_callback )
-			return call_user_func( $save_callback, $object_type, $object_id, $field_slug, $value );
+		
 
 		if( ! in_array( $object_type, $this->_non_post_types ) )
 			$object_type = 'post';
