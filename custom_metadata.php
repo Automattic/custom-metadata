@@ -152,6 +152,9 @@ class custom_metadata_manager {
 			add_action( 'save_post', array( &$this, 'save_post_metadata' ) );
 			add_action( 'edit_comment', array( &$this, 'save_comment_metadata' ) );
 		}
+
+		do_action( 'custom_metadata_manager_init_metadata' );
+		do_action( 'custom_metadata_manager_init_metadata_' . $object_type );
 	}
 
 	function init_columns() {

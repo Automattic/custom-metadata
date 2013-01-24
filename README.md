@@ -147,7 +147,7 @@ The main idea behind this plugin is to have a single API to work with regardless
 For the sake of performance (and to avoid potential race conditions), always register your custom fields in the `custom_metadata_manager_admin_init` hook. This way your front-end doesn't get bogged down with unnecessary processing and you can be sure that your fields will be registered safely. Here's a code sample:
 
 ```php
-add_action( 'custom_metadata_manager_admin_init', 'my_theme_init_custom_fields' );
+add_action( 'custom_metadata_manager_init_metadata', 'my_theme_init_custom_fields' );
 
 function my_theme_init_custom_fields() {
 	x_add_metadata_field( 'my_field', array( 'user', 'post' ) );

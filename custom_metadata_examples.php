@@ -67,7 +67,7 @@ $labels = array(
  * make sure to use the 'admin_init' hook as below
  * @return void
  */
-add_action( 'custom_metadata_manager_admin_init', 'x_init_custom_fields' );
+add_action( 'custom_metadata_manager_init_metadata', 'x_init_custom_fields' );
 function x_init_custom_fields() {
 
 	// adds a new group to the test post type
