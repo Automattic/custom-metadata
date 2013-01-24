@@ -40,3 +40,24 @@
 .custom-metadata-field select[multiple] { width: 400px; }
 .chzn-container-multi .chzn-choices .search-field input { box-sizing: inherit !important; }
 #wpbody-content { overflow: visible !important; } /* otherwise the chosen selector gets cut off at the bottom */
+
+/* sortable fields */
+.custom-metadata-field .x-sortable .cloneable {
+  position: relative;
+  padding-left: 20px;
+}
+.custom-metadata-field .x-sortable .cloneable .drag-handle {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  cursor: move;
+  opacity: 0.5;
+}
+.custom-metadata-field .x-sortable .cloneable .drag-handle:hover {
+  opacity: 1;
+}
+
+.custom-metadata-field  .delete {
+  color: #f00;
+  border-bottom-color: #f00;
+}

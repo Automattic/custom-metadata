@@ -5,14 +5,17 @@ jQuery(document).ready(function($) {
 	if ( $('.add-multiple').length ) {
 		$('.add-multiple').live('click', function(e) {
 			e.preventDefault();
-			var parent = $(this).parent().prev('.cloneable').attr('id');
-			var $last = $('#'+parent);
-			var $clone = $last.clone();
+			var $this = $(this);
+			var $container = $this.closest('.custom-metadata-field');
+			$clone = $( $container.find('script.clonetemplate').html() );
+
+			// Create a unique ID for other JS to hook to, use current time (in milliseconds) and random number to create unique
 			var idName = $clone.attr('id');
-			var instanceNum = parseInt(idName.split('-')[1])+1;
-			idName = idName.split('-')[0]+'-'+instanceNum;
+			idName = idName.split('-')[0]+'-'+((new Date()).getTime())+Math.floor(Math.random()*1000);
 			$clone.attr('id',idName);
-			$clone.insertAfter($last).hide().fadeIn().find(':input[type=text]').val('');
+
+			// insert
+			$clone.appendTo( $container.find('.x-sortable') ).hide().fadeIn().find(':input').not('input[type="button"], input[type="submit"], input[type="reset"]').val('');
 		});
 	}
 
@@ -25,6 +28,13 @@ jQuery(document).ready(function($) {
 			});
 		});
 	}
+
+	// sorting multiple fields
+	$('.x-sortable').sortable({
+		handle: '.drag-handle',
+	});
+
+
 
 	// init the upload fields
 	if ( $('.upload_button').length ) {
