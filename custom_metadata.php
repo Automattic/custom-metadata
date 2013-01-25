@@ -964,7 +964,7 @@ class custom_metadata_manager {
 
 						<?php case 'upload': ?>
 							<input type="text" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo esc_attr( $v ); ?>" class="upload_field" <?php echo $readonly_str ?>/>
-							<input type="button" title="<?php echo esc_attr( $post->ID ); ?>" class="button upload_button" value="Upload" />
+							<input type="button" title="<?php echo esc_attr( $post->ID ); ?>" class="button upload_button" value="<?php esc_attr_e( 'Upload', 'custom-metadata-manager' ); ?>" />
 						<?php break; ?>
 
 						<?php case 'taxonomy_select': ?>
@@ -990,7 +990,7 @@ class custom_metadata_manager {
 					<?php endswitch; ?>
 
 					<?php if ( $cloneable && $count > 1) : ?>
-						<a href="#" class="del-multiple hide-if-no-js" style="color:red;">Delete</a>
+						<a href="#" class="del-multiple hide-if-no-js" style="color:red;"><?php _e( 'Delete', 'custom-metadata-manager' ); ?></a>
 					<?php endif; $count++ ?>
 
 				</div>
@@ -1018,7 +1018,7 @@ class custom_metadata_manager {
 			<?php endif; ?>
 
 		<?php if ($cloneable) : ?>
-			<p><a href="#" class="add-multiple hide-if-no-js" id="add-<?php echo esc_attr( $field_slug ); ?>">+ Add New</a></p>
+			<p><a href="#" class="add-multiple hide-if-no-js" id="add-<?php echo esc_attr( $field_slug ); ?>"><?php _e( '+ Add New', 'custom-metadata-manager' ); ?></a></p>
 		<?php endif ?>
 
 		<?php $this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value ); ?>
