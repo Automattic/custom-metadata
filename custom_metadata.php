@@ -153,8 +153,7 @@ class custom_metadata_manager {
 			add_action( 'edit_comment', array( $this, 'save_comment_metadata' ) );
 		}
 
-		do_action( 'custom_metadata_manager_init_metadata' );
-		do_action( 'custom_metadata_manager_init_metadata_' . $object_type );
+		do_action( 'custom_metadata_manager_init_metadata', $object_type );
 	}
 
 	function init_columns() {
