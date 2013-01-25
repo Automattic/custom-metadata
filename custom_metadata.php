@@ -269,6 +269,8 @@ class custom_metadata_manager {
 		if( $field->required_cap && ! current_user_can( $field->required_cap ) )
 			return;
 
+		$field = apply_filters( 'custom_metadata_manager_add_metadata_field', $field, $field_slug, $group_slug, $object_types );
+
 		if( ! $this->_validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) )
 			return;
 
@@ -293,6 +295,8 @@ class custom_metadata_manager {
 
 		// Sanitize slug
 		$group_slug = sanitize_key( $group_slug );
+
+		$group = apply_filters( 'custom_metadata_manager_add_metadata_group', $group, $group_slug, $object_types );
 
 		if( !$this->_validate_metadata_group( $group_slug, $group, $object_types ) )
 			return;
@@ -744,37 +748,45 @@ class custom_metadata_manager {
 		return $object_type;
 	}
 
-	function _get_value_callback( $field ) {
+	function _get_value_callback( $field, $object_type ) {
 		$callback = isset( $field->value_callback ) ? $field->value_callback : '';
-		if( $callback && is_callable( $callback ) )
-			return $callback;
-		return '';
+
+		if ( ! ( $callback && is_callable( $callback ) ) )
+			$callback = '';
+
+		return apply_filters( 'custom_metadata_manager_get_value_callback', $callback, $field, $object_type );
 	}
 
-	function _get_save_callback( $field ) {
+	function _get_save_callback( $field, $object_type ) {
 		$callback = isset( $field->save_callback ) ? $field->save_callback : '';
-		if( $callback && is_callable( $callback ) )
-			return $callback;
-		return '';
+
+		if ( ! ( $callback && is_callable( $callback ) ) )
+			$callback = '';
+			
+		return apply_filters( 'custom_metadata_manager_get_save_callback', $callback, $field, $object_type );
 	}
 
-	function get_sanitize_callback( $field ) {
+	function get_sanitize_callback( $field, $object_type ) {
 		$callback = $field->sanitize_callback;
-		if( $callback && is_callable( $callback ) )
-			return $callback;
-		return '';
+
+		if ( ! ( $callback && is_callable( $callback ) ) )
+			$callback = '';
+
+		return apply_filters( 'custom_metadata_manager_get_sanitize_callback', $callback, $field, $object_type );
 	}
 
-	function get_display_column_callback( $field ) {
+	function get_display_column_callback( $field, $object_type ) {
 		$callback = $field->display_column_callback;
-		if( $callback && is_callable( $callback ) )
-			return $callback;
-		return '';
+
+		if ( ! ( $callback && is_callable( $callback ) ) )
+			$callback = '';
+
+		return apply_filters( 'custom_metadata_manager_get_display_column_callback', $callback, $field, $object_type );
 	}
 
 	function _get_field_value( $field_slug, $field, $object_type, $object_id ) {
 
-		$get_value_callback = $this->_get_value_callback( $field );
+		$get_value_callback = $this->_get_value_callback( $field, $object_type );
 		echo $get_value_callback;
 		if( $get_value_callback )
 			return call_user_func( $get_value_callback, $object_type, $object_id, $field_slug );
@@ -789,7 +801,7 @@ class custom_metadata_manager {
 
 	function _save_field_value( $field_slug, $field, $object_type, $object_id, $value ) {
 
-		$save_callback = $this->_get_save_callback( $field );
+		$save_callback = $this->_get_save_callback( $field, $object_type );
 
 		if( $save_callback )
 			return call_user_func( $save_callback, $object_type, $object_id, $field_slug, $value );
@@ -820,8 +832,6 @@ class custom_metadata_manager {
 		if (empty($value)) {
 			delete_metadata( $object_type, $object_id, $field_slug );
 		}
-
-
 	}
 
 	function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
@@ -835,7 +845,7 @@ class custom_metadata_manager {
 
 	function _sanitize_field_value( $field_slug, $field, $object_type, $object_id, $value ) {
 
-		$sanitize_callback = $this->get_sanitize_callback( $field );
+		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
 
 		if( $sanitize_callback )
 			return call_user_func( $sanitize_callback, $field_slug, $field, $object_type, $object_id, $value );
@@ -851,7 +861,7 @@ class custom_metadata_manager {
 	function _metadata_column_content( $field_slug, $field, $object_type, $object_id ) {
 		$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 
-		$display_column_callback = $this->get_display_column_callback( $field );
+		$display_column_callback = $this->get_display_column_callback( $field, $object_type );
 
 		if( $display_column_callback )
 			return call_user_func( $display_column_callback, $field_slug, $field, $object_type, $object_id, $value );
