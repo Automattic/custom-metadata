@@ -922,7 +922,7 @@ class custom_metadata_manager {
 						<?php break; ?>
 
 						<?php case 'checkbox': ?>
-							<input type="checkbox" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php checked($checked = $v ); ?> />
+							<input type="checkbox" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php checked( 'on' == $v ); ?> />
 						<?php break; ?>
 
 						<?php case 'radio': ?>
