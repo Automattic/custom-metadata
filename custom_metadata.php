@@ -983,7 +983,7 @@ class custom_metadata_manager {
 					$value_id = sprintf( '%s_%s', $field_slug, $value_slug );
 					?>
 					<label for="<?php echo $value_id; ?>" class="selectit">
-						<input type="radio" id="<?php echo $value_id; ?>" name="<?php echo $field_id; ?>" id="<?php echo $value_id; ?>" value="<?php echo $value_slug ?>" <?php checked($checked = $v ); ?> />
+						<input type="radio" id="<?php echo $value_id; ?>" name="<?php echo $field_id; ?>" id="<?php echo $value_id; ?>" value="<?php echo $value_slug ?>" <?php checked( $v, $value_slug ); ?> />
 						<?php echo $value_label; ?>
 					</label>
 				<?php endforeach; ?>
