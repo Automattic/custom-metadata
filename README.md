@@ -50,6 +50,7 @@ There are usage instructions below
 * adjusted the plugin URL and removed the donate URL
 * adjust files for code standards
 * fixed PHP warning with empty values for date fields
+* moved filtering of instance vars to `init` instead of on `construct` which runs too early
 
 
 ## 0.7

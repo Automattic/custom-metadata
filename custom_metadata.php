@@ -80,7 +80,12 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 
 	function __construct( ) {
+		// We need to run these as late as possible!
+		add_action( 'init', array( $this, 'init' ), 1000, 0 );
+		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
+	}
 
+	function init() {
 		// filter our vars
 		$this->_non_post_types = apply_filters( 'custom_metadata_manager_non_post_types', $this->_non_post_types );
 		$this->_builtin_object_types = apply_filters( 'custom_metadata_manager_builtin_object_types', $this->_builtin_object_types );
@@ -92,13 +97,6 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
 		$this->default_editor_args = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
 
-
-		// We need to run these as late as possible!
-		add_action( 'init', array( $this, 'init' ), 1000, 0 );
-		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
-	}
-
-	function init() {
 		$this->init_object_types();
 		do_action( 'custom_metadata_manager_init' );
 	}
