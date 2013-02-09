@@ -48,6 +48,7 @@ There are usage instructions below
 * adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals
 * adjusted the list of contributors in the plugin
 * adjusted the plugin URL and removed the donate URL
+* adjust files for code standards
 
 ## 0.7
 
