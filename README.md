@@ -43,13 +43,14 @@ There are usage instructions below
 
 * allow fieldtypes that save as multiples but don't display as cloneable or multiples
 * added the taxonomy_checkbox field
-* made use of the selected() and checked() functions in WordPress instead of clumsy if statements
+* made use of the `selected()` and `checked()` functions in WordPress instead of clumsy if statements
 * limit or exclude groups and fields using a custom callback
 * adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals
 * adjusted the list of contributors in the plugin
 * adjusted the plugin URL and removed the donate URL
 * adjust files for code standards
 * fixed PHP warning with empty values for date fields
+
 
 ## 0.7
 
@@ -60,7 +61,7 @@ There are usage instructions below
 * note: the plugin now requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
 * update/clean-up the examples file
 * properly enqueue admin css for WP 3.3+
-* added a filter for the CUSTOM_METADATA_MANAGER_URL constant
+* added a filter for the `CUSTOM_METADATA_MANAGER_URL` constant
 * fix fields not appearing when editing users in WP 3.3+ (props @FolioVision)
 * now passing the `$value` for a `display_callback` (props @FolioVision)
 * use the new `wp_editor()` function (since WP 3.3+) instead of `the_editor()` (now deprecated)
@@ -97,7 +98,7 @@ There are usage instructions below
 
 * better tiny mce implementation and added html/visual switch
 * small css fixes and added inline documentation
-* moved DEFINEs in to admin_init() so that they can be filtered more easily
+* moved `DEFINE`s in to `admin_init` so that they can be filtered more easily
 
 ## 0.5.1
 
@@ -118,7 +119,7 @@ There are usage instructions below
 ## 0.4
 
 * Enhanced the code which generates the different field types
-* Added new types: password, upload, wysiwyg, datepicker, taxonomy_select, taxonomy_radio, attachment_list
+* Added new types: `password`, `upload`, `wysiwyg`, `datepicker`, `taxonomy_select`, `taxonomy_radio`, `attachment_list`
 * Added field multiplication ability
 * Metadata is now deleted if a value is empty
 * Can now also generate option pages which use a metabox interface
@@ -293,16 +294,6 @@ $args = array(
 For examples, please see the [custom_metadata_examples.php](https://github.com/jkudish/custom-metadata/blob/master/custom_metadata_examples.php) file included with the plugin. Add a constant to your wp-config.php called `CUSTOM_METADATA_MANAGER_DEBUG` with a value of `true` to see it in action:
 
 `define( 'CUSTOM_METADATA_MANAGER_DEBUG', true );`
-
-# TODOs
-
-Stuff we have planned for the future:
-
-* Ability Pass in attributes for built-in fields (e.g. class, data-*, etc.)
-* Additional field types (multi-select, multi-checkbox)
-* Autosave support for fields on post types
-* Client- and server-side validation support
-* Add groups and fields to Quick Edit
 
 
 # License
