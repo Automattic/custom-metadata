@@ -47,6 +47,7 @@ There are usage instructions below
 * limit or exclude groups and fields using a custom callback
 * adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals
 * adjusted the list of contributors in the plugin
+* adjusted the plugin URL and removed the donate URL
 
 ## 0.7
 

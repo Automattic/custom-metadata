@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
 Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
 Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
 Version: 0.8-dev
-Author URI: http://digitalize.ca/wordpress-plugins/custom-metadata/
+Author URI: https://github.com/Automattic/custom-metadata/
 
 Copyright 2010-2013 The Contributors
 

@@ -1,6 +1,5 @@
 === Custom Metadata Manager ===
 Contributors: automattic, batmoo, jkudish, cvernon, danielbachhuber,
-Donate link: http://digitalize.ca/donate
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
 Requires at least: 3.3
 Tested up to: 3.4-alpha
