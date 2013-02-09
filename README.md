@@ -49,6 +49,7 @@ There are usage instructions below
 * adjusted the list of contributors in the plugin
 * adjusted the plugin URL and removed the donate URL
 * adjust files for code standards
+* fix PHP warning wiht empty values for date fields
 
 ## 0.7
 
