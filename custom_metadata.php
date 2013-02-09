@@ -7,7 +7,7 @@ Author: Mohammad Jangda, Joachim Kudish & Colin Vernon
 Version: 0.8-dev
 Author URI: http://digitalize.ca/wordpress-plugins/custom-metadata/
 
-Copyright 2010-2012 Mohammad Jangda, Joachim Kudish, Colin Vernon
+Copyright 2010-2013 The Contributors
 
 GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 

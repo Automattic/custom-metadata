@@ -44,7 +44,8 @@ There are usage instructions below
 * allow fieldtypes that save as multiples but don't display as cloneable or multiples
 * added the taxonomy_checkbox field
 * made use of the selected() and checked() functions in WordPress instead of clumsy if statements
-* Limit or exclude groups and fields using a custom callback
+* limit or exclude groups and fields using a custom callback
+* adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals
 
 ## 0.7
 
@@ -298,10 +299,6 @@ Stuff we have planned for the future:
 * Autosave support for fields on post types
 * Client- and server-side validation support
 * Add groups and fields to Quick Edit
-
-# Credits
-
-This plugin is built and maintained by [Mo' Jangda](http://digitalize.ca/ "Mo' Jangda"), [Stresslimit Design](http://stresslimitdesign.com/about-our-wordpress-expertise "Stresslimit Design") & [Joachim Kudish](http://jkudish.com "Joachim Kudish")
 
 
 # License

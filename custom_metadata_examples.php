@@ -1,6 +1,6 @@
 <?php
 /*
-Copyright 2010-2012 Mohammad Jangda, Joachim Kudish, Colin Vernon
+Copyright 2010-2013 The Contributors
 
 GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 
