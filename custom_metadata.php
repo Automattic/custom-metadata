@@ -951,7 +951,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 						<?php break; ?>
 
 						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo isset( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : ''; ?>" <?php echo $readonly_str ?>/>
+							<input type="text" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : ''; ?>" <?php echo $readonly_str ?>/>
 						<?php break; ?>
 
 						<?php case 'wysiwyg': ?>
