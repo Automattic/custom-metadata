@@ -922,16 +922,14 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 						<?php break; ?>
 
 						<?php case 'checkbox': ?>
-							<input type="checkbox" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php checked( 'on' == $v ); ?> />
+							<input type="checkbox" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php checked( $v, 'on' ); ?> />
 						<?php break; ?>
 
 						<?php case 'radio': ?>
 							<?php foreach ( $field->values as $value_slug => $value_label ) : ?>
-								<?php
-			$value_id = sprintf( '%s_%s', $field_slug, $value_slug );
-?>
+								<?php $value_id = sprintf( '%s_%s', $field_slug, $value_slug ); ?>
 								<label for="<?php echo esc_attr( $value_id ); ?>" class="selectit">
-									<input type="radio" id="<?php echo esc_attr( $value_id ); ?>" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $value_id ); ?>" value="<?php echo esc_attr( $value_slug ); ?>" <?php checked( $checked = $v ); ?> />
+									<input type="radio" id="<?php echo esc_attr( $value_id ); ?>" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $value_id ); ?>" value="<?php echo esc_attr( $value_slug ); ?>" <?php checked( $v, $value_slug ); ?> />
 									<?php echo $value_label; ?>
 								</label>
 							<?php endforeach; ?>
