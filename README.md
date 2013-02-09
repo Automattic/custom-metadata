@@ -46,6 +46,7 @@ There are usage instructions below
 * made use of the selected() and checked() functions in WordPress instead of clumsy if statements
 * limit or exclude groups and fields using a custom callback
 * adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals
+* adjusted the list of contributors in the plugin
 
 ## 0.7
 
