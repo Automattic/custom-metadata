@@ -55,10 +55,10 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
 
 	// field types that are cloneable
-	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password' );
+	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
@@ -920,6 +920,12 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					break;
 				case 'password' :
 					printf( '<input type="password" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					break;
+				case 'email' :
+					printf( '<input type="email" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					break;
+				case 'tel' :
+					printf( '<input type="tel" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
 					break;
 				case 'number' :
 					$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"': '';

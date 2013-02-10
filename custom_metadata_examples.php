@@ -206,7 +206,22 @@ function x_init_custom_fields() {
 			'field_type' => 'number',
 			'min' => '-3',
 			'max' => '25',
-			'label' => 'Number field (with min/max)',
+			'multiple' => true,
+			'label' => 'Number field (with min/max + cloneable)',
+		) );
+
+	// adds an email field in the first group
+	x_add_metadata_field( 'x_field_email', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'email',
+			'label' => 'Email field',
+		) );
+
+	// adds a telephone field in the first group
+	x_add_metadata_field( 'x_field_telephone', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'tel',
+			'label' => 'Telephone field',
 		) );
 
 	// adds a field to posts and users
