@@ -217,11 +217,20 @@ function x_init_custom_fields() {
 			'label' => 'Email field',
 		) );
 
-	// adds a telephone field in the first group
+	// adds a telephone field in the first group (with default value)
 	x_add_metadata_field( 'x_field_telephone', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'field_type' => 'tel',
 			'label' => 'Telephone field',
+			'default_value' => '123-4567'
+		) );
+
+	// adds a text field with a default value
+	x_add_metadata_field( 'x_field_text_default', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'text',
+			'label' => 'Text field with default value',
+			'default_value' => 'lorem ipsum'
 		) );
 
 	// adds a field to posts and users

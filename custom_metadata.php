@@ -60,6 +60,9 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
+	// field types that support a default value
+	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker' );
+
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
 
@@ -92,6 +95,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$this->_column_types = apply_filters( 'custom_metadata_manager_column_types', $this->_column_types );
 		$this->_field_types = apply_filters( 'custom_metadata_manager_field_types', $this->_field_types );
 		$this->_cloneable_field_types = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_cloneable_field_types );
+		$this->_field_types_that_support_default_value = apply_filters( 'custom_metadata_manager_field_types_that_support_default_value', $this->_field_types_that_support_default_value );
 		$this->_taxonomy_fields = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_taxonomy_fields );
 		$this->_column_filter_object_types = apply_filters( 'custom_metadata_manager_column_filter_object_types', $this->_column_filter_object_types );
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
@@ -243,6 +247,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'label' => $field_slug, // Label for the field
 			'description' => '', // Description of the field, displayed below the input
 			'values' => array(), // values for select, checkbox, radio buttons
+			'default_value' => '', // default value
 			'display_callback' => '', // function to custom render the input
 			'sanitize_callback' => '',
 			'display_column' => false, // Add the field to the columns when viewing all posts
@@ -899,6 +904,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 		echo '<script>var numb = ' . esc_js( $numb ) . '</script>';
 		printf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
+
+		// check if there is a default value and set it if no value currently set
+		if ( empty( $value ) && in_array( $field->field_type, $this->_field_types_that_support_default_value ) && ! empty( $field->default_value ) )
+			$value = sanitize_text_field( $field->default_value );
+
 
 		// if value is empty set to an empty string
 		if ( empty( $value ) )
