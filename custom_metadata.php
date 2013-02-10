@@ -872,176 +872,182 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 		$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 
-		if ( isset( $field->display_callback ) && function_exists( $field->display_callback ) ) :
-
+		if ( isset( $field->display_callback ) && function_exists( $field->display_callback ) ) {
 			call_user_func( $field->display_callback, $field_slug, $field, $object_type, $object_id, $value );
+			return;
+		}
 
-		else :
-?>
-		<div class="custom-metadata-field <?php echo $field->field_type ?>">
-			<?php
-			if ( !in_array( $object_type, $this->_non_post_types ) ) global $post;
-			if ( isset( $field->multiple ) && $field->multiple && @!in_array( $field->field_type, $this->_cloneable_field_types ) ) {
-				$field->multiple = false;
-				echo '<p class="error"><strong>Note:</strong> this field type cannot be multiplied</p>';
-			}
+		echo '<div class="custom-metadata-field ' . sanitize_html_class( $field->field_type ) .'">';
+		if ( ! in_array( $object_type, $this->_non_post_types ) )
+			global $post;
 
-		if ( ( isset( $field->multiple ) && $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) $field_id = $field_slug.'[]';
-		else $field_id = $field_slug;
+		if ( ! empty ($field->multiple ) && ( empty( $this->_cloneable_field_types ) || ! in_array( $field->field_type, $this->_cloneable_field_types ) ) ) {
+			$field->multiple = false;
+			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata-manager' ) );
+		}
 
-		$cloneable = ( isset( $field->multiple ) && $field->multiple );
+		$field_id = ( ! empty( $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) ? $field_slug . '[]' : $field_slug;
+		$cloneable = ( ! empty( $field->multiple ) ) ? true : false;
+		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly" ' : '';
 
-		$readonly_str = ( $field->readonly ) ? 'readonly="readonly" ' : '';
+		if ( get_post_type() )
+			$numb = $post->ID;
+		else
+			$numb = 1;
 
-		if ( get_post_type() ) $numb = $post->ID; else $numb = 1; ?>
-			<script>var numb = '<?php echo esc_js( $numb ) ?>'; </script>
+		echo '<script>var numb = ' . esc_js( $numb ) . '</script>';
+		printf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
 
-			<label for="<?php echo esc_attr( $field_slug ); ?>"><?php echo esc_attr( $field->label ); ?></label>
-			<?php
+		// if value is empty set to an empty string
+		if ( empty( $value ) )
+			$value = '';
+
 		// make sure $value is an array
-		if ( !$value ) $value = ''; // if empty, give it an empty string instead
-		$value = (array)$value;
+		$value = (array) $value;
+
 		$count = 1;
-		foreach ( $value as $v ) : ?>
+		$container_class = sanitize_html_class( $field_slug );
+		$container_class .= ( $cloneable ) ? ' cloneable' : '';
+		foreach ( $value as $v ) :
+			$container_id = $field_slug . '-' . $count;
+			printf( '<div class="%s" id="%s">', esc_attr( $container_class ), esc_attr( $container_id ) );
 
-				<div class="<?php echo esc_attr( $field_slug ); ?><?php echo ( $cloneable ) ? ' cloneable' : ''; ?>" id="<?php echo esc_attr( $field_slug .'-'. $count );?>">
+			switch ( $field->field_type ) :
+				case 'text' :
+					printf( '<input type="text" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					break;
+				case 'password' :
+					printf( '<input type="password" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					break;
+				case 'textarea' :
+					printf( '<textarea id="%s" name="%s"%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, esc_textarea( $v ) );
+					break;
+				case 'checkbox' :
+					printf( '<input type="checkbox" id="%s" name="%s" %s/>', esc_attr( $field_slug ), esc_attr( $field_id ), checked( $v, 'on', false ) );
+					break;
+				case 'radio' :
+					foreach ( $field->values as $value_slug => $value_label ) {
+						$value_id = sprintf( '%s_%s', $field_slug, $value_slug );
+						printf( '<label for="%s" class="selectit">', esc_attr( $value_id ) );
+						printf( '<input type="radio" id="%s" name="%s" id="%s" value="%s"%s/>', esc_attr( $value_id ), esc_attr( $field_id ), esc_attr( $value_id ), esc_attr( $value_slug ), checked( $v, $value_slug, false ) );
+						echo esc_html( $value_label );
+						echo '</label>';
+					}
+					break;
+				case 'select' :
+					printf( '<select id="%s" name="%s">', esc_attr( $field_slug ), esc_attr( $field_id ) );
+					foreach ( $field->values as $value_slug => $value_label ) {
+						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( $v, $value_slug, false ) );
+						echo esc_html( $value_label );
+						echo '</option>';
+					}
+					echo '</select>';
+					break;
+				case 'datepicker' :
+					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
+					printf( '<input type="text" name="%s" value="%s"%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str );
+					break;
+				case 'wysiwyg' :
+					$wysiwyg_args = apply_filters( 'custom_metadata_manager_wysiwyg_args_field_' . $field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
+					wp_editor( $v, $field_id, $wysiwyg_args );
+					break;
+				case 'upload' :
+					printf( '<input type="text" name="%s" value="%s" class="upload_field"%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					printf( '<input type="button" title="%s" class="button upload_button" value="%s" />', esc_attr( $numb ), esc_attr( __( 'Upload', 'custom-metadata-manager' ) ) );
+					break;
+				case 'taxonomy_select' :
+					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					if ( empty( $terms ) ) {
+						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						break;
+					}
+					printf( '<select name="%s" id="%s">', esc_attr( $field_id ), esc_attr( $field_slug ) );
+					foreach ( $terms as $term ) {
+						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( $v, $term->slug, false ), esc_html( $term->name ) );
+					}
+					echo '</select>';
+					break;
+				case 'taxonomy_radio' :
+					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					if ( empty( $terms ) ) {
+						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						break;
+					}
+					foreach ( $terms as $term ) {
+						printf( '<label for="%s" class="selectit">', esc_attr( $term->slug ) );
+						printf( '<input type="radio" name="%s" value="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $term->slug ), esc_attr( $term->slug ), checked( $v, $term->slug, false ) );
+						echo esc_html( $term->name );
+						echo '</label>';
+					}
+					break;
+			endswitch;
 
-					<?php switch ( $field->field_type ) :
-		case 'text': ?>
-							<input type="text" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo esc_attr( $v ); ?>" <?php echo $readonly_str ?>/>
-						<?php break; ?>
+			if ( $cloneable && $count > 1 )
+					echo '<a href="#" class="del-multiple hide-if-no-js" style="color:red;">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
 
-						<?php case 'textarea': ?>
-							<textarea id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php echo $readonly_str ?>><?php echo esc_textarea( $v ); ?></textarea>
-						<?php break; ?>
+			$count++;
 
-						<?php case 'password': ?>
-							<input type="password" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo esc_attr( $v ); ?>" <?php echo $readonly_str ?>/>
-						<?php break; ?>
+			echo '</div>';
 
-						<?php case 'checkbox': ?>
-							<input type="checkbox" id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>" <?php checked( $v, 'on' ); ?> />
-						<?php break; ?>
+		endforeach;
 
-						<?php case 'radio': ?>
-							<?php foreach ( $field->values as $value_slug => $value_label ) : ?>
-								<?php $value_id = sprintf( '%s_%s', $field_slug, $value_slug ); ?>
-								<label for="<?php echo esc_attr( $value_id ); ?>" class="selectit">
-									<input type="radio" id="<?php echo esc_attr( $value_id ); ?>" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $value_id ); ?>" value="<?php echo esc_attr( $value_slug ); ?>" <?php checked( $v, $value_slug ); ?> />
-									<?php echo $value_label; ?>
-								</label>
-							<?php endforeach; ?>
-						<?php break; ?>
 
-						<?php case 'select': ?>
-							<select id="<?php echo esc_attr( $field_slug ); ?>" name="<?php echo esc_attr( $field_id ); ?>">
-								<?php foreach ( $field->values as $value_slug => $value_label ) : ?>
-									<?php
-			$value_id = $field_slug . $value_slug;
-?>
-									<option value="<?php echo esc_attr( $value_slug ); ?>" <?php selected( $v == $value_slug ); ?>>
-										<?php echo $value_label; ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						<?php break; ?>
+		if ( in_array( $field->field_type, $this->_always_multiple_fields ) ) :
+			$container_id = $field_slug . '-' . 1;
+			printf( '<div class="%s" id="%s">', esc_attr( $container_class ), esc_attr( $container_id ) );
 
-						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : ''; ?>" <?php echo $readonly_str ?>/>
-						<?php break; ?>
 
-						<?php case 'wysiwyg': ?>
-							<?php
-		$args = apply_filters( 'custom_metadata_manager_wysiwyg_args_field_'.$field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
-		wp_editor( $v, $field_id, $args );
-?>
-						<?php break; ?>
+			// fields that save as arrays are not part of the foreach, otherwise they would display for each value, which is not the desired behaviour
+			switch ( $field->field_type ) :
+				case 'multi_select' :
+					$chosen = ( $field->chosen ) ? ' class="chosen" ' : ' ';
+					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $chosen );
+					foreach ( $field->values as $value_slug => $value_label ) {
+						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( in_array( $value_slug, $value ), true, false ) );
+						echo esc_html( $value_label );
+						echo '</option>';
+					}
+					echo '</select>';
+					break;
+				case 'taxonomy_checkbox' :
+					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					if ( empty( $terms ) ) {
+						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						break;
+					}
+					foreach ( $terms as $term ) {
+						printf( ' <label for="%s" class="selectit">', esc_attr( $term->slug ) );
+						printf( '<input type="checkbox" name="%s" value="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $term->slug ), esc_attr( $term->slug ), checked( in_array( $term->slug, $value ), true, false ) );
+						echo esc_html( $term->name );
+						echo '</label>';
+					}
+					break;
+			endswitch;
 
-						<?php case 'upload': ?>
-							<input type="text" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo esc_attr( $v ); ?>" class="upload_field" <?php echo $readonly_str ?>/>
-							<input type="button" title="<?php echo esc_attr( $post->ID ); ?>" class="button upload_button" value="<?php esc_attr_e( 'Upload', 'custom-metadata-manager' ); ?>" />
-						<?php break; ?>
-
-						<?php case 'taxonomy_select': ?>
-							<select name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $field_slug ); ?>">
-							<?php
-		$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
-		foreach ( $terms as $term ) : ?>
-								<option value="<?php echo esc_attr( $term->slug ); ?>"<?php selected( $term->slug == $v ) ?>><?php echo esc_html( $term->name ); ?></option>
-							<?php endforeach; ?>
-							</select>
-						<?php break; ?>
-
-						<?php case 'taxonomy_radio':
-		$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
-		foreach ( $terms as $term ) : ?>
-								<label for="<?php echo $term->slug; ?>" class="selectit">
-									<input type="radio" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo esc_attr( $term->slug ); ?>" id="<?php echo esc_attr( $term->slug ); ?>"<?php checked( $term->slug == $v ) ?>>
-									<?php echo esc_html( $term->name ); ?>
-								</label>
-						<?php endforeach; ?>
-						<?php break; ?>
-
-					<?php endswitch; ?>
-
-					<?php if ( $cloneable && $count > 1 ) : ?>
-						<a href="#" class="del-multiple hide-if-no-js" style="color:red;"><?php _e( 'Delete', 'custom-metadata-manager' ); ?></a>
-					<?php endif; $count++ ?>
-
-				</div>
-
-			<?php endforeach; ?>
-
-			<?php if ( 'multi_select' == $field->field_type ) : ?>
-				<select id="<?php echo $field_slug; ?>" <?php if ( true == $field->chosen ) { echo 'class="chosen" '; } ?>name="<?php echo $field_id; ?>" multiple>
-					<?php foreach ( $field->values as $value_slug => $value_label ) : ?>
-						<option value="<?php echo esc_attr( $value_slug ); ?>" <?php selected( in_array( $value_slug, $value ) ) ?>>
-							<?php echo esc_html( $value_label ); ?>
-						</option>
-					<?php endforeach; ?>
-				</select>
-			<?php endif; ?>
-
-			<?php if ( 'taxonomy_checkbox' == $field->field_type ) :
-			$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
-		foreach ( $terms as $term ) : ?>
-					<label for="<?php echo esc_attr( $term->slug ); ?>" class="selectit">
-						<input type="checkbox" name="<?php echo esc_attr( $field_id ); ?>" value="<?php echo esc_attr( $term->slug ); ?>" id="<?php echo esc_attr( $term->slug ); ?>"<?php checked( in_array( $term->slug, $value ) ) ?>>
-						<?php echo esc_html( $term->name ); ?>
-					</label>
-				<?php endforeach; ?>
-			<?php endif; ?>
-
-		<?php if ( $cloneable ) : ?>
-			<p><a href="#" class="add-multiple hide-if-no-js" id="add-<?php echo esc_attr( $field_slug ); ?>"><?php _e( '+ Add New', 'custom-metadata-manager' ); ?></a></p>
-		<?php endif ?>
-
-		<?php $this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value ); ?>
-
-		</div>
-
-	<?php
+			echo '</div>';
 		endif;
+
+		if ( $cloneable )
+			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), __( '+ Add New', 'custom-metadata-manager' ) );
+
+		$this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value );
+
+		echo '</div>';
 	}
 
 	function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) {
-?>
-		<?php if ( $field->description ) : ?>
-			<span class="description"><?php echo $field->description; ?></span>
-		<?php endif; ?>
-		<?php
+		if ( $field->description )
+			echo '<span class="description">' . $field->description . '</span>';
 	}
 
-	function _display_registration_errors( ) {
-		if ( !empty( $this->errors ) ) {
-?>
-			<div class="message error">
-				<?php foreach ( $this->errors as $error => $error_message ) : ?>
-					<li><?php echo esc_html( $error_message ); ?></li>
-				<?php endforeach; ?>
-			</div>
-			<?php
-		}
+	function _display_registration_errors() {
+		if ( empty( $this->errors ) )
+			return;
+
+		echo '<div class="message error">';
+		foreach ( $this->errors as $error => $error_message )
+			printf( '<li>%s</li>', esc_html( $error_message ) );
+		echo '</div>';
 	}
 }
 
