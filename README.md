@@ -51,7 +51,10 @@ There are usage instructions below
 * adjusted files for code standards
 * fixed PHP warning with empty values for date fields
 * moved filtering of instance vars to `init` instead of on `construct` which runs too early
-
+* added new field types: number, email and telephone
+* added ability to add default value for certain field types
+* added ability to set placeholder for certain fields
+* updated the examples file
 
 ## 0.7
 
