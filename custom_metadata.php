@@ -63,6 +63,9 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	// field types that support a default value
 	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker' );
 
+	// field types that support the placeholder attribute
+	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker' );
+
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
 
@@ -96,6 +99,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$this->_field_types = apply_filters( 'custom_metadata_manager_field_types', $this->_field_types );
 		$this->_cloneable_field_types = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_cloneable_field_types );
 		$this->_field_types_that_support_default_value = apply_filters( 'custom_metadata_manager_field_types_that_support_default_value', $this->_field_types_that_support_default_value );
+		$this->_field_types_that_support_placeholder = apply_filters( 'custom_metadata_manager_field_types_that_support_placeholder', $this->_field_types_that_support_placeholder );
 		$this->_taxonomy_fields = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_taxonomy_fields );
 		$this->_column_filter_object_types = apply_filters( 'custom_metadata_manager_column_filter_object_types', $this->_column_filter_object_types );
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
@@ -248,6 +252,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'description' => '', // Description of the field, displayed below the input
 			'values' => array(), // values for select, checkbox, radio buttons
 			'default_value' => '', // default value
+			'placeholder' => '',
 			'display_callback' => '', // function to custom render the input
 			'sanitize_callback' => '',
 			'display_column' => false, // Add the field to the columns when viewing all posts
@@ -895,7 +900,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 		$field_id = ( ! empty( $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) ? $field_slug . '[]' : $field_slug;
 		$cloneable = ( ! empty( $field->multiple ) ) ? true : false;
-		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly" ' : '';
+		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly"' : '';
+		$placeholder_str = ( in_array( $field->field_type, $this->_field_types_that_support_placeholder ) && ! empty( $field->placeholder ) ) ? ' placeholder="' . esc_attr( $field->placeholder ) . '"' : '';
 
 		if ( get_post_type() )
 			$numb = $post->ID;
@@ -926,24 +932,24 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 			switch ( $field->field_type ) :
 				case 'text' :
-					printf( '<input type="text" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					printf( '<input type="text" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'password' :
-					printf( '<input type="password" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					printf( '<input type="password" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'email' :
-					printf( '<input type="email" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					printf( '<input type="email" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'tel' :
-					printf( '<input type="tel" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					printf( '<input type="tel" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'number' :
 					$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"': '';
 					$max = ( ! empty( $field->max ) ) ? ' max="' . (int) $field->max . '"': '';
-					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $min, $max );
+					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str, $min, $max );
 					break;
 				case 'textarea' :
-					printf( '<textarea id="%s" name="%s"%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, esc_textarea( $v ) );
+					printf( '<textarea id="%s" name="%s"%s%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, $placeholder_str, esc_textarea( $v ) );
 					break;
 				case 'checkbox' :
 					printf( '<input type="checkbox" id="%s" name="%s" %s/>', esc_attr( $field_slug ), esc_attr( $field_id ), checked( $v, 'on', false ) );
@@ -968,14 +974,14 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					break;
 				case 'datepicker' :
 					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
-					printf( '<input type="text" name="%s" value="%s"%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str );
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
 					break;
 				case 'wysiwyg' :
 					$wysiwyg_args = apply_filters( 'custom_metadata_manager_wysiwyg_args_field_' . $field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
 					wp_editor( $v, $field_id, $wysiwyg_args );
 					break;
 				case 'upload' :
-					printf( '<input type="text" name="%s" value="%s" class="upload_field"%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					printf( '<input type="text" name="%s" value="%s" class="upload_field"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					printf( '<input type="button" title="%s" class="button upload_button" value="%s" />', esc_attr( $numb ), esc_attr( __( 'Upload', 'custom-metadata-manager' ) ) );
 					break;
 				case 'taxonomy_select' :

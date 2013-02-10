@@ -233,6 +233,62 @@ function x_init_custom_fields() {
 			'default_value' => 'lorem ipsum'
 		) );
 
+	// adds a text field with placeholder
+	x_add_metadata_field( 'x_field_textarea_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'textarea',
+			'label' => 'Textarea field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a password field with placeholder
+	x_add_metadata_field( 'x_field_password_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'password',
+			'label' => 'Password field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a number field with placeholder
+	x_add_metadata_field( 'x_field_number_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'number',
+			'label' => 'Number field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds an email field with placeholder
+	x_add_metadata_field( 'x_field_email_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'email',
+			'label' => 'Email field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds an telephone field with placeholder
+	x_add_metadata_field( 'x_field_telephone_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'tel',
+			'label' => 'Telephone field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds an upload field with placeholder
+	x_add_metadata_field( 'x_field_upload_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'upload',
+			'label' => 'Upload field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds an datepicker field with placeholder
+	x_add_metadata_field( 'x_field_datepicker_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'datepicker',
+			'label' => 'Datepicker field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
 	// adds a field to posts and users
 	x_add_metadata_field( 'x_fieldName2', array( 'post', 'user' ), array(
 			'group' => 'x_metaBox2',
