@@ -140,6 +140,7 @@ function x_init_custom_fields() {
 	x_add_metadata_field( 'x_fieldUpload1', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'field_type' => 'upload',
+			'readonly' => true,
 			'label' => 'Upload field',
 		) );
 

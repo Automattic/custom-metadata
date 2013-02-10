@@ -195,6 +195,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	}
 
 	function enqueue_scripts() {
+		wp_enqueue_media();
 		wp_enqueue_script( 'chosen-js', apply_filters( 'custom-metadata-manager-chosen-js', CUSTOM_METADATA_MANAGER_URL .'js/chosen.jquery.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'chosen-js' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 	}
@@ -264,7 +265,13 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'chosen' => false, // applies chosen.js (only when 'field_type' => 'multi_select')
 			'min' => false, // a minimum value (for number field only)
 			'max' => false, // a maximum value (for number field only)
+			'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
+			'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
 		);
+
+		// upload field is readonly by default (can be set explicitly to false though)
+		if ( ! empty( $args['field_type'] ) && 'upload' == $args['field_type'] )
+			$defaults['readonly'] = true;
 
 		// Merge defaults with args
 		$field = wp_parse_args( $args, $defaults );
@@ -558,8 +565,16 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		if ( isset( $_POST[$field_slug] ) ) {
 			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[$field_slug] );
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
+
+			// save the attachment ID of the upload field as well
+			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
+				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[$field_slug . '_attachment_id'] ) );
 		} else {
 			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
+
+			// delete the attachment ID of the upload field as well
+			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
+				$this->_delete_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 		}
 	}
 
@@ -903,12 +918,6 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly"' : '';
 		$placeholder_str = ( in_array( $field->field_type, $this->_field_types_that_support_placeholder ) && ! empty( $field->placeholder ) ) ? ' placeholder="' . esc_attr( $field->placeholder ) . '"' : '';
 
-		if ( get_post_type() )
-			$numb = $post->ID;
-		else
-			$numb = 1;
-
-		echo '<script>var numb = ' . esc_js( $numb ) . '</script>';
 		printf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
 
 		// check if there is a default value and set it if no value currently set
@@ -981,8 +990,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					wp_editor( $v, $field_id, $wysiwyg_args );
 					break;
 				case 'upload' :
-					printf( '<input type="text" name="%s" value="%s" class="upload_field"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
-					printf( '<input type="button" title="%s" class="button upload_button" value="%s" />', esc_attr( $numb ), esc_attr( __( 'Upload', 'custom-metadata-manager' ) ) );
+					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
+					$attachment_id = array_shift( array_values( $_attachment_id ) ); // get the first value in the array
+					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"%s/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ), $readonly_str );
+					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
 					break;
 				case 'taxonomy_select' :
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );

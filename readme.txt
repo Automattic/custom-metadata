@@ -1,8 +1,8 @@
 === Custom Metadata Manager ===
 Contributors: automattic, batmoo, jkudish, cvernon, danielbachhuber,
 Tags: custom metadata, custom metadata manager metadata, postmeta, post meta, user meta, custom post types, custom fields, metabox, metadata api, metadata
-Requires at least: 3.3
-Tested up to: 3.4-alpha
+Requires at least: 3.5
+Tested up to: 3.6-alpha
 Stable tag: 0.7
 
 An easy way to add custom fields to your object types (post, pages, custom post types, users)

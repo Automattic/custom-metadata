@@ -4,7 +4,7 @@ This code-only developer WordPress plugin allows you to add custom fields to you
 
 This is a WordPress Plugin. We sync changes between github and the [WordPress.org plugin repository](http://wordpress.org/extend/plugins/custom-metadata/). Why? Because collaboration is made much easier on github :)
 
-**NOTE**: The plugin requires WordPress 3.3+ (chiefly for the wysiwyg & datepicker fields)
+**NOTE**: The plugin requires WordPress 3.5+
 
 
 # Installation
@@ -55,6 +55,7 @@ There are usage instructions below
 * added ability to add default value for certain field types
 * added ability to set placeholder for certain fields
 * updated the examples file
+* rewrote the `upload` field to use the media manager from WordPress 3.5+. Note the `upload` field is now `readonly` by default (but can be set to `false` when you setup the field)
 
 ## 0.7
 
