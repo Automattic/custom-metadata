@@ -155,7 +155,7 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'radio',
 			'values' => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (value is stored in DB)
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
 				'option2' => 'Option #2',
 			),
 			'label' => 'Radio field',
@@ -166,10 +166,31 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'select',
 			'values' => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (value is stored in DB)
-				'option2' => 'Option #2'
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+				'option2' => 'Option #2',
 			),
 			'label' => 'Select field',
+		) );
+
+	// adds a multi-select field in the first group
+	x_add_metadata_field( 'x_field_multi_select', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'multi_select',
+			'values' => array(     // set possible value/options
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+				'option2' => 'Option #2',
+				'option3' => 'Option #3',
+				'option4' => 'Option #4',
+			),
+			'label' => 'Multi Select field',
+		) );
+
+	// adds a taxonomy checkbox field in the first group
+	x_add_metadata_field( 'x_field_taxonomy_checkbox', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'taxonomy_checkbox',
+			'taxonomy' => 'category',
+			'label' => 'Category checkbox field',
 		) );
 
 	// adds a field to posts and users
