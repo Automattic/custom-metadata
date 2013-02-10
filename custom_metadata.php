@@ -252,6 +252,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'multiple' => false, // can the field be duplicated with a click of a button
 			'readonly' => false, // makes the field be readonly
 			'chosen' => false, // applies chosen.js (only when 'field_type' => 'multi_select')
+			'min' => false, // a minimum value (for number field only)
+			'max' => false, // a maximum value (for number field only)
 		);
 
 		// Merge defaults with args
@@ -918,6 +920,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					break;
 				case 'password' :
 					printf( '<input type="password" id="%s" name="%s" value="%s"%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str );
+					break;
+				case 'number' :
+					$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"': '';
+					$max = ( ! empty( $field->max ) ) ? ' max="' . (int) $field->max . '"': '';
+					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $min, $max );
 					break;
 				case 'textarea' :
 					printf( '<textarea id="%s" name="%s"%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, esc_textarea( $v ) );

@@ -193,6 +193,22 @@ function x_init_custom_fields() {
 			'label' => 'Category checkbox field',
 		) );
 
+	// adds a number field in the first group (with no min/max)
+	x_add_metadata_field( 'x_field_number', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'number',
+			'label' => 'Number field',
+		) );
+
+	// adds a number field in the first group (with min/max)
+	x_add_metadata_field( 'x_field_number_with_min_max', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'number',
+			'min' => '-3',
+			'max' => '25',
+			'label' => 'Number field (with min/max)',
+		) );
+
 	// adds a field to posts and users
 	x_add_metadata_field( 'x_fieldName2', array( 'post', 'user' ), array(
 			'group' => 'x_metaBox2',
