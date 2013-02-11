@@ -267,6 +267,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'max' => false, // a maximum value (for number field only)
 			'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
 			'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
+			'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
 		);
 
 		// upload field is readonly by default (can be set explicitly to false though)
@@ -1001,6 +1002,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					$attachment_id = array_shift( array_values( $_attachment_id ) ); // get the first value in the array
 					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
+					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
 					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
 					break;
 				case 'taxonomy_select' :
