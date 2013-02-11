@@ -1034,7 +1034,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			endswitch;
 
 			if ( $cloneable && $count > 1 )
-					echo '<a href="#" class="del-multiple hide-if-no-js" style="color:red;">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
+					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
 
 			$count++;
 
