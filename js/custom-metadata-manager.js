@@ -27,7 +27,7 @@
 
 		// init upload fields
 		var custom_metadata_file_frame;
-		$('.custom-metadata-field').on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
+		$( '.custom-metadata-field' ).on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
 			e.preventDefault();
 
 			var $this = $(this),
