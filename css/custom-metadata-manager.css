@@ -74,6 +74,7 @@
 .custom-metadata-field textarea {
 	width: 99%;
 	height: 4em;
+	margin-top: 5px;
 }
 .custom-metadata-field textarea[readonly="readonly"] {
 	background-color: #eee;
