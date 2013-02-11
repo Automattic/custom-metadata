@@ -59,6 +59,8 @@ There are usage instructions below
 * updated JavaScript to be up to standard with coding standards and be fully compatible with jQuery 1.9+
 * replaced chosen.js with select2.js
 * reformat and clean up css file
+* added ability for groups to display their description
+* added ability to limit capabilities for entire groups using `required_cap`
 
 ## 0.7
 
