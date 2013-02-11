@@ -36,11 +36,7 @@ if ( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) )
 if ( CUSTOM_METADATA_MANAGER_DEBUG )
 	include_once 'custom_metadata_examples.php';
 
-define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js
-
-if ( !class_exists( 'custom_metadata_manager' ) ) :
-
-	class custom_metadata_manager {
+class custom_metadata_manager {
 
 	var $errors = array();
 
@@ -86,12 +82,12 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 
 	function __construct( ) {
-		// We need to run these as late as possible!
-		add_action( 'init', array( $this, 'init' ), 1000, 0 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
 	}
 
-	function init() {
+	function admin_init() {
+		global $pagenow;
+
 		// filter our vars
 		$this->_non_post_types = apply_filters( 'custom_metadata_manager_non_post_types', $this->_non_post_types );
 		$this->_builtin_object_types = apply_filters( 'custom_metadata_manager_builtin_object_types', $this->_builtin_object_types );
@@ -105,15 +101,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
 		$this->default_editor_args = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
 
-		$this->init_object_types();
-		do_action( 'custom_metadata_manager_init' );
-	}
-
-	function admin_init() {
-		global $pagenow;
-
+		define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js
 		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.8-dev' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , apply_filters( 'custom_metadata_manager_url', trailingslashit( plugins_url( '', __FILE__ ) ) ) );
+
+		$this->init_object_types();
 
 		// Hook into load to initialize custom columns
 		if ( in_array( $pagenow, $this->_pages_whitelist ) ) {
@@ -124,6 +116,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		if ( current_user_can( 'manage_options' ) )
 			add_action( 'admin_notices', array( $this, '_display_registration_errors' ) );
 
+		do_action( 'custom_metadata_manager_init' );
 		do_action( 'custom_metadata_manager_admin_init' );
 	}
 
@@ -1116,8 +1109,6 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 global $custom_metadata_manager;
 $custom_metadata_manager = new custom_metadata_manager();
-
-endif; // !class_exists
 
 function x_add_metadata_field( $slug, $object_types = 'post', $args = array() ) {
 	global $custom_metadata_manager;
