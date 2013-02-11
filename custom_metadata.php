@@ -326,7 +326,6 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		if ( ! empty( $group->required_cap ) && ! current_user_can( $group->required_cap ) )
 			return;
 
-
 		if ( !$this->_validate_metadata_group( $group_slug, $group, $object_types ) )
 			return;
 
