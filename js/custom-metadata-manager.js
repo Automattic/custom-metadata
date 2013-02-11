@@ -64,7 +64,7 @@
 		})
 
 	 	// init the datepicker fields
-		$( '.custom-metadata-field' ).find( '.datepicker input' ).datepicker({
+		$( '.custom-metadata-field.datepicker' ).find( 'input' ).datepicker({
 			changeMonth: true,
 			changeYear: true
 		});
