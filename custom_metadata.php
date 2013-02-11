@@ -498,6 +498,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			return;
 		}
 
+		$this->_display_group_description( $group );
+
 		foreach ( $fields as $field_slug => $field ) {
 			if ( $this->is_thing_added_to_object( $field_slug, $field, $object_type, $object_id ) ) {
 				$this->_display_metadata_field( $field_slug, $field, $object_type, $object_id );
@@ -506,6 +508,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 		// Each group gets its own nonce
 		$this->_display_group_nonce( $group_slug, $object_type );
+	}
+
+	function _display_group_description( $group ) {
+		if ( ! empty( $group->description ) )
+			printf( '<div class="custom-metadata-group-description description">%s</div>', $group->description );
 	}
 
 	function _display_group_nonce( $group_slug, $object_type ) {

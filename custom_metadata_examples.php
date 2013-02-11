@@ -79,7 +79,8 @@ function x_init_custom_fields() {
 
 	// adds another group to the test post type + posts + users
 	x_add_metadata_group( 'x_metaBox2', array( 'x_test', 'post', 'user' ), array(
-			'label' => 'Group for Post and User'
+			'label' => 'Group for Post and User',
+			'description' => "Here's a group with a description!",
 		) );
 
 	// adds a text field to the first group
