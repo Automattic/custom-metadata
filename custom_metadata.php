@@ -259,7 +259,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'display_column' => false, // Add the field to the columns when viewing all posts
 			'display_column_callback' => '',
 			'add_to_quick_edit' => false, // (post only) Add the field to Quick edit
-			'required_cap' => '', // the cap required to view and edit the field
+			'required_cap' => false, // the cap required to view and edit the field
 			'multiple' => false, // can the field be duplicated with a click of a button
 			'readonly' => false, // makes the field be readonly
 			'select2' => false, // applies select2.js (work on select and multi select field types)
@@ -289,7 +289,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$group_slug = sanitize_key( $field->group );
 
 		// Check to see if the user should see this field
-		if ( $field->required_cap && ! current_user_can( $field->required_cap ) )
+		if ( ! empty( $field->required_cap ) && ! current_user_can( $field->required_cap ) )
 			return;
 
 		$field = apply_filters( 'custom_metadata_manager_add_metadata_field', $field, $field_slug, $group_slug, $object_types );
@@ -310,6 +310,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'context' => 'normal', // (post only)
 			'priority' => 'default', // (post only)
 			'autosave' => false, // (post only) Should the group be saved in autosave?
+			'required_cap' => false, // the cap required to view and edit the group
 		);
 
 		// Merge defaults with args
@@ -320,6 +321,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$group_slug = sanitize_key( $group_slug );
 
 		$group = apply_filters( 'custom_metadata_manager_add_metadata_group', $group, $group_slug, $object_types );
+
+		// Check to see if the user has caps to view/edit this group
+		if ( ! empty( $group->required_cap ) && ! current_user_can( $group->required_cap ) )
+			return;
+
 
 		if ( !$this->_validate_metadata_group( $group_slug, $group, $object_types ) )
 			return;
