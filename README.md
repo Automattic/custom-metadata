@@ -56,6 +56,8 @@ There are usage instructions below
 * added ability to set placeholder for certain fields
 * updated the examples file
 * rewrote the `upload` field to use the media manager from WordPress 3.5+. Note the `upload` field is now `readonly` by default (but can be set to `false` when you setup the field)
+* updated JavaScript to be up to standard with coding standards and be fully compatible with jQuery 1.9+
+* replaced chosen.js with select2.js
 
 ## 0.7
 

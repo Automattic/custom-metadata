@@ -186,6 +186,36 @@ function x_init_custom_fields() {
 			'label' => 'Multi Select field',
 		) );
 
+	// adds a multi-select field with chosen in the first group
+	// note: `select2` and `chosen` args do the exact same (add select2)
+	// but for the purposes of testing, we're using chosen here
+	x_add_metadata_field( 'x_field_multi_select_chosen', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'multi_select',
+			'values' => array(     // set possible value/options
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+				'option2' => 'Option #2',
+				'option3' => 'Option #3',
+				'option4' => 'Option #4',
+			),
+			'label' => 'Multi Select field (with chosen)',
+			'chosen' => true,
+		) );
+
+	// adds a select field with select2 in the first group
+	x_add_metadata_field( 'x_field_select_select2', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'select',
+			'values' => array(     // set possible value/options
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+				'option2' => 'Option #2',
+				'option3' => 'Option #3',
+				'option4' => 'Option #4',
+			),
+			'label' => 'Select field (with select2)',
+			'select2' => true,
+		) );
+
 	// adds a taxonomy checkbox field in the first group
 	x_add_metadata_field( 'x_field_taxonomy_checkbox', 'x_test', array(
 			'group' => 'x_metaBox1',

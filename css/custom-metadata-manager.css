@@ -35,8 +35,10 @@
 .user-metadata-group .custom-metadata-field textarea {width:25em;}
 .user-metadata-group .custom-metadata-field .description {margin-left:200px;}
 
-/* chosen fields */
+/* select2 fields */
 .custom-metadata-field select { min-width: 200px; max-width: 400px; }
-.custom-metadata-field select[multiple] { width: 400px; }
-.chzn-container-multi .chzn-choices .search-field input { box-sizing: inherit !important; }
+.custom-metadata-field select[multiple],
+.custom-metadata-field .custom-metadata-select2 {
+	width: 400px;
+}
 #wpbody-content { overflow: visible !important; } /* otherwise the chosen selector gets cut off at the bottom */

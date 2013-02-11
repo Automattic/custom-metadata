@@ -36,7 +36,7 @@ if ( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) )
 if ( CUSTOM_METADATA_MANAGER_DEBUG )
 	include_once 'custom_metadata_examples.php';
 
-define( 'CUSTOM_METADATA_MANAGER_CHOSEN_VERSION', '0.9.11' ); // version for included chosen.js
+define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js
 
 if ( !class_exists( 'custom_metadata_manager' ) ) :
 
@@ -196,14 +196,14 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 	function enqueue_scripts() {
 		wp_enqueue_media();
-		wp_enqueue_script( 'chosen-js', apply_filters( 'custom-metadata-manager-chosen-js', CUSTOM_METADATA_MANAGER_URL .'js/chosen.jquery.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION, true );
-		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'chosen-js' ), CUSTOM_METADATA_MANAGER_VERSION, true );
+		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
+		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 	}
 
 	function enqueue_styles() {
-		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom-metadata-manager-default-css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
-		wp_enqueue_style( 'jquery-ui-css', apply_filters( 'custom-metadata-manager-jquery-ui-css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
-		wp_enqueue_style( 'chosen-css', apply_filters( 'custom-metadata-manager-chosen-css', CUSTOM_METADATA_MANAGER_URL .'css/chosen.css' ), array(), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION );
+		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom_metadata_manager_default_css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
+		wp_enqueue_style( 'jquery-ui-css', apply_filters( 'custom_metadata_manager_jquery_ui_css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
+		wp_enqueue_style( 'select2', apply_filters( 'custom_metadata_manager_select2_css', CUSTOM_METADATA_MANAGER_URL .'css/select2.css' ), array(), CUSTOM_METADATA_MANAGER_SELECT2_VERSION );
 	}
 
 	function add_metadata_column_headers( $columns ) {
@@ -262,7 +262,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'required_cap' => '', // the cap required to view and edit the field
 			'multiple' => false, // can the field be duplicated with a click of a button
 			'readonly' => false, // makes the field be readonly
-			'chosen' => false, // applies chosen.js (only when 'field_type' => 'multi_select')
+			'select2' => false, // applies select2.js (work on select and multi select field types)
 			'min' => false, // a minimum value (for number field only)
 			'max' => false, // a maximum value (for number field only)
 			'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
@@ -272,6 +272,12 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		// upload field is readonly by default (can be set explicitly to false though)
 		if ( ! empty( $args['field_type'] ) && 'upload' == $args['field_type'] )
 			$defaults['readonly'] = true;
+
+		// `chosen` arg is the same as `select2` arg
+		if ( isset( $args['chosen'] ) ) {
+			$args['select2'] = $args['chosen'];
+			unset( $args['chosen'] );
+		}
 
 		// Merge defaults with args
 		$field = wp_parse_args( $args, $defaults );
@@ -973,7 +979,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					}
 					break;
 				case 'select' :
-					printf( '<select id="%s" name="%s">', esc_attr( $field_slug ), esc_attr( $field_id ) );
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					printf( '<select id="%s" name="%s"%s>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 );
 					foreach ( $field->values as $value_slug => $value_label ) {
 						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( $v, $value_slug, false ) );
 						echo esc_html( $value_label );
@@ -1002,7 +1009,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
 						break;
 					}
-					printf( '<select name="%s" id="%s">', esc_attr( $field_id ), esc_attr( $field_slug ) );
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					printf( '<select name="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 );
 					foreach ( $terms as $term ) {
 						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( $v, $term->slug, false ), esc_html( $term->name ) );
 					}
@@ -1041,8 +1049,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			// fields that save as arrays are not part of the foreach, otherwise they would display for each value, which is not the desired behaviour
 			switch ( $field->field_type ) :
 				case 'multi_select' :
-					$chosen = ( $field->chosen ) ? ' class="chosen" ' : ' ';
-					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $chosen );
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 );
 					foreach ( $field->values as $value_slug => $value_label ) {
 						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( in_array( $value_slug, $value ), true, false ) );
 						echo esc_html( $value_label );
