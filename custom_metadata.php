@@ -80,8 +80,22 @@ class custom_metadata_manager {
 	// the default args used for the wp_editor function
 	var $default_editor_args = array();
 
+	// singleton instance
+	private static $instance;
 
-	function __construct( ) {
+	public static function instance() {
+		if ( isset( self::$instance ) )
+			return self::$instance;
+
+		self::$instance = new custom_metadata_manager;
+		self::$instance->run_initial_hooks();
+		return self::$instance;
+	}
+
+	// do nothing on construct
+	function __construct() {}
+
+	function run_initial_hooks() {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
 	}
 
@@ -1107,15 +1121,13 @@ class custom_metadata_manager {
 	}
 }
 
-global $custom_metadata_manager;
-$custom_metadata_manager = new custom_metadata_manager();
+global $custom_metadata_manager; // for backwards-compatibility we keep the global around, but it shouldn't be used
+$custom_metadata_manager = custom_metadata_manager::instance();
 
 function x_add_metadata_field( $slug, $object_types = 'post', $args = array() ) {
-	global $custom_metadata_manager;
-	$custom_metadata_manager->add_metadata_field( $slug, $object_types, $args );
+	custom_metadata_manager::instance()->add_metadata_field( $slug, $object_types, $args );
 }
 
 function x_add_metadata_group( $slug, $object_types, $args = array() ) {
-	global $custom_metadata_manager;
-	$custom_metadata_manager->add_metadata_group( $slug, $object_types, $args );
+	custom_metadata_manager::instance()->add_metadata_group( $slug, $object_types, $args );
 }

@@ -61,6 +61,7 @@ There are usage instructions below
 * reformat and clean up css file
 * added ability for groups to display their description
 * added ability to limit capabilities for entire groups using `required_cap`
+* convert plugin class to singleton
 
 ## 0.7
 
