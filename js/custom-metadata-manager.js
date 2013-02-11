@@ -33,7 +33,6 @@
 			var $this = $(this),
 			$this_field = $this.parent();
 
-
 			// if the media frame already exists, reopen it.
 			if ( custom_metadata_file_frame ) {
 				custom_metadata_file_frame.open();
