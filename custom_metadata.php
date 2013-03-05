@@ -195,9 +195,9 @@ class custom_metadata_manager {
 
 		// Hook into Column Content. Users get filtered, others get actioned.
 		if ( ! in_array( $object_type, $this->_column_filter_object_types ) )
-			add_action( "manage_{$column_content_name}_custom_column", $custom_column_content_function, 10, 3 );
+			add_action( "manage_{$column_header_name}_custom_column", $custom_column_content_function, 10, 3 );
 		else
-			add_filter( "manage_{$column_content_name}_custom_column", $custom_column_content_function, 10, 3 );
+			add_filter( "manage_{$column_header_name}_custom_column", $custom_column_content_function, 10, 3 );
 
 	}
 
@@ -205,6 +205,7 @@ class custom_metadata_manager {
 		wp_enqueue_media();
 		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
+		wp_enqueue_script( 'custom-metadata-manager-datetimepicker', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker-addon.js' ), array( 'jquery', 'jquery-ui-datepicker', 'jquery-ui-slider' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 	}
 
 	function enqueue_styles() {
@@ -1009,7 +1010,7 @@ class custom_metadata_manager {
 					echo '</select>';
 					break;
 				case 'datepicker' :
-					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
+					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : '';
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
 					break;
 				case 'wysiwyg' :
