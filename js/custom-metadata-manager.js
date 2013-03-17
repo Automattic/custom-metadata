@@ -65,6 +65,43 @@
 			$this_field.find( 'input:not( [type=button] )' ).val( '' );
 		});
 
+		// init link fields
+		var custom_metadata_link_selector_is_open = false;
+		var custom_metadata_link_selector_target = null;
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-link-button', function(e){
+			e.preventDefault();
+			custom_metadata_link_selector_is_open = true;
+			custom_metadata_link_selector_target = $(this).parent().find( 'input[type="text"]' );
+			wpActiveEditor = true;
+			wpLink.open();
+			var $wp_link = $( '#wp-link' );
+			$wp_link.find( '.link-target' ).remove(); // remove the "new tab" checkbox
+			$wp_link.find( '#link-title-field' ).parents( '#link-options div' ).remove(); // remove the "title" field
+		});
+
+		$(document).on( 'click.custom_metadata', '#wp-link-submit', function(e){
+			e.preventDefault();
+			if ( null === custom_metadata_link_selector_target)
+				return;
+
+			var linkAtts = wpLink.getAttrs();
+			custom_metadata_link_selector_target.val(linkAtts.href);
+			wpLink.textarea = custom_metadata_link_selector_target;
+			wpLink.close();
+			custom_metadata_link_selector_target = null;
+		});
+
+		$(document).on( 'click.custom_metadata', '#wp-link-cancel, .ui-dialog-titlebar-close', function(e){
+			e.preventDefault();
+			if ( null === custom_metadata_link_selector_target)
+				return;
+
+			wpLink.textarea = custom_metadata_link_selector_target;
+			wpLink.close();
+			custom_metadata_link_selector_target = null;
+			custom_metadata_link_selector_is_open = false;
+		});
+
 	 	// init the datepicker fields
 		$( '.custom-metadata-field.datepicker' ).find( 'input' ).datepicker({
 			changeMonth: true,

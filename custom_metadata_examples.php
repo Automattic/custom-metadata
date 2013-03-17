@@ -249,6 +249,13 @@ function x_init_custom_fields() {
 			'label' => 'Email field',
 		) );
 
+	// adds a link field in the first group
+	x_add_metadata_field( 'x_field_link', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'link',
+			'label' => 'Link field',
+		) );
+
 	// adds a telephone field in the first group (with default value)
 	x_add_metadata_field( 'x_field_telephone', 'x_test', array(
 			'group' => 'x_metaBox1',
@@ -294,6 +301,14 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'email',
 			'label' => 'Email field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a link field with placeholder
+	x_add_metadata_field( 'x_field_link_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'link',
+			'label' => 'Link field with placeholder',
 			'placeholder' => 'some placeholder text',
 		) );
 
