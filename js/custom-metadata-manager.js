@@ -56,12 +56,12 @@
 			custom_metadata_file_frame.open();
 		});
 
-		$( '.custom-metadata-field' ).on( 'click.custom_metada', '.custom-metadata-clear-button', function(e){
+		$custom_metadata_field.on( 'click.custom_metada', '.custom-metadata-clear-button', function(e){
 			e.preventDefault();
 			var $this = $(this),
 			$this_field = $this.parent();
 			$this_field.find( 'input:not( [type=button] )' ).val( '' );
-		})
+		});
 
 	 	// init the datepicker fields
 		$( '.custom-metadata-field.datepicker' ).find( 'input' ).datepicker({
