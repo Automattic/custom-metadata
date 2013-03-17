@@ -41,7 +41,7 @@ There are usage instructions below
 
 ## 0.8 (currently under development)
 
-* allow fieldtypes that save as multiples but don't display as cloneable or multiples
+* allow field types that save as multiples but don't display as cloneable or multiples
 * added the `taxonomy_checkbox` field
 * made use of the `selected()` and `checked()` functions in WordPress instead of clumsy if statements
 * limit or exclude groups and fields using a custom callback
