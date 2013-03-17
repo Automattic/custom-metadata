@@ -4,7 +4,7 @@
 		var $custom_metadata_field = $( '.custom-metadata-field' );
 
 		// duplicating fields
-		$custom_metadata_field.on( 'click.custom_metada', '.add-multiple', function(e){
+		$custom_metadata_field.on( 'click.custom_metadata', '.add-multiple', function(e){
 			e.preventDefault();
 			var $this = $( this ),
 				$last = $this.parent().prev( '.cloneable' ),
@@ -19,7 +19,7 @@
 		});
 
 		// deleting fields
-		$custom_metadata_field.on( 'click.custom_metada', '.del-multiple', function(e){
+		$custom_metadata_field.on( 'click.custom_metadata', '.del-multiple', function(e){
 			e.preventDefault();
 			var $this = $( this );
 			$this.parent().fadeOut('normal', function(){
@@ -58,7 +58,7 @@
 			custom_metadata_file_frame.open();
 		});
 
-		$custom_metadata_field.on( 'click.custom_metada', '.custom-metadata-clear-button', function(e){
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-clear-button', function(e){
 			e.preventDefault();
 			var $this = $(this),
 			$this_field = $this.parent();
