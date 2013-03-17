@@ -65,9 +65,15 @@
 	margin-right: 5px;
 }
 
-/* upload fields */
-.custom-metadata-field input.upload_field {
+/* upload & link fields */
+.custom-metadata-field input.upload_field,
+.custom-metadata-field input.link_field {
 	width: 60%;
+}
+
+.custom-metadata-field.upload input[type="button"],
+.custom-metadata-field.link input[type="button"] {
+	margin-left: 10px;
 }
 
 /* datepicker fields */
@@ -96,10 +102,6 @@
 	background: #fff
 }
 
-/* upload fields */
-.custom-metadata-field.upload input[type="button"] {
-	margin-left: 10px;
-}
 
 /* user fields */
 .user-metadata-group .custom-metadata-field > label {
