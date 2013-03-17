@@ -1,8 +1,10 @@
 (function($){
 	$(document).ready(function($) {
 
+		var $custom_metadata_field = $( '.custom-metadata-field' );
+
 		// duplicating fields
-		$( '.custom-metadata-field' ).on( 'click.custom_metada', '.add-multiple', function(e){
+		$custom_metadata_field.on( 'click.custom_metada', '.add-multiple', function(e){
 			e.preventDefault();
 			var $this = $( this ),
 				$last = $this.parent().prev( '.cloneable' ),
@@ -17,7 +19,7 @@
 		});
 
 		// deleting fields
-		$( '.custom-metadata-field' ).on( 'click.custom_metada', '.del-multiple', function(e){
+		$custom_metadata_field.on( 'click.custom_metada', '.del-multiple', function(e){
 			e.preventDefault();
 			var $this = $( this );
 			$this.parent().fadeOut('normal', function(){
@@ -27,7 +29,7 @@
 
 		// init upload fields
 		var custom_metadata_file_frame;
-		$( '.custom-metadata-field' ).on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
 			e.preventDefault();
 
 			var $this = $(this),
@@ -70,7 +72,7 @@
 		});
 
 		// select2
-		$( '.custom-metadata-field' ).find( '.custom-metadata-select2' ).each(function(index) {
+		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
 			$(this).select2();
 		});
 
