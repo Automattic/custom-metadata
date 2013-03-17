@@ -137,6 +137,20 @@ function x_init_custom_fields() {
 			'label' => 'Datepicker field',
 		) );
 
+	// adds a datetimepicker field to the 1st group
+	x_add_metadata_field( 'x_fieldDatetimepicker1', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'datetimepicker',
+			'label' => 'Datetimepicker field',
+		) );
+
+	// adds a timepicker field to the 1st group
+	x_add_metadata_field( 'x_fieldTimepicker1', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'timepicker',
+			'label' => 'Timepicker field',
+		) );
+
 	// adds an upload field to the 1st group
 	x_add_metadata_field( 'x_fieldUpload1', 'x_test', array(
 			'group' => 'x_metaBox1',
@@ -333,6 +347,22 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'datepicker',
 			'label' => 'Datepicker field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a datetimepicker field with placeholder
+	x_add_metadata_field( 'x_field_datetimepicker_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'datetimepicker',
+			'label' => 'Datetimepicker field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a timepicker field with placeholder
+	x_add_metadata_field( 'x_field_timepicker_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'timepicker',
+			'label' => 'Timepicker field with placeholder',
 			'placeholder' => 'some placeholder text',
 		) );
 

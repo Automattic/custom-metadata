@@ -108,6 +108,18 @@
 			changeYear: true
 		});
 
+		// init the datetimepicker fields
+		$( '.custom-metadata-field.datetimepicker' ).find( 'input' ).datetimepicker({
+			changeMonth: true,
+			changeYear: true
+		});
+
+		// init the timepicker fields
+		$( '.custom-metadata-field.timepicker' ).find( 'input' ).timepicker({
+			changeMonth: true,
+			changeYear: true
+		});
+
 		// select2
 		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
 			$(this).select2();

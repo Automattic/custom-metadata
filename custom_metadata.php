@@ -51,19 +51,19 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
 	// field types that support a default value
-	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'link' );
+	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
 	// field types that support the placeholder attribute
-	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'link' );
+	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
 	// field types that are read only by default
-	var $_field_types_that_are_read_only = array( 'upload', 'link' );
+	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
@@ -119,6 +119,7 @@ class custom_metadata_manager {
 		$this->default_editor_args = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
 
 		define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js
+		define( 'CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION', '1.2' ); // version for included timepicker
 		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.8-dev' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , apply_filters( 'custom_metadata_manager_url', trailingslashit( plugins_url( '', __FILE__ ) ) ) );
 
@@ -208,6 +209,7 @@ class custom_metadata_manager {
 		wp_enqueue_media();
 		wp_enqueue_script( 'wp-link' );
 		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
+		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 	}
 
@@ -903,7 +905,7 @@ class custom_metadata_manager {
 		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
 
 		// convert date to unix timestamp
-		if ( $field->field_type == 'datepicker' ) {
+		if ( in_array( $field->field_type, array( 'datepicker', 'datetimepicker', 'timepicker' ) ) ) {
 			$value = strtotime( $value );
 		}
 
@@ -1020,6 +1022,14 @@ class custom_metadata_manager {
 				case 'datepicker' :
 					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
+					break;
+				case 'datetimepicker' :
+					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : '';
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datetimepicker_value, $readonly_str, $placeholder_str );
+					break;
+				case 'timepicker' :
+					$timepicker = ! empty( $v ) ? esc_attr( date( 'G:i', $v ) ) : '';
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $timepicker, $readonly_str, $placeholder_str );
 					break;
 				case 'wysiwyg' :
 					$wysiwyg_args = apply_filters( 'custom_metadata_manager_wysiwyg_args_field_' . $field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
