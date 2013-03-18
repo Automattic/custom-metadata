@@ -75,6 +75,7 @@
 			wpActiveEditor = true;
 			wpLink.open();
 			var $wp_link = $( '#wp-link' );
+			wpLink.textarea = custom_metadata_link_selector_target;
 			$wp_link.find( '.link-target' ).remove(); // remove the "new tab" checkbox
 			$wp_link.find( '#link-title-field' ).parents( '#link-options div' ).remove(); // remove the "title" field
 		});
