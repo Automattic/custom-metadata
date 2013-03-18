@@ -171,6 +171,8 @@ class custom_metadata_manager {
 		}
 
 		do_action( 'custom_metadata_manager_init_metadata', $object_type );
+
+		add_action( 'admin_footer', array( $this, '_display_wp_link_dialog' ) );
 	}
 
 	function init_columns() {
@@ -207,13 +209,17 @@ class custom_metadata_manager {
 
 	function enqueue_scripts() {
 		wp_enqueue_media();
-		wp_enqueue_script( 'wp-link' );
+		wp_enqueue_script( 'wplink' );
+		wp_enqueue_script( 'wpdialogs-popup' );
+		wp_enqueue_style( 'wp-jquery-ui-dialog' );
 		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
 		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 	}
 
 	function enqueue_styles() {
+		wp_enqueue_style( 'wp-jquery-ui-dialog' );
+		wp_enqueue_style( 'editor-buttons' );
 		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom_metadata_manager_default_css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'jquery-ui-datepicker', apply_filters( 'custom_metadata_manager_jquery_ui_css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'select2', apply_filters( 'custom_metadata_manager_select2_css', CUSTOM_METADATA_MANAGER_URL .'css/select2.css' ), array(), CUSTOM_METADATA_MANAGER_SELECT2_VERSION );
@@ -1137,6 +1143,14 @@ class custom_metadata_manager {
 		foreach ( $this->errors as $error => $error_message )
 			printf( '<li>%s</li>', esc_html( $error_message ) );
 		echo '</div>';
+	}
+
+	function _display_wp_link_dialog() {
+		if ( ! class_exists( '_WP_Editors' ) )
+			require( ABSPATH . WPINC . '/class-wp-editor.php' );
+
+		if ( ! has_action( 'admin_footer', array( '_WP_Editors', 'enqueue_scripts' ) ) )
+			_WP_Editors::wp_link_dialog();
 	}
 }
 
