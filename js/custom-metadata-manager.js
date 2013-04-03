@@ -27,9 +27,9 @@
 			});
 		});
 
-		// init upload fields
-		var custom_metadata_file_frame;
 		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
+			// init upload fields (on every click)
+			var custom_metadata_file_frame;
 			e.preventDefault();
 
 			var $this = $(this),
