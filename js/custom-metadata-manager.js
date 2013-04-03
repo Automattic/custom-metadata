@@ -11,11 +11,11 @@
 				$clone = $last.clone(),
 				id_name = $clone.attr('id'),
 				split_id = id_name.split( '-' ),
-				instance_num = parseInt( split_id[1] ) + 1;
+				instance_num = +split_id.pop() + 1;
 
-			id_name = split_id[0] + '-' + instance_num;
+			id_name = split_id.join('-') + '-' + instance_num;
 			$clone.attr( 'id', id_name );
-			$clone.insertAfter( $last ).hide().fadeIn().find( ':input' ).val(''); // todo: figure out if default value
+			$clone.insertAfter( $last ).hide().fadeIn().find( 'input' ).filter( ':first' ).val(''); // todo: figure out if default value
 		});
 
 		// deleting fields
@@ -27,9 +27,9 @@
 			});
 		});
 
-		// init upload fields
-		var custom_metadata_file_frame;
 		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
+			// init upload fields (on every click)
+			var custom_metadata_file_frame;
 			e.preventDefault();
 
 			var $this = $(this),
