@@ -36,11 +36,7 @@ if ( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) )
 if ( CUSTOM_METADATA_MANAGER_DEBUG )
 	include_once 'custom_metadata_examples.php';
 
-define( 'CUSTOM_METADATA_MANAGER_CHOSEN_VERSION', '0.9.11' ); // version for included chosen.js
-
-if ( !class_exists( 'custom_metadata_manager' ) ) :
-
-	class custom_metadata_manager {
+class custom_metadata_manager {
 
 	var $errors = array();
 
@@ -55,16 +51,19 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
 	// field types that support a default value
-	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker' );
+	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
 	// field types that support the placeholder attribute
-	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker' );
+	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
+
+	// field types that are read only by default
+	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
@@ -84,14 +83,28 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	// the default args used for the wp_editor function
 	var $default_editor_args = array();
 
+	// singleton instance
+	private static $instance;
 
-	function __construct( ) {
-		// We need to run these as late as possible!
-		add_action( 'init', array( $this, 'init' ), 1000, 0 );
+	public static function instance() {
+		if ( isset( self::$instance ) )
+			return self::$instance;
+
+		self::$instance = new custom_metadata_manager;
+		self::$instance->run_initial_hooks();
+		return self::$instance;
+	}
+
+	// do nothing on construct
+	function __construct() {}
+
+	function run_initial_hooks() {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
 	}
 
-	function init() {
+	function admin_init() {
+		global $pagenow;
+
 		// filter our vars
 		$this->_non_post_types = apply_filters( 'custom_metadata_manager_non_post_types', $this->_non_post_types );
 		$this->_builtin_object_types = apply_filters( 'custom_metadata_manager_builtin_object_types', $this->_builtin_object_types );
@@ -105,15 +118,12 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
 		$this->default_editor_args = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
 
-		$this->init_object_types();
-		do_action( 'custom_metadata_manager_init' );
-	}
-
-	function admin_init() {
-		global $pagenow;
-
+		define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js
+		define( 'CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION', '1.2' ); // version for included timepicker
 		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.8-dev' );
 		define( 'CUSTOM_METADATA_MANAGER_URL' , apply_filters( 'custom_metadata_manager_url', trailingslashit( plugins_url( '', __FILE__ ) ) ) );
+
+		$this->init_object_types();
 
 		// Hook into load to initialize custom columns
 		if ( in_array( $pagenow, $this->_pages_whitelist ) ) {
@@ -124,6 +134,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		if ( current_user_can( 'manage_options' ) )
 			add_action( 'admin_notices', array( $this, '_display_registration_errors' ) );
 
+		do_action( 'custom_metadata_manager_init' );
 		do_action( 'custom_metadata_manager_admin_init' );
 	}
 
@@ -160,6 +171,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		}
 
 		do_action( 'custom_metadata_manager_init_metadata', $object_type );
+
+		add_action( 'admin_footer', array( $this, '_display_wp_link_dialog' ) );
 	}
 
 	function init_columns() {
@@ -195,14 +208,21 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 	}
 
 	function enqueue_scripts() {
-		wp_enqueue_script( 'chosen-js', apply_filters( 'custom-metadata-manager-chosen-js', CUSTOM_METADATA_MANAGER_URL .'js/chosen.jquery.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION, true );
-		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom-metadata-manager-default-js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'chosen-js' ), CUSTOM_METADATA_MANAGER_VERSION, true );
+		wp_enqueue_media();
+		wp_enqueue_script( 'wplink' );
+		wp_enqueue_script( 'wpdialogs-popup' );
+		wp_enqueue_style( 'wp-jquery-ui-dialog' );
+		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
+		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
+		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 	}
 
 	function enqueue_styles() {
-		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom-metadata-manager-default-css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
-		wp_enqueue_style( 'jquery-ui-css', apply_filters( 'custom-metadata-manager-jquery-ui-css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
-		wp_enqueue_style( 'chosen-css', apply_filters( 'custom-metadata-manager-chosen-css', CUSTOM_METADATA_MANAGER_URL .'css/chosen.css' ), array(), CUSTOM_METADATA_MANAGER_CHOSEN_VERSION );
+		wp_enqueue_style( 'wp-jquery-ui-dialog' );
+		wp_enqueue_style( 'editor-buttons' );
+		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom_metadata_manager_default_css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
+		wp_enqueue_style( 'jquery-ui-datepicker', apply_filters( 'custom_metadata_manager_jquery_ui_css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
+		wp_enqueue_style( 'select2', apply_filters( 'custom_metadata_manager_select2_css', CUSTOM_METADATA_MANAGER_URL .'css/select2.css' ), array(), CUSTOM_METADATA_MANAGER_SELECT2_VERSION );
 	}
 
 	function add_metadata_column_headers( $columns ) {
@@ -258,13 +278,27 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'display_column' => false, // Add the field to the columns when viewing all posts
 			'display_column_callback' => '',
 			'add_to_quick_edit' => false, // (post only) Add the field to Quick edit
-			'required_cap' => '', // the cap required to view and edit the field
+			'required_cap' => false, // the cap required to view and edit the field
 			'multiple' => false, // can the field be duplicated with a click of a button
 			'readonly' => false, // makes the field be readonly
-			'chosen' => false, // applies chosen.js (only when 'field_type' => 'multi_select')
+			'select2' => false, // applies select2.js (work on select and multi select field types)
 			'min' => false, // a minimum value (for number field only)
 			'max' => false, // a maximum value (for number field only)
+			'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
+			'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
+			'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
+			'link_modal_button_text' => __( 'Select', 'custom-metadata' ), // link field button text
 		);
+
+		// upload field is readonly by default (can be set explicitly to false though)
+		if ( ! empty( $args['field_type'] ) && in_array( $args['field_type'], $this->_field_types_that_are_read_only ) )
+			$defaults['readonly'] = true;
+
+		// `chosen` arg is the same as `select2` arg
+		if ( isset( $args['chosen'] ) ) {
+			$args['select2'] = $args['chosen'];
+			unset( $args['chosen'] );
+		}
 
 		// Merge defaults with args
 		$field = wp_parse_args( $args, $defaults );
@@ -275,7 +309,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$group_slug = sanitize_key( $field->group );
 
 		// Check to see if the user should see this field
-		if ( $field->required_cap && ! current_user_can( $field->required_cap ) )
+		if ( ! empty( $field->required_cap ) && ! current_user_can( $field->required_cap ) )
 			return;
 
 		$field = apply_filters( 'custom_metadata_manager_add_metadata_field', $field, $field_slug, $group_slug, $object_types );
@@ -296,6 +330,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			'context' => 'normal', // (post only)
 			'priority' => 'default', // (post only)
 			'autosave' => false, // (post only) Should the group be saved in autosave?
+			'required_cap' => false, // the cap required to view and edit the group
 		);
 
 		// Merge defaults with args
@@ -306,6 +341,10 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$group_slug = sanitize_key( $group_slug );
 
 		$group = apply_filters( 'custom_metadata_manager_add_metadata_group', $group, $group_slug, $object_types );
+
+		// Check to see if the user has caps to view/edit this group
+		if ( ! empty( $group->required_cap ) && ! current_user_can( $group->required_cap ) )
+			return;
 
 		if ( !$this->_validate_metadata_group( $group_slug, $group, $object_types ) )
 			return;
@@ -484,6 +523,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			return;
 		}
 
+		$this->_display_group_description( $group );
+
 		foreach ( $fields as $field_slug => $field ) {
 			if ( $this->is_thing_added_to_object( $field_slug, $field, $object_type, $object_id ) ) {
 				$this->_display_metadata_field( $field_slug, $field, $object_type, $object_id );
@@ -492,6 +533,11 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 
 		// Each group gets its own nonce
 		$this->_display_group_nonce( $group_slug, $object_type );
+	}
+
+	function _display_group_description( $group ) {
+		if ( ! empty( $group->description ) )
+			printf( '<div class="custom-metadata-group-description description">%s</div>', $group->description );
 	}
 
 	function _display_group_nonce( $group_slug, $object_type ) {
@@ -558,8 +604,16 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		if ( isset( $_POST[$field_slug] ) ) {
 			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[$field_slug] );
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
+
+			// save the attachment ID of the upload field as well
+			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
+				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[$field_slug . '_attachment_id'] ) );
 		} else {
 			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
+
+			// delete the attachment ID of the upload field as well
+			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
+				$this->_delete_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 		}
 	}
 
@@ -857,7 +911,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
 
 		// convert date to unix timestamp
-		if ( $field->field_type == 'datepicker' ) {
+		if ( in_array( $field->field_type, array( 'datepicker', 'datetimepicker', 'timepicker' ) ) ) {
 			$value = strtotime( $value );
 		}
 
@@ -903,120 +957,6 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly"' : '';
 		$placeholder_str = ( in_array( $field->field_type, $this->_field_types_that_support_placeholder ) && ! empty( $field->placeholder ) ) ? ' placeholder="' . esc_attr( $field->placeholder ) . '"' : '';
 
-<<<<<<< HEAD
-			if ( (isset($field->multiple) && $field->multiple) || in_array($field->field_type, $this->_always_multiple_fields) ) $field_id = $field_slug.'[]';
-			else $field_id = $field_slug;
-
-			$cloneable = (isset($field->multiple) && $field->multiple);
-
-			$readonly_str = ($field->readonly) ? 'readonly="readonly" ' : '';
-
-			if (get_post_type()) $numb = $post->ID; else $numb = 1; ?>
-			<script>var numb = '<?php echo $numb ?>'; </script>
-
-			<label for="<?php echo $field_slug; ?>"><?php echo $field->label; ?></label>
-			<?php
-			// make sure $value is an array
-				if (!$value) $value = ''; // if empty, give it an empty string instead
-				$value = (array)$value;
-				$count = 1;
-				foreach( $value as $v ) :	?>
-
-				<div class="<?php echo $field_slug ?><?php echo ( $cloneable ) ? ' cloneable' : ''; ?>" id="<?php echo $field_slug ?>-<?php echo $count;?>">
-
-					<?php switch ($field->field_type) :
-							case 'text': ?>
-							<input type="text" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr($v); ?>" <?php echo $readonly_str ?>/>
-						<?php break; ?>
-
-						<?php case 'textarea': ?>
-							<textarea id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" <?php echo $readonly_str ?>><?php echo esc_attr($v); ?></textarea>
-						<?php break; ?>
-
-						<?php case 'password': ?>
-							<input type="password" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="<?php echo esc_attr($v); ?>" <?php echo $readonly_str ?>/>
-						<?php break; ?>
-
-						<?php case 'checkbox': ?>
-							<input type="checkbox" id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>" value="1" <?php checked($checked = $v, 'on' ); ?> />
-						<?php break; ?>
-
-						<?php case 'radio': ?>
-							<?php foreach( $field->values as $value_slug => $value_label ) : ?>
-								<?php
-								$value_id = sprintf( '%s_%s', $field_slug, $value_slug );
-								?>
-								<label for="<?php echo $value_id; ?>" class="selectit">
-									<input type="radio" id="<?php echo $value_id; ?>" name="<?php echo $field_id; ?>" id="<?php echo $value_id; ?>" value="<?php echo $value_slug ?>" <?php checked($checked = $v ); ?> />
-									<?php echo $value_label; ?>
-								</label>
-							<?php endforeach; ?>
-						<?php break; ?>
-
-						<?php case 'select': ?>
-							<select id="<?php echo $field_slug; ?>" name="<?php echo $field_id; ?>">
-								<?php foreach( $field->values as $value_slug => $value_label ) : ?>
-									<?php
-									$value_id = $field_slug . $value_slug;
-									?>
-									<option value="<?php echo $value_slug ?>" <?php selected($v == $value_slug); ?>>
-										<?php echo $value_label; ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						<?php break; ?>
-
-						<?php case 'datepicker': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo (isset($v)) ? date('m/d/Y', $v) : ''; ?>" <?php echo $readonly_str ?>/>
-						<?php break; ?>
-
-						<?php case 'wysiwyg': ?>
-							<?php
-								$args = apply_filters('custom_metadata_manager_wysiwyg_args_field_'.$field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
-							 	wp_editor($v, $field_id, $args);
-							?>
-						<?php break; ?>
-
-						<?php case 'upload': ?>
-							<input type="text" name="<?php echo $field_id; ?>" value="<?php echo $v; ?>" class="upload_field" <?php echo $readonly_str ?>/>
-							<input type="button" title="<?php echo $post->ID ?>" class="button upload_button" value="Upload" />
-						<?php break; ?>
-
-						<?php case 'taxonomy_select': ?>
-							<select name="<?php echo $field_id; ?>" id="<?php echo $field_slug; ?>">
-							<?php
-							$terms = get_terms( $field->taxonomy, array('hide_empty' => false));
-							foreach ( $terms as $term ) : ?>
-								<option value="<?php echo $term->slug ?>"<?php selected($term->slug == $v) ?>><?php echo $term->name ?></option>
-							<?php endforeach; ?>
-							</select>
-						<?php break; ?>
-
-						<?php case 'taxonomy_radio':
-							$terms = get_terms( $field->taxonomy, array('hide_empty' => false) );
-							foreach ( $terms as $term ) : ?>
-								<label for="<?php echo $term->slug; ?>" class="selectit">
-									<input type="radio" name="<?php echo $field_id ?>" value="<?php echo $term->slug ?>" id="<?php echo $term->slug ?>"<?php checked($term->slug == $v) ?>>
-									<?php echo $term->name ?>
-								</label>
-						<?php endforeach; ?>
-						<?php break; ?>
-
-					<?php endswitch; ?>
-
-					<?php if ( $cloneable && $count > 1) : ?>
-						<a href="#" class="del-multiple hide-if-no-js" style="color:red;">Delete</a>
-					<?php endif; $count++ ?>
-
-				</div>
-=======
-		if ( get_post_type() )
-			$numb = $post->ID;
-		else
-			$numb = 1;
->>>>>>> upstream/master
-
-		echo '<script>var numb = ' . esc_js( $numb ) . '</script>';
 		printf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
 
 		// check if there is a default value and set it if no value currently set
@@ -1051,6 +991,10 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 				case 'tel' :
 					printf( '<input type="tel" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
+				case 'link' :
+					printf( '<input type="text" id="%s" name="%s" value="%s" %s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="button" class="button custom-metadata-link-button" value="%s"/>', esc_attr( $field->link_modal_button_text ) );
+					break;
 				case 'number' :
 					$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"': '';
 					$max = ( ! empty( $field->max ) ) ? ' max="' . (int) $field->max . '"': '';
@@ -1072,7 +1016,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					}
 					break;
 				case 'select' :
-					printf( '<select id="%s" name="%s">', esc_attr( $field_slug ), esc_attr( $field_id ) );
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					printf( '<select id="%s" name="%s"%s>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 );
 					foreach ( $field->values as $value_slug => $value_label ) {
 						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( $v, $value_slug, false ) );
 						echo esc_html( $value_label );
@@ -1084,13 +1029,25 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
 					break;
+				case 'datetimepicker' :
+					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : '';
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datetimepicker_value, $readonly_str, $placeholder_str );
+					break;
+				case 'timepicker' :
+					$timepicker = ! empty( $v ) ? esc_attr( date( 'G:i', $v ) ) : '';
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $timepicker, $readonly_str, $placeholder_str );
+					break;
 				case 'wysiwyg' :
 					$wysiwyg_args = apply_filters( 'custom_metadata_manager_wysiwyg_args_field_' . $field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
 					wp_editor( $v, $field_id, $wysiwyg_args );
 					break;
 				case 'upload' :
-					printf( '<input type="text" name="%s" value="%s" class="upload_field"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
-					printf( '<input type="button" title="%s" class="button upload_button" value="%s" />', esc_attr( $numb ), esc_attr( __( 'Upload', 'custom-metadata-manager' ) ) );
+					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
+					$attachment_id = array_shift( array_values( $_attachment_id ) ); // get the first value in the array
+					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
+					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
+					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
 					break;
 				case 'taxonomy_select' :
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
@@ -1098,7 +1055,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
 						break;
 					}
-					printf( '<select name="%s" id="%s">', esc_attr( $field_id ), esc_attr( $field_slug ) );
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					printf( '<select name="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 );
 					foreach ( $terms as $term ) {
 						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( $v, $term->slug, false ), esc_html( $term->name ) );
 					}
@@ -1120,7 +1078,7 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			endswitch;
 
 			if ( $cloneable && $count > 1 )
-					echo '<a href="#" class="del-multiple hide-if-no-js" style="color:red;">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
+					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
 
 			$count++;
 
@@ -1137,8 +1095,8 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			// fields that save as arrays are not part of the foreach, otherwise they would display for each value, which is not the desired behaviour
 			switch ( $field->field_type ) :
 				case 'multi_select' :
-					$chosen = ( $field->chosen ) ? ' class="chosen" ' : ' ';
-					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $chosen );
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 );
 					foreach ( $field->values as $value_slug => $value_label ) {
 						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( in_array( $value_slug, $value ), true, false ) );
 						echo esc_html( $value_label );
@@ -1186,19 +1144,23 @@ if ( !class_exists( 'custom_metadata_manager' ) ) :
 			printf( '<li>%s</li>', esc_html( $error_message ) );
 		echo '</div>';
 	}
+
+	function _display_wp_link_dialog() {
+		if ( ! class_exists( '_WP_Editors' ) )
+			require( ABSPATH . WPINC . '/class-wp-editor.php' );
+
+		if ( ! has_action( 'admin_footer', array( '_WP_Editors', 'enqueue_scripts' ) ) )
+			_WP_Editors::wp_link_dialog();
+	}
 }
 
-global $custom_metadata_manager;
-$custom_metadata_manager = new custom_metadata_manager();
-
-endif; // !class_exists
+global $custom_metadata_manager; // for backwards-compatibility we keep the global around, but it shouldn't be used
+$custom_metadata_manager = custom_metadata_manager::instance();
 
 function x_add_metadata_field( $slug, $object_types = 'post', $args = array() ) {
-	global $custom_metadata_manager;
-	$custom_metadata_manager->add_metadata_field( $slug, $object_types, $args );
+	custom_metadata_manager::instance()->add_metadata_field( $slug, $object_types, $args );
 }
 
 function x_add_metadata_group( $slug, $object_types, $args = array() ) {
-	global $custom_metadata_manager;
-	$custom_metadata_manager->add_metadata_group( $slug, $object_types, $args );
+	custom_metadata_manager::instance()->add_metadata_group( $slug, $object_types, $args );
 }

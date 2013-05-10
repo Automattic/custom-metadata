@@ -56,7 +56,7 @@ function x_init_custom_post_types() {
 		'has_archive' => true,
 		'hierarchical' => false,
 		'menu_position' => null,
-		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+		'supports' => array( 'title' )
 	);
 	register_post_type( 'x_test', $args );
 }
@@ -79,7 +79,8 @@ function x_init_custom_fields() {
 
 	// adds another group to the test post type + posts + users
 	x_add_metadata_group( 'x_metaBox2', array( 'x_test', 'post', 'user' ), array(
-			'label' => 'Group for Post and User'
+			'label' => 'Group for Post and User',
+			'description' => "Here's a group with a description!",
 		) );
 
 	// adds a text field to the first group
@@ -136,10 +137,25 @@ function x_init_custom_fields() {
 			'label' => 'Datepicker field',
 		) );
 
+	// adds a datetimepicker field to the 1st group
+	x_add_metadata_field( 'x_fieldDatetimepicker1', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'datetimepicker',
+			'label' => 'Datetimepicker field',
+		) );
+
+	// adds a timepicker field to the 1st group
+	x_add_metadata_field( 'x_fieldTimepicker1', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'timepicker',
+			'label' => 'Timepicker field',
+		) );
+
 	// adds an upload field to the 1st group
 	x_add_metadata_field( 'x_fieldUpload1', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'field_type' => 'upload',
+			'readonly' => true,
 			'label' => 'Upload field',
 		) );
 
@@ -185,6 +201,36 @@ function x_init_custom_fields() {
 			'label' => 'Multi Select field',
 		) );
 
+	// adds a multi-select field with chosen in the first group
+	// note: `select2` and `chosen` args do the exact same (add select2)
+	// but for the purposes of testing, we're using chosen here
+	x_add_metadata_field( 'x_field_multi_select_chosen', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'multi_select',
+			'values' => array(     // set possible value/options
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+				'option2' => 'Option #2',
+				'option3' => 'Option #3',
+				'option4' => 'Option #4',
+			),
+			'label' => 'Multi Select field (with chosen)',
+			'chosen' => true,
+		) );
+
+	// adds a select field with select2 in the first group
+	x_add_metadata_field( 'x_field_select_select2', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'select',
+			'values' => array(     // set possible value/options
+				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+				'option2' => 'Option #2',
+				'option3' => 'Option #3',
+				'option4' => 'Option #4',
+			),
+			'label' => 'Select field (with select2)',
+			'select2' => true,
+		) );
+
 	// adds a taxonomy checkbox field in the first group
 	x_add_metadata_field( 'x_field_taxonomy_checkbox', 'x_test', array(
 			'group' => 'x_metaBox1',
@@ -215,6 +261,13 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'email',
 			'label' => 'Email field',
+		) );
+
+	// adds a link field in the first group
+	x_add_metadata_field( 'x_field_link', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'link',
+			'label' => 'Link field',
 		) );
 
 	// adds a telephone field in the first group (with default value)
@@ -265,6 +318,14 @@ function x_init_custom_fields() {
 			'placeholder' => 'some placeholder text',
 		) );
 
+	// adds a link field with placeholder
+	x_add_metadata_field( 'x_field_link_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'link',
+			'label' => 'Link field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
 	// adds an telephone field with placeholder
 	x_add_metadata_field( 'x_field_telephone_placeholder', 'x_test', array(
 			'group' => 'x_metaBox1',
@@ -286,6 +347,22 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'datepicker',
 			'label' => 'Datepicker field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a datetimepicker field with placeholder
+	x_add_metadata_field( 'x_field_datetimepicker_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'datetimepicker',
+			'label' => 'Datetimepicker field with placeholder',
+			'placeholder' => 'some placeholder text',
+		) );
+
+	// adds a timepicker field with placeholder
+	x_add_metadata_field( 'x_field_timepicker_placeholder', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'timepicker',
+			'label' => 'Timepicker field with placeholder',
 			'placeholder' => 'some placeholder text',
 		) );
 
