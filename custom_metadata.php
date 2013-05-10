@@ -882,7 +882,6 @@ class custom_metadata_manager {
 		if ( is_array( $value ) ) {
 			// multiple values
 			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
-			$value = array_reverse( $value );
 			foreach ( $value as $v ) {
 				add_metadata( $object_type, $object_id, $field_slug, $v, false );
 			}
@@ -943,7 +942,11 @@ class custom_metadata_manager {
 			return;
 		}
 
-		echo '<div class="custom-metadata-field ' . sanitize_html_class( $field->field_type ) .'">';
+		echo '<div class="custom-metadata-field ' . sanitize_html_class( $field->field_type );
+		if ( $field->multiple == true )
+				echo ' x-sortable';
+		echo '">';
+		
 		if ( ! in_array( $object_type, $this->_non_post_types ) )
 			global $post;
 
@@ -1077,6 +1080,9 @@ class custom_metadata_manager {
 					break;
 			endswitch;
 
+			if ( $cloneable )
+					echo  '<span class="drag-handle"></span>';
+			
 			if ( $cloneable && $count > 1 )
 					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
 

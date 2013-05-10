@@ -125,6 +125,29 @@
 		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
 			$(this).select2();
 		});
+		
+		// sorting multiple fields
+		$('.x-sortable').sortable({
+			handle: '.drag-handle',
+		});
+		
+		$('.x-sortable').bind( 'sortupdate', function() {
+			var rowCount = $(this).children('div.cloneable').length;
+			var fieldName = $(this).children('label').attr('for');
+			$(this).children('div.cloneable').each(function(index) {
+				var thisIndex = index+1;
+				if(index===0) {
+					$(this).attr('id',fieldName+'-'+thisIndex);
+					$(this).children('a.del-multiple').remove();
+				} else {
+					$(this).attr('id',fieldName+'-'+thisIndex);
+					if ( !$(this).children('a.del-multiple').length ) {
+						$(this).append('<a href="#" class="del-multiple hide-if-no-js">Delete</a>');
+					}
+				}
+			});
+	});
+
 
 	});
 })(jQuery);
