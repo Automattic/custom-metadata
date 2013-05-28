@@ -12,9 +12,16 @@
 				id_name = $clone.attr('id'),
 				split_id = id_name.split( '-' ),
 				instance_num = parseInt( split_id[1] ) + 1;
-
 			id_name = split_id[0] + '-' + instance_num;
 			$clone.attr( 'id', id_name );
+			$clone.children().not('span,a').each( function() {
+				var old_name = $(this).attr( 'name' );
+				alert(old_name);
+				if ( old_name.indexOf( '['+(instance_num-1)+']' ) != -1 ) {
+					var new_name = old_name.replace( '['+(instance_num-1)+']', '['+instance_num+']' );
+					$(this).attr( 'name', new_name );
+				}
+  			} );
 			$clone.insertAfter( $last ).hide().fadeIn().find( ':input' ).val(''); // todo: figure out if default value
 		});
 

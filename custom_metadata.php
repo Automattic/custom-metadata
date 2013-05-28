@@ -51,10 +51,10 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link', 'multifield' );
 
 	// field types that are cloneable
-	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
+	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel', 'multifield' );
 
 	// field types that support a default value
 	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
@@ -288,6 +288,7 @@ class custom_metadata_manager {
 			'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
 			'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
 			'link_modal_button_text' => __( 'Select', 'custom-metadata' ), // link field button text
+			'columns' => array(), // columns for multifields
 		);
 
 		// upload field is readonly by default (can be set explicitly to false though)
@@ -879,15 +880,27 @@ class custom_metadata_manager {
 			wp_set_object_terms( $object_id, $value, $field->taxonomy );
 		}
 
-		if ( is_array( $value ) ) {
-			// multiple values
-			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
-			foreach ( $value as $v ) {
-				add_metadata( $object_type, $object_id, $field_slug, $v, false );
+		// make sure we're not dealing with a multifield
+		if ( $field->field_type !== 'multifield' ) {
+
+			if ( is_array( $value ) ) {
+				// multiple values
+				delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
+				foreach ( $value as $v ) {
+					add_metadata( $object_type, $object_id, $field_slug, $v, false );
+				}
+			} else {
+				// single value
+				update_metadata( $object_type, $object_id, $field_slug, $value );
 			}
-		} else {
-			// single value
-			update_metadata( $object_type, $object_id, $field_slug, $value );
+			
+		} elseif ( $field->field_type == 'multifield' ) {
+			
+				delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
+				foreach ( $value as $v ) {
+					add_metadata( $object_type, $object_id, $field_slug, $v, false );
+				}
+			
 		}
 
 		// delete metadata entries if empty
@@ -954,7 +967,7 @@ class custom_metadata_manager {
 			$field->multiple = false;
 			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata-manager' ) );
 		}
-
+		
 		$field_id = ( ! empty( $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) ? $field_slug . '[]' : $field_slug;
 		$cloneable = ( ! empty( $field->multiple ) ) ? true : false;
 		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly"' : '';
@@ -1078,6 +1091,34 @@ class custom_metadata_manager {
 						echo '</label>';
 					}
 					break;
+				case 'multifield' :
+					foreach( $field->columns as $column_name => $column ) {
+						$column_placeholder_str = ( in_array( $column['field_type'], $this->_field_types_that_support_placeholder ) && ! empty( $column['placeholder'] ) ) ? ' placeholder="' . esc_attr( $column['placeholder'] ) . '"' : '';
+						$column_field_id = str_replace('[]', '[' . $count . ']', $field_id) . '[' . $column_name . ']';
+						switch ( $column['field_type'] ) :
+						case 'text' :
+							printf( '<input type="text" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $column_field_id ), esc_attr( $v[$column_name] ), $readonly_str, $column_placeholder_str );
+							break;
+						case 'password' :
+							printf( '<input type="password" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $column_field_id ), esc_attr( $v[$column_name] ), $readonly_str, $placeholder_str );
+							break;
+						case 'email' :
+							printf( '<input type="email" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $column_field_id ), esc_attr( $v[$column_name] ), $readonly_str, $placeholder_str );
+							break;
+						case 'tel' :
+							printf( '<input type="tel" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $column_field_id ), esc_attr( $v[$column_name] ), $readonly_str, $placeholder_str );
+							break;
+						case 'number' :
+							$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"': '';
+							$max = ( ! empty( $field->max ) ) ? ' max="' . (int) $field->max . '"': '';
+							printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s%s/>', esc_attr( $field_slug ), esc_attr( $column_field_id ), esc_attr( $v[$column_name] ), $readonly_str, $placeholder_str, $min, $max );
+							break;
+						case 'textarea' :
+							printf( '<textarea id="%s" name="%s"%s%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $column_field_id ), $readonly_str, $column_placeholder_str, esc_textarea( $v[$column_name] ) );
+							break;
+						endswitch;
+					}
+					break;	
 			endswitch;
 
 			if ( $cloneable )
