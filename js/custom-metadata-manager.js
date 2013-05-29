@@ -16,7 +16,6 @@
 			$clone.attr( 'id', id_name );
 			$clone.children().not('span,a').each( function() {
 				var old_name = $(this).attr( 'name' );
-				alert(old_name);
 				if ( old_name.indexOf( '['+(instance_num-1)+']' ) != -1 ) {
 					var new_name = old_name.replace( '['+(instance_num-1)+']', '['+instance_num+']' );
 					$(this).attr( 'name', new_name );
