@@ -66,13 +66,13 @@ class custom_metadata_manager {
 	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
 	// taxonomy types
-	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
+	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
 
 	// filed types that are saved as multiples but not cloneable
 	var $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
 
 	// fields that always save as an array
-	var $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select' );
+	var $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select', 'taxonomy_multi_select' );
 
 	// Object types whose columns are generated through apply_filters instead of do_action
 	var $_column_filter_object_types = array( 'user' );
@@ -1167,6 +1167,20 @@ class custom_metadata_manager {
 						echo esc_html( $term->name );
 						echo '</label>';
 					}
+					break;
+				case 'taxonomy_multi_select' :
+					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					if ( empty( $terms ) ) {
+						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						break;
+					}
+					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
+					$select2 .= ( $field->placeholder ) ? ' data-placeholder="'. $field->placeholder . '" ' : ' ';
+					printf( '<select name="%s" id="%s"%smultiple>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 );
+					foreach ( $terms as $term ) {
+						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( in_array( $term->slug, $value ), true, false ), esc_html( $term->name ) );
+					}
+					echo '</select>';
 					break;
 			endswitch;
 
