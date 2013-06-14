@@ -168,3 +168,28 @@
 #wpbody-content {
 	overflow: visible !important; /* otherwise the chosen selector gets cut off at the bottom */
 }
+
+/* sortable fields */
+.x-sortable .cloneable {
+  position: relative;
+  padding-left: 20px;
+}
+.x-sortable .cloneable .drag-handle {
+  background-image: url(images/ui-icons_222222_256x240.png);
+  background-position: -128px -48px;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 0;
+  top: 6px;
+  cursor: move;
+  opacity: 0.5;
+}
+.x-sortable .cloneable .drag-handle:hover {
+  opacity: 1;
+}
+
+.x-sortable .delete {
+  color: #f00;
+  border-bottom-color: #f00;
+}
