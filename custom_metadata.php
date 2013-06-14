@@ -897,6 +897,7 @@ class custom_metadata_manager {
 		} elseif ( $field->field_type == 'multifield' ) {
 			
 				delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
+				
 				foreach ( $value as $v ) {
 					if ( array_filter( $v ) ) {
 						add_metadata( $object_type, $object_id, $field_slug, $v, false );
