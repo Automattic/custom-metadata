@@ -894,15 +894,21 @@ class custom_metadata_manager {
 				update_metadata( $object_type, $object_id, $field_slug, $value );
 			}
 			
-		} elseif ( $field->field_type == 'multifield' ) {
+		} elseif ( $field->field_type == 'multifield' && $field->multiple == true ) {
 			
-				delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
-				
-				foreach ( $value as $v ) {
-					if ( array_filter( $v ) ) {
-						add_metadata( $object_type, $object_id, $field_slug, $v, false );
-					}
+			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
+			
+			foreach ( $value as $v ) {
+				if ( array_filter( $v ) ) {
+					add_metadata( $object_type, $object_id, $field_slug, $v, false );
 				}
+			}
+		} elseif ( $field->field_type == 'multifield' && $field->multiple !== true ) {
+
+			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
+			
+			add_metadata( $object_type, $object_id, $field_slug, $value, false );
+
 		}
 
 		// delete metadata entries if empty
