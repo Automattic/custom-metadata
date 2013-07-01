@@ -77,7 +77,6 @@ function x_init_custom_fields() {
 			'label' => 'Group with Multiple Fields'
 		) );
 
-	/*
 	// adds another group to the test post type + posts + users
 	x_add_metadata_group( 'x_metaBox2', array( 'x_test', 'post', 'user' ), array(
 			'label' => 'Group for Post and User',
@@ -366,7 +365,6 @@ function x_init_custom_fields() {
 			'label' => 'Timepicker field with placeholder',
 			'placeholder' => 'some placeholder text',
 		) );
-	*/
 
 	// adds a mulitifield
 	x_add_metadata_multifield( 'x_test_multifield', 'x_test', array(
