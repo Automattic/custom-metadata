@@ -65,6 +65,10 @@ class custom_metadata_manager {
 	// field types that are read only by default
 	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
+	// field types that support being part of a multifield group
+	// @todo: workarounds needed for other field types
+	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel' );
+
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox' );
 
@@ -267,6 +271,7 @@ class custom_metadata_manager {
 
 		$defaults = array(
 			'group' => '', // To which meta_box the field should be added
+			'multifield' => false, // which multifield does this field belong to, if any
 			'field_type' => 'text', // The type of field; possibly values: text, checkbox, radio, select, image
 			'label' => $field_slug, // Label for the field
 			'description' => '', // Description of the field, displayed below the input
@@ -317,8 +322,45 @@ class custom_metadata_manager {
 		if ( ! $this->_validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) )
 			return;
 
+//		$object_types = (array) $object_type;
+//		if ( $field->multifield && $this->_multifield_exists_for_group_object( $field->multifield, $group_slug, array_shift( $object_types ) ) ) {
+//			$this->add_field_to_multifield( $field_slug, $field, $group_slug, $object_types );
+//		} else {
+			// add to group
+			$this->add_field_to_group( $field_slug, $field, $group_slug, $object_types );
+//		}
+
+	}
+
+	function add_multifield( $slug, $object_types = array( 'post' ), $args = array() ) {
+
+		$defaults = array(
+			'group' => '', // To which meta_box the multifield should be added
+			'label' => $slug, // Label for the multifield
+			'description' => '', // Description of the multifield, displayed below all the fields
+			'required_cap' => false, // the cap required to view and edit the multifield
+		);
+
+		// Merge defaults with args
+		$multifield = wp_parse_args( $args, $defaults );
+		$multifield['multifield'] = true; // force it
+		$multifield = (object) $multifield;
+
+		// Sanitize slug
+		$slug = sanitize_key( $slug );
+		$group_slug = sanitize_key( $multifield->group );
+
+		// Check to see if the user should see this field
+		if ( ! empty( $multifield->required_cap ) && ! current_user_can( $multifield->required_cap ) )
+			return;
+
+		$multifield = apply_filters( 'custom_metadata_manager_add_multifield', $multifield, $slug, $group_slug, $object_types );
+
+		if ( ! $this->_validate_metadata_field( $slug, $multifield, $group_slug, $object_types ) )
+			return;
+
 		// Add to group
-		$this->add_field_to_group( $field_slug, $field, $group_slug, $object_types );
+		$this->add_multifield_to_group( $slug, $multifield, $group_slug, $object_types );
 
 	}
 
@@ -368,6 +410,24 @@ class custom_metadata_manager {
 			}
 
 			$this->_push_field( $field_slug, $field, $group_slug, $object_type );
+		}
+	}
+
+	function add_multifield_to_group( $slug, $multifield, $group_slug, $object_types ) {
+		$object_types = (array) $object_types;
+
+		foreach ( $object_types as $object_type ) {
+			if ( ! $group_slug ) {
+				$group_slug = sprintf( 'single-group-%1$s-%2$s', $object_type, $slug );
+			}
+
+			// If group doesn't exist, create group
+			if ( ! $this->is_registered_group( $group_slug, $object_type ) ) {
+				$this->add_metadata_group( $group_slug, $object_type, array( 'label' => ( ! empty( $multifield->label ) ) ? $multifield->label : $slug ) );
+				$multifield->group = $group_slug;
+			}
+
+			$this->_push_multifield( $slug, $multifield, $group_slug, $object_type );
 		}
 	}
 
@@ -527,7 +587,12 @@ class custom_metadata_manager {
 
 		foreach ( $fields as $field_slug => $field ) {
 			if ( $this->is_thing_added_to_object( $field_slug, $field, $object_type, $object_id ) ) {
-				$this->_display_metadata_field( $field_slug, $field, $object_type, $object_id );
+
+				if ( $this->_is_multifield( $field_slug ) ) {
+					$this->_display_metadata_multifield( $field_slug, $field, $object_type, $object_id );
+				} elseif ( empty( $field->multifield ) ) {
+					$this->_display_metadata_field( $field_slug, $field, $object_type, $object_id );
+				}
 			}
 		}
 
@@ -617,6 +682,10 @@ class custom_metadata_manager {
 		}
 	}
 
+	function get_metadata_mulitifield_value( $slug, $multifield, $object_type, $object_id ) {
+		return $this->_get_field_value( $slug, $multifield, $object_type, $object_id );
+	}
+
 	function get_metadata_field_value( $field_slug, $field, $object_type, $object_id ) {
 		return $this->_get_field_value( $field_slug, $field, $object_type, $object_id );
 	}
@@ -662,7 +731,8 @@ class custom_metadata_manager {
 	function get_group( $group_slug, $object_type ) {
 		if ( $this->is_registered_group( $group_slug, $object_type ) ) {
 			$groups = $this->get_groups_in_object_type( $object_type );
-			return $groups[$group_slug];
+			$group = $groups[$group_slug];
+			return $group;
 		}
 		return null;
 	}
@@ -677,7 +747,7 @@ class custom_metadata_manager {
 		return array();
 	}
 
-	function get_single_field_in_group( $field_slug, $group_slug, $object_slug ) {
+	function get_single_field_in_group( $field_slug, $group_slug, $object_type ) {
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 		return isset( $fields[$field_slug] ) ? $fields[$field_slug] : null;
 	}
@@ -686,6 +756,24 @@ class custom_metadata_manager {
 		$group = $this->get_group( $group_slug, $object_type );
 		if ( $group ) return (array) $group->fields;
 		return array();
+	}
+
+	function get_fields_in_multifield( $group_slug, $multifield_slug, $object_type ) {
+		$group = $this->get_group( $group_slug, $object_type );
+		$fields_in_multifield = array();
+		if ( empty( $group ) || empty( $group->fields ) || empty( $group->fields[$multifield_slug] ) )
+			return $fields_in_multifield;
+
+		$_multifields = wp_list_pluck( $group->fields, 'multifield' );
+		foreach ( $_multifields as $_field_key => $_multifield ) {
+			if ( empty( $_multifield ) || true === $_multifield )
+				continue;
+
+			if ( $multifield_slug == $_multifield || $multifield_slug == '_x_multifield_' . $_multifield )
+				$fields_in_multifield[$_field_key] = $group->fields[$_field_key];
+		}
+
+		return $fields_in_multifield;
 	}
 
 	function get_single_field_in_object_type( $field_slug, $object_type ) {
@@ -707,6 +795,24 @@ class custom_metadata_manager {
 
 	function _push_field( $field_slug, $field, $group_slug, $object_type ) {
 		$this->metadata[$object_type][$group_slug]->fields[$field_slug] = $field;
+	}
+
+	function _push_multifield( $slug, $multifield, $group_slug, $object_type ) {
+		$this->metadata[$object_type][$group_slug]->fields['_x_multifield_' . $slug] = $multifield;
+	}
+
+	function _multifield_exists_for_group_object( $slug, $group_slug, $object_type ) {
+		$slug = '_x_multifield_' . $slug;
+		return (
+			! empty( $this->metadata[$object_type] ) &&
+			! empty( $this->metadata[$object_type][$group_slug] ) &&
+			! empty( $this->metadata[$object_type][$group_slug]->fields ) &&
+			array_key_exists( $slug, $this->metadata[$object_type][$group_slug]->fields )
+		);
+	}
+
+	function _is_multifield( $slug ) {
+		return ( 0 === strpos( $slug, '_x_multifield' ) );
 	}
 
 	function is_thing_added_to_object( $thing_slug, $thing, $object_type, $object_id, $object_slug = '' ) {
@@ -934,9 +1040,62 @@ class custom_metadata_manager {
 		return $value;
 	}
 
-	function _display_metadata_field( $field_slug, $field, $object_type, $object_id ) {
+	function _display_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
+		echo '<div class="custom-metadata-multifield" id="' . esc_attr( 'custom-metadata-multifield-' . str_replace( '_', '-', str_replace( '_x_multifield_', '', $slug ) ) ) . '">';
 
-		$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
+		if ( ! empty( $multifield->label ) ) {
+			printf( '<h2>%s</h2>', esc_html( $multifield->label ) );
+		}
+
+		if ( ! empty( $multifield->description ) ) {
+			printf( '<p class="description">%s</p>', esc_html( $multifield->description ) );
+		}
+
+		$fields = $this->get_fields_in_multifield( $multifield->group, $slug, $object_type );
+
+		// validate/weed out the fields that can't be part of mulitified
+		foreach ( $fields as $field_slug => $field ) {
+			if ( ! in_array( $field->field_type, $this->_field_types_that_support_multifield ) ) {
+				unset( $fields[$field_slug] );
+			}
+		}
+
+		$_values = $this->get_metadata_mulitifield_value( $slug, $multifield, $object_type, $object_id );
+		$_values = ( ! empty( $_values ) ) ? $_values : array( array() );
+		$grouping_count = 0;
+
+		foreach ( $_values as $grouping_of_values ) {
+			$grouping_count++;
+			$grouping_id = $slug . '-' . $grouping_count;
+			printf( '<div id="%s" class="custom-metadata-multifield-grouping">', esc_attr( $grouping_id ) );
+				foreach ( $fields as $field_slug => $field ) {
+					$value = ( isset( $grouping_of_values[$field_slug] ) ) ? $grouping_of_values[$field_slug] : false;
+					$field_id = $slug . '[' . ( $grouping_count - 1 ) . ']' . '[' . $field_slug . ']';
+					$display_field_slug = $field_slug . '-' . $grouping_count;
+					$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
+				}
+			echo '<div class="clear"></div>';
+			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', __( 'duplicate this set of fields' ) );
+
+			if ( $grouping_count > 1 ) {
+				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', __( 'remove this set of fields' ) );
+			}
+
+			echo '</div>';
+		}
+
+		echo '</div>';
+
+	}
+
+	function _display_metadata_field( $field_slug, $field, $object_type, $object_id, $field_id = null, $value = null ) {
+
+		// this is a safety to prevent multifields from being displayed as a field
+		if ( true === $field->multifield )
+			return;
+
+		if ( null === $value )
+			$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 
 		if ( isset( $field->display_callback ) && function_exists( $field->display_callback ) ) {
 			call_user_func( $field->display_callback, $field_slug, $field, $object_type, $object_id, $value );
@@ -952,7 +1111,10 @@ class custom_metadata_manager {
 			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata-manager' ) );
 		}
 
-		$field_id = ( ! empty( $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) ? $field_slug . '[]' : $field_slug;
+		if ( empty( $field_id ) ) {
+			$field_id = ( ! empty( $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) ? $field_slug . '[]' : $field_slug;
+		}
+
 		$cloneable = ( ! empty( $field->multiple ) ) ? true : false;
 		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly"' : '';
 		$placeholder_str = ( in_array( $field->field_type, $this->_field_types_that_support_placeholder ) && ! empty( $field->placeholder ) ) ? ' placeholder="' . esc_attr( $field->placeholder ) . '"' : '';
@@ -1159,6 +1321,10 @@ $custom_metadata_manager = custom_metadata_manager::instance();
 
 function x_add_metadata_field( $slug, $object_types = 'post', $args = array() ) {
 	custom_metadata_manager::instance()->add_metadata_field( $slug, $object_types, $args );
+}
+
+function x_add_metadata_multifield( $slug, $object_types = 'post', $args = array() ) {
+	custom_metadata_manager::instance()->add_multifield( $slug, $object_types, $args );
 }
 
 function x_add_metadata_group( $slug, $object_types, $args = array() ) {

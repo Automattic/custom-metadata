@@ -77,6 +77,7 @@ function x_init_custom_fields() {
 			'label' => 'Group with Multiple Fields'
 		) );
 
+	/*
 	// adds another group to the test post type + posts + users
 	x_add_metadata_group( 'x_metaBox2', array( 'x_test', 'post', 'user' ), array(
 			'label' => 'Group for Post and User',
@@ -365,6 +366,52 @@ function x_init_custom_fields() {
 			'label' => 'Timepicker field with placeholder',
 			'placeholder' => 'some placeholder text',
 		) );
+	*/
+
+	// adds a mulitifield
+	x_add_metadata_multifield( 'x_test_multifield', 'x_test', array(
+			'group' => 'x_metabox1',
+			'label' => 'Multifield test',
+			'description' => 'This is a great multifield',
+		) );
+
+	// adds a text field to the multifield
+	x_add_metadata_field( 'multifield_field_1', 'x_test', array(
+		'group' => 'x_metabox1', // the group name
+		'multifield' => 'x_test_multifield',
+		'description' => 'This is field #1 of the multifield.',
+		'label' => 'Text Field', // field label
+		'field_type' => 'text',
+	) );
+
+	// adds an upload text field to the multifield
+	x_add_metadata_field( 'multifield_field_2', 'x_test', array(
+		'group' => 'x_metabox1', // the group name
+		'multifield' => 'x_test_multifield',
+		'description' => 'This is field #2 of the multifield.',
+		'label' => 'Upload Field', // field label
+		'field_type' => 'upload',
+	) );
+
+
+	// adds an upload text field to the multifield
+	x_add_metadata_field( 'multifield_field_3', 'x_test', array(
+		'group' => 'x_metabox1', // the group name
+		'multifield' => 'x_test_multifield',
+		'description' => 'This is field #4 of the multifield.',
+		'label' => 'Telephone Field', // field label
+		'field_type' => 'tel',
+	) );
+
+	// adds a text field to the multifield
+	x_add_metadata_field( 'multifield_field_4', 'x_test', array(
+		'group' => 'x_metabox1', // the group name
+		'multifield' => 'x_test_multifield',
+		'description' => 'This is field #4 of the multifield.',
+		'label' => 'Password Field', // field label
+		'field_type' => 'password',
+	) );
+
 
 	// adds a field to posts and users
 	x_add_metadata_field( 'x_fieldName2', array( 'post', 'user' ), array(
