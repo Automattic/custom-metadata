@@ -74,7 +74,7 @@
 		});
 
 		// deleting multifields
-		$custom_metadata_multifield.on( 'click.custom_metadata', '.del-custom-metadata-multifield-delete', function(e){
+		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-delete', function(e){
 			e.preventDefault();
 			var $this = $( this );
 			$this.parent().fadeOut('normal', function(){
