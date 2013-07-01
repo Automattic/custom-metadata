@@ -661,7 +661,46 @@ class custom_metadata_manager {
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 
 		foreach ( $fields as $field_slug => $field ) {
-			$this->save_metadata_field( $field_slug, $field, $object_type, $object_id );
+			if ( true === $field->multifield ) {
+				$this->save_metadata_multifield( $field_slug, $field, $object_type, $object_id );
+			} elseif ( ! $field->multifield ) {
+				$this->save_metadata_field( $field_slug, $field, $object_type, $object_id );
+			}
+		}
+
+	}
+
+	function save_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
+
+		if ( isset( $_POST[$slug] ) ) {
+			$multifield_value = array();
+			$groupings = $_POST[$slug];
+			$fields = $this->get_fields_in_multifield( $multifield->group, $slug, $object_type );
+			foreach ( $groupings as $grouping ) {
+				$grouping_values = array();
+				foreach ( $fields as $field_slug => $field ) {
+					if ( ! empty( $grouping[$field_slug] ) ) {
+						$grouping_values[$field_slug] = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $grouping[$field_slug] );
+					} else {
+						$grouping_values[$field_slug] = '';
+					}
+				}
+				$multifield_value[] = $grouping_values;
+			}
+
+			$slug = sanitize_key( $slug );
+
+			if ( ! in_array( $object_type, $this->_non_post_types ) )
+				$object_type = 'post';
+
+			update_metadata( $object_type, $object_id, $slug, $multifield_value );
+		} else {
+			$slug = sanitize_key( $slug );
+
+			if ( ! in_array( $object_type, $this->_non_post_types ) )
+				$object_type = 'post';
+
+			delete_metadata( $object_type, $object_id, $slug );
 		}
 	}
 
@@ -669,6 +708,7 @@ class custom_metadata_manager {
 		if ( isset( $_POST[$field_slug] ) ) {
 			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[$field_slug] );
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
+
 
 			// save the attachment ID of the upload field as well
 			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
@@ -683,7 +723,7 @@ class custom_metadata_manager {
 	}
 
 	function get_metadata_mulitifield_value( $slug, $multifield, $object_type, $object_id ) {
-		return $this->_get_field_value( $slug, $multifield, $object_type, $object_id );
+		return $this->_get_field_value( $slug, $multifield, $object_type, $object_id, true );
 	}
 
 	function get_metadata_field_value( $field_slug, $field, $object_type, $object_id ) {
@@ -953,7 +993,7 @@ class custom_metadata_manager {
 		return apply_filters( 'custom_metadata_manager_get_display_column_callback', $callback, $field, $object_type );
 	}
 
-	function _get_field_value( $field_slug, $field, $object_type, $object_id ) {
+	function _get_field_value( $field_slug, $field, $object_type, $object_id, $single = false ) {
 
 		$get_value_callback = $this->_get_value_callback( $field, $object_type );
 		echo $get_value_callback;
@@ -963,7 +1003,7 @@ class custom_metadata_manager {
 		if ( !in_array( $object_type, $this->_non_post_types ) )
 			$object_type = 'post';
 
-		$value = get_metadata( $object_type, $object_id, $field_slug, false );
+		$value = get_metadata( $object_type, $object_id, $field_slug, $single );
 
 		return $value;
 	}
