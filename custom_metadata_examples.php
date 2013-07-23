@@ -239,6 +239,14 @@ function x_init_custom_fields() {
 			'label' => 'Category checkbox field',
 		) );
 
+	// adds a taxonomy multi_select field in the first group
+	x_add_metadata_field( 'x_field_taxonomy_multi_select', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'taxonomy_multi_select',
+			'taxonomy' => 'category',
+			'label' => 'Category multiselect field',
+		) );
+
 	// adds a number field in the first group (with no min/max)
 	x_add_metadata_field( 'x_field_number', 'x_test', array(
 			'group' => 'x_metaBox1',
