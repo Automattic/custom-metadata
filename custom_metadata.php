@@ -1137,8 +1137,10 @@ class custom_metadata_manager {
 		if ( null === $value )
 			$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 
-		if ( isset( $field->display_callback ) && function_exists( $field->display_callback ) ) {
-			call_user_func( $field->display_callback, $field_slug, $field, $object_type, $object_id, $value );
+		$callback = $field->display_callback;
+
+		if ( $callback && is_callable( $callback ) ) {
+			call_user_func( $callback, $field_slug, $field, $object_type, $object_id, $value );
 			return;
 		}
 
