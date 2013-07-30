@@ -276,6 +276,7 @@ class custom_metadata_manager {
 			'multifield' => false, // which multifield does this field belong to, if any
 			'field_type' => 'text', // The type of field; possibly values: text, checkbox, radio, select, image
 			'label' => $field_slug, // Label for the field
+			'slug' => $field_slug, // Slug for the field
 			'description' => '', // Description of the field, displayed below the input
 			'values' => array(), // values for select, checkbox, radio buttons
 			'default_value' => '', // default value
@@ -1083,7 +1084,7 @@ class custom_metadata_manager {
 	}
 
 	function _display_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
-		echo '<div class="custom-metadata-multifield" id="' . esc_attr( 'custom-metadata-multifield-' . str_replace( '_', '-', str_replace( '_x_multifield_', '', $slug ) ) ) . '">';
+		echo '<div class="custom-metadata-multifield" data-slug="' . esc_attr($slug) . '" id="' . esc_attr( 'custom-metadata-multifield-' . str_replace( '_', '-', str_replace( '_x_multifield_', '', $slug ) ) ) . '">';
 
 		if ( ! empty( $multifield->label ) ) {
 			printf( '<h2>%s</h2>', esc_html( $multifield->label ) );
@@ -1146,7 +1147,7 @@ class custom_metadata_manager {
 			return;
 		}
 
-		echo '<div class="custom-metadata-field ' . sanitize_html_class( $field->field_type ) .'">';
+		echo '<div class="custom-metadata-field ' . sanitize_html_class( $field->field_type ) .'" data-slug="' . esc_attr($field->slug) . '">';
 		if ( ! in_array( $object_type, $this->_non_post_types ) )
 			global $post;
 
