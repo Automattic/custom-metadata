@@ -67,7 +67,7 @@ class custom_metadata_manager {
 
 	// field types that support being part of a multifield group
 	// @todo: workarounds needed for other field types
-	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel' );
+	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
 
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
@@ -117,6 +117,8 @@ class custom_metadata_manager {
 		$this->_cloneable_field_types = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_cloneable_field_types );
 		$this->_field_types_that_support_default_value = apply_filters( 'custom_metadata_manager_field_types_that_support_default_value', $this->_field_types_that_support_default_value );
 		$this->_field_types_that_support_placeholder = apply_filters( 'custom_metadata_manager_field_types_that_support_placeholder', $this->_field_types_that_support_placeholder );
+		$this->_field_types_that_are_read_only = apply_filters( 'custom_metadata_manager_field_types_that_are_read_only', $this->_field_types_that_are_read_only );
+		$this->_field_types_that_support_multifield = apply_filters( 'custom_metadata_manager_field_types_that_support_multifield', $this->_field_types_that_support_multifield );
 		$this->_taxonomy_fields = apply_filters( 'custom_metadata_manager_cloneable_field_types', $this->_taxonomy_fields );
 		$this->_column_filter_object_types = apply_filters( 'custom_metadata_manager_column_filter_object_types', $this->_column_filter_object_types );
 		$this->_pages_whitelist = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
