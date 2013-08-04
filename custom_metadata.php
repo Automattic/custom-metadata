@@ -67,7 +67,7 @@ class custom_metadata_manager {
 
 	// field types that support being part of a multifield group
 	// @todo: workarounds needed for other field types
-	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel' );
+	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
 
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
@@ -1137,8 +1137,10 @@ class custom_metadata_manager {
 		if ( null === $value )
 			$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 
-		if ( isset( $field->display_callback ) && function_exists( $field->display_callback ) ) {
-			call_user_func( $field->display_callback, $field_slug, $field, $object_type, $object_id, $value );
+		$callback = $field->display_callback;
+
+		if ( $callback && is_callable( $callback ) ) {
+			call_user_func( $callback, $field_slug, $field, $object_type, $object_id, $value );
 			return;
 		}
 
