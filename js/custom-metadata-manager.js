@@ -39,7 +39,7 @@
 			e.preventDefault();
 			var $this = $( this ),
 				$parent = $this.parent().parent(),
-				$slug = $parent.attr('data-slug'),
+				$slug = $parent.attr( 'data-slug' ),
 				$last = $this.parent(),
 				$clone = $last.clone();
 
@@ -52,33 +52,31 @@
 
 				var $grouping = $( grouping ),
 					$fields = $grouping.find('.custom-metadata-field'),
-					$inputs = $grouping.find( ':input:not(:button)' ),
-					$i = i+1;
+					num = i + 1;
 
-				$grouping.attr('id', $slug + '-' + $i);
+				$grouping.attr( 'id', $slug + '-' + num );
 
 				$.each( $fields, function( j, field ){
 					var $field = $( field ),
-						$field_slug = $field.attr('data-slug'),
-						$label = $field.find('label'),
-						$div = $field.find('div'),
+						$field_slug = $field.attr( 'data-slug' ),
+						$label = $field.find( 'label' ),
+						$div = $field.find( 'div' ),
 						$field_inputs = $field.find( ':input:not(:button)' ),
-						$field_id = $field_slug + '-' + $i;
+						$field_id = $field_slug + '-' + num;
 
-
-					$label.attr('for', $field_id);
-					$div.attr('id', $field_id + '-1').attr('class', $field_id);
+					$label.attr( 'for', $field_id );
+					$div.attr( 'id', $field_id + '-1' ).attr( 'class', $field_id );
 
 					$.each( $field_inputs, function( k, field_input ){
 						
 						var $field_input = $( field_input );
 						
 						if ( ! _.isEmpty( $field_input.attr( 'id' ) ) ) {
-							$field_input.attr('id', $field_id);
+							$field_input.attr( 'id', $field_id );
 						}
 
 						if ( ! _.isEmpty( $field_input.attr( 'name' ) ) ) {
-							$field_input.attr('name', $slug + '[' + i + '][' + $field_slug + ']');
+							$field_input.attr( 'name', $slug + '[' + i + '][' + $field_slug + ']');
 						}
 					});
 
