@@ -105,12 +105,6 @@
 			var $this = $(this),
 			$this_field = $this.parent();
 
-			// if the media frame already exists, reopen it.
-			if ( custom_metadata_file_frame ) {
-				custom_metadata_file_frame.open();
-				return;
-			}
-
 			custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
 				title: $this.data( 'uploader-title' ),
 				button: {
