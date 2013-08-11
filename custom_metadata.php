@@ -1143,7 +1143,7 @@ class custom_metadata_manager {
 		$callback = $field->display_callback;
 
 		if ( $callback && is_callable( $callback ) ) {
-			call_user_func( $callback, $field_slug, $field, $object_type, $object_id, $value );
+			call_user_func( $callback, $field_slug, $field, $object_type, $object_id, $field_id, $value );
 			return;
 		}
 
