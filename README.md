@@ -41,8 +41,9 @@ There are usage instructions below
 
 ## 0.8 (currently under development)
 
+* added ability to group several fields as a `multifield`; see `x_add_metadata_multifield()`, props @greatislander, @rinatkhaziev and @PhilippSchreiber for their contributions there
 * allow field types that save as multiples but don't display as cloneable or multiples
-* added the `taxonomy_checkbox` field
+* added the `taxonomy_checkbox` and `taxonomy_multi_select` field types, props @greatislander
 * made use of the `selected()` and `checked()` functions in WordPress instead of clumsy if statements
 * limit or exclude groups and fields using a custom callback
 * adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals

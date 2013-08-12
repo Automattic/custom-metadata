@@ -38,39 +38,54 @@
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
 			e.preventDefault();
 			var $this = $( this ),
+				$parent = $this.parent().parent(),
+				$slug = $parent.attr( 'data-slug' ),
 				$last = $this.parent(),
-				$clone = $last.clone(),
-				id_name = $clone.attr('id'),
-				split_id = id_name.split( '-' ),
-				initial_num = split_id[1],
-				instance_num = parseInt( initial_num ) + 1,
-				$fields = $clone.find( '.custom-metadata-field' ),
+				$clone = $last.clone();
 
-			id_name = split_id[0] + '-' + instance_num;
-			$clone.attr( 'id', id_name );
+			$clone.find( ':input:not(:button)' ).val('');
+			$clone.insertAfter( $last ).hide();
 
-			$.each( $fields, function( i, field ){
-				var $field = $( field ),
-					$label = $field.find( 'label' ),
-					$div = $field.find( 'div' ),
-					$inputs = $field.find( ':input:not(:button)' );
+			$groupings = $parent.find('.custom-metadata-multifield-grouping');
 
-				$label.attr( 'for', incrementor( $label.attr( 'for' ) ) );
-				$div.attr( 'id', incrementor( $div.attr( 'id' ) ) );
+			$.each( $groupings, function( i, grouping ){
 
-				$.each( $inputs, function( i, input ){
-					var $input = $( input );
-					if ( ! _.isEmpty( $input.attr( 'id' ) ) )
-						$input.attr( 'id', incrementor( $input.attr( 'id' ) ) );
+				var $grouping = $( grouping ),
+					$fields = $grouping.find('.custom-metadata-field'),
+					num = i + 1;
 
-					if ( ! _.isEmpty( $input.attr( 'name' ) ) )
-						$input.attr( 'name', $input.attr( 'name' ).replace( '[' + ( initial_num - 1 ) + ']', '[' + initial_num + ']' ) );
+				$grouping.attr( 'id', $slug + '-' + num );
+
+				$.each( $fields, function( j, field ){
+					var $field = $( field ),
+						$field_slug = $field.attr( 'data-slug' ),
+						$label = $field.find( 'label' ),
+						$div = $field.find( 'div' ),
+						$field_inputs = $field.find( ':input:not(:button)' ),
+						$field_id = $field_slug + '-' + num;
+
+					$label.attr( 'for', $field_id );
+					$div.attr( 'id', $field_id + '-1' ).attr( 'class', $field_id );
+
+					$.each( $field_inputs, function( k, field_input ){
+						
+						var $field_input = $( field_input );
+						
+						if ( ! _.isEmpty( $field_input.attr( 'id' ) ) ) {
+							$field_input.attr( 'id', $field_id );
+						}
+
+						if ( ! _.isEmpty( $field_input.attr( 'name' ) ) ) {
+							$field_input.attr( 'name', $slug + '[' + i + '][' + $field_slug + ']');
+						}
+					});
+
 				});
 
-				$inputs.val( '' ); // todo: figure out how to set back to default value ?
 			});
 
-			$clone.insertAfter( $last ).hide().fadeIn();
+			$clone.fadeIn();
+
 		});
 
 		// deleting multifields
