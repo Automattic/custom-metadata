@@ -98,35 +98,23 @@
 		});
 
 		// init upload fields
-		var custom_metadata_file_frame;
 		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
-			e.preventDefault();
+      e.preventDefault();
+      var old_send_to_editor = wp.media.editor.send.attachment = wp.media({
+        title: 'Upload file',
+        multiple: true
+      });
+        var input = this;
+        wp.media.editor.send.attachment = function( props, attachment ) {
+          $(input).parent().find('.custom-metadata-upload-id').val( attachment.id );
+          $(input).parent().find('.custom-metadata-upload-url').val( attachment.url );
+          
+          wp.media.editor.send.attachment = old_send_to_editor;
+        }
+        wp.media.editor.open( input );
 
-			var $this = $(this),
-			$this_field = $this.parent();
-
-			// if the media frame already exists, reopen it.
-			if ( custom_metadata_file_frame ) {
-				custom_metadata_file_frame.open();
-				return;
-			}
-
-			custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
-				title: $this.data( 'uploader-title' ),
-				button: {
-					text: $this.data( 'uploader-button-text' )
-				},
-				multiple: false
-			});
-
-			custom_metadata_file_frame.on( 'select', function() {
-				attachment = custom_metadata_file_frame.state().get( 'selection' ).first().toJSON();
-				$this_field.find( '.custom-metadata-upload-url' ).val( attachment.url );
-				$this_field.find( '.custom-metadata-upload-id' ).val( attachment.id );
-			});
-
-			custom_metadata_file_frame.open();
-		});
+      
+    });
 
 		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-clear-button', function(e){
 			e.preventDefault();
