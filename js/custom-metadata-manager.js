@@ -193,7 +193,7 @@
 
 		// select2
 		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
-			$(this).select2({ placeholder : $(this).attr('data-placeholder') });
+			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
 		});
 
 	});

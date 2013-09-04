@@ -1271,6 +1271,7 @@ class custom_metadata_manager {
 					$select2 = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
 					$select2 .= ( $field->placeholder ) ? ' data-placeholder="'. esc_attr( $field->placeholder ) . '" ' : ' ';
 					printf( '<select name="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 );
+						echo '<option value=""></option>';
 					foreach ( $terms as $term ) {
 						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( $v, $term->slug, false ), esc_html( $term->name ) );
 					}
