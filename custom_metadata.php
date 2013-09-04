@@ -159,6 +159,11 @@ class custom_metadata_manager {
 
 		// Handle actions related to users
 		if ( $object_type == 'user' ) {
+			global $user_id;
+			
+			if ( empty( $user_id ) )
+				$user_id = get_current_user_id();
+				
 			// Editing another user's profile
 			add_action( 'edit_user_profile', array( $this, 'add_user_metadata_groups' ) );
 			add_action( 'edit_user_profile_update', array( $this, 'save_user_metadata' ) );

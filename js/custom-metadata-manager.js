@@ -103,21 +103,21 @@
 			e.preventDefault();
 
 			var $this = $(this),
-			$this_field = $this.parent();
+				$this_field = $this.parent();
 
-			// if the media frame already exists, reopen it.
-			if ( custom_metadata_file_frame ) {
-				custom_metadata_file_frame.open();
-				return;
+			// if the media frame doesn't exist yet, create it
+			if ( ! custom_metadata_file_frame ) {
+				custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
+					title: $this.data( 'uploader-title' ),
+					button: {
+						text: $this.data( 'uploader-button-text' )
+					},
+					multiple: false
+				});
 			}
 
-			custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
-				title: $this.data( 'uploader-title' ),
-				button: {
-					text: $this.data( 'uploader-button-text' )
-				},
-				multiple: false
-			});
+			// unbind prior events first
+			custom_metadata_file_frame.off( 'select' );
 
 			custom_metadata_file_frame.on( 'select', function() {
 				attachment = custom_metadata_file_frame.state().get( 'selection' ).first().toJSON();
