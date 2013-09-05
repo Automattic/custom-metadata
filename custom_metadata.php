@@ -693,15 +693,21 @@ class custom_metadata_manager {
 						$grouping_values[$field_slug] = '';
 					}
 				}
-				$multifield_value[] = $grouping_values;
+				$filtered_grouping_values = array_filter( $grouping_values );
+				if ( !empty( $filtered_grouping_values ) )
+					$multifield_value[] = $grouping_values;
 			}
 
 			$slug = sanitize_key( $slug );
 
 			if ( ! in_array( $object_type, $this->_non_post_types ) )
 				$object_type = 'post';
-
-			update_metadata( $object_type, $object_id, $slug, $multifield_value );
+			
+			if ( !empty( $multifield_value ) ) {
+				update_metadata( $object_type, $object_id, $slug, $multifield_value );
+			} else {
+				delete_metadata( $object_type, $object_id, $slug );
+			}
 		} else {
 			$slug = sanitize_key( $slug );
 
