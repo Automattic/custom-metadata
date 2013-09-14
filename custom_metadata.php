@@ -1004,7 +1004,6 @@ class custom_metadata_manager {
 	function _get_field_value( $field_slug, $field, $object_type, $object_id, $single = false ) {
 
 		$get_value_callback = $this->_get_value_callback( $field, $object_type );
-		echo $get_value_callback;
 		if ( $get_value_callback )
 			return call_user_func( $get_value_callback, $object_type, $object_id, $field_slug );
 
@@ -1012,6 +1011,13 @@ class custom_metadata_manager {
 			$object_type = 'post';
 
 		$value = get_metadata( $object_type, $object_id, $field_slug, $single );
+
+		if ( is_array( $value ) && ( in_array( $field->field_type, $this->_always_multiple_fields ) || $field->multiple ) ) {
+			// Do nothing
+		} else {
+			// Pop out the last value
+			$value = array( 0 => array_pop( $value ) );
+		}
 
 		return $value;
 	}
@@ -1033,22 +1039,19 @@ class custom_metadata_manager {
 			wp_set_object_terms( $object_id, $value, $field->taxonomy );
 		}
 
-		if ( is_array( $value ) ) {
+		delete_metadata( $object_type, $object_id, $field_slug ); // Delete first
+
+		if ( is_array( $value ) && $field->multiple ) {
 			// multiple values
-			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
 			$value = array_reverse( $value );
 			foreach ( $value as $v ) {
 				add_metadata( $object_type, $object_id, $field_slug, $v, false );
 			}
-		} else {
+		} elseif ( ! empty( $value ) ) {
 			// single value
-			update_metadata( $object_type, $object_id, $field_slug, $value );
+			add_metadata( $object_type, $object_id, $field_slug, $value, true );
 		}
 
-		// delete metadata entries if empty
-		if ( empty( $value ) ) {
-			delete_metadata( $object_type, $object_id, $field_slug );
-		}
 	}
 
 	function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
@@ -1169,7 +1172,14 @@ class custom_metadata_manager {
 		$readonly_str = ( ! empty( $field->readonly ) ) ? ' readonly="readonly"' : '';
 		$placeholder_str = ( in_array( $field->field_type, $this->_field_types_that_support_placeholder ) && ! empty( $field->placeholder ) ) ? ' placeholder="' . esc_attr( $field->placeholder ) . '"' : '';
 
-		printf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
+		$label_str = sprintf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
+
+		// Define an array of field types that need the <label> AFTER the <input>
+		$label_after_field_types = array( 'checkbox' );
+
+		// Show the label now if the current field_type is not on the list
+		if ( ! in_array( $field->field_type, $label_after_field_types ) )
+			echo $label_str;
 
 		// check if there is a default value and set it if no value currently set
 		if ( empty( $value ) && in_array( $field->field_type, $this->_field_types_that_support_default_value ) && ! empty( $field->default_value ) )
@@ -1298,6 +1308,10 @@ class custom_metadata_manager {
 			$count++;
 
 			echo '</div>';
+
+			// Now show the <label> for any field_type that needs it to come after
+			if ( in_array( $field->field_type, $label_after_field_types ) )
+				echo $label_str;
 
 		endforeach;
 
