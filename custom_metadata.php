@@ -1004,7 +1004,6 @@ class custom_metadata_manager {
 	function _get_field_value( $field_slug, $field, $object_type, $object_id, $single = false ) {
 
 		$get_value_callback = $this->_get_value_callback( $field, $object_type );
-		echo $get_value_callback;
 		if ( $get_value_callback )
 			return call_user_func( $get_value_callback, $object_type, $object_id, $field_slug );
 
@@ -1012,6 +1011,13 @@ class custom_metadata_manager {
 			$object_type = 'post';
 
 		$value = get_metadata( $object_type, $object_id, $field_slug, $single );
+
+		if ( is_array( $value ) && ( in_array( $field->field_type, $this->_always_multiple_fields ) || $field->multiple ) ) {
+			// Do nothing
+		} else {
+			// Pop out the last value
+			$value = array( 0 => array_pop( $value ) );
+		}
 
 		return $value;
 	}
@@ -1033,22 +1039,19 @@ class custom_metadata_manager {
 			wp_set_object_terms( $object_id, $value, $field->taxonomy );
 		}
 
-		if ( is_array( $value ) ) {
+		delete_metadata( $object_type, $object_id, $field_slug ); // Delete first
+
+		if ( is_array( $value ) && $field->multiple ) {
 			// multiple values
-			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
 			$value = array_reverse( $value );
 			foreach ( $value as $v ) {
 				add_metadata( $object_type, $object_id, $field_slug, $v, false );
 			}
-		} else {
+		} elseif ( ! empty( $value ) ) {
 			// single value
-			update_metadata( $object_type, $object_id, $field_slug, $value );
+			add_metadata( $object_type, $object_id, $field_slug, $value, true );
 		}
 
-		// delete metadata entries if empty
-		if ( empty( $value ) ) {
-			delete_metadata( $object_type, $object_id, $field_slug );
-		}
 	}
 
 	function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
