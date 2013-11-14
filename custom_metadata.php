@@ -1034,7 +1034,6 @@ class custom_metadata_manager {
 		if ( is_array( $value ) ) {
 			// multiple values
 			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
-			$value = array_reverse( $value );
 			foreach ( $value as $v ) {
 				add_metadata( $object_type, $object_id, $field_slug, $v, false );
 			}
