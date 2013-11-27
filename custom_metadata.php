@@ -1320,13 +1320,15 @@ class custom_metadata_manager {
 					break;
 				case 'taxonomy_checkbox' :
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					$value_type = (isset($field->value_type) ? $field->value_type : 'slug');
+					$value_type = (isset($field->value_type) && ($field->value_type == 'slug' || $field->value_type == 'term_id') ? $field->value_type : 'slug');
 					if ( empty( $terms ) ) {
 						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
 						break;
 					}
 					foreach ( $terms as $term ) {
 						printf( ' <label for="%s" class="selectit">', esc_attr( $term->slug ) );
-						printf( '<input type="checkbox" name="%s" value="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $term->slug ), esc_attr( $term->slug ), checked( in_array( $term->slug, $value ), true, false ) );
+						printf( '<input type="checkbox" name="%s" value="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $term->{$value_type} ), esc_attr( $term->slug ), checked( in_array( $term->slug, $value ), true, false ) );
 						echo esc_html( $term->name );
 						echo '</label>';
 					}

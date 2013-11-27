@@ -236,6 +236,7 @@ function x_init_custom_fields() {
 			'group' => 'x_metaBox1',
 			'field_type' => 'taxonomy_checkbox',
 			'taxonomy' => 'category',
+			'value_type' => 'term_id', // set to either 'term_id' or 'slug' (defaults to 'slug' if not set)
 			'label' => 'Category checkbox field',
 		) );
 
