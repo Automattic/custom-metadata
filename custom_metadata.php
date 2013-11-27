@@ -1320,7 +1320,6 @@ class custom_metadata_manager {
 					break;
 				case 'taxonomy_checkbox' :
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
-					$value_type = (isset($field->value_type) ? $field->value_type : 'slug');
 					$value_type = (isset($field->value_type) && ($field->value_type == 'slug' || $field->value_type == 'term_id') ? $field->value_type : 'slug');
 					if ( empty( $terms ) ) {
 						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
