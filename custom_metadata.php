@@ -253,13 +253,15 @@ class custom_metadata_manager {
 	}
 
 	function add_user_metadata_column_content( $param, $name, $object_id ) {
-		return $this->add_metadata_column_content( $name, $object_id, $param );
+		return $this->add_metadata_column_content( $name, $object_id );
 	}
 
-	function add_metadata_column_content( $name, $object_id, $column_content = '' ) {
+	function add_metadata_column_content( $name, $object_id ) {
 
 		$object_type = $this->_get_object_type_context();
 		$field_slug = $name;
+
+		$column_content = '';
 
 		if ( $this->is_registered_object_type( $object_type ) && $this->is_registered_field( $field_slug, null, $object_type ) ) {
 			$field = $this->get_field( $field_slug, null, $object_type );
@@ -1002,7 +1004,6 @@ class custom_metadata_manager {
 	function _get_field_value( $field_slug, $field, $object_type, $object_id, $single = false ) {
 
 		$get_value_callback = $this->_get_value_callback( $field, $object_type );
-
 		if ( $get_value_callback )
 			return call_user_func( $get_value_callback, $object_type, $object_id, $field_slug );
 
