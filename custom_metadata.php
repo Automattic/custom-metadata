@@ -1121,10 +1121,10 @@ class custom_metadata_manager {
 					$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
 				}
 			echo '<div class="clear"></div>';
-			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', __( 'duplicate this set of fields' ) );
+			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#"></a>', __( 'duplicate this set of fields' ) );
 
 			if ( $grouping_count > 1 ) {
-				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', __( 'remove this set of fields' ) );
+				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#"></a>', __( 'remove this set of fields' ) );
 			}
 
 			echo '</div>';
