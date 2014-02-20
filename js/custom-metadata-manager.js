@@ -78,6 +78,16 @@
 			});
 		};
 
+		// Adds sortable functionality to multifields
+		$('.custom-metadata-multifield').sortable({
+		    items: '.custom-metadata-multifield-grouping',
+		    handle: '.sort-handle'
+		});
+
+		$('.custom-metadata-multifield').sortable().bind('sortupdate', function(e) {
+			multifield_after_change( $(this) );
+		});
+
 		// adding multifields
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-add', function(e){
 			e.preventDefault();

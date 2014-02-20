@@ -1119,6 +1119,7 @@ class custom_metadata_manager {
 			$grouping_count++;
 			$grouping_id = $slug . '-' . $grouping_count;
 			printf( '<div id="%s" class="custom-metadata-multifield-grouping">', esc_attr( $grouping_id ) );
+			echo '<div class="sort-handle"></div>';
 			echo '<div class="custom-metadata-multifield-fields">';
 				foreach ( $fields as $field_slug => $field ) {
 					$value = ( isset( $grouping_of_values[$field_slug] ) ) ? $grouping_of_values[$field_slug] : false;
