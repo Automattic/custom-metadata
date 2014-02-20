@@ -209,8 +209,9 @@
 .custom-metadata-multifield-grouping .custom-metadata-field {
 	float: left;
 	width: auto;
-	margin-left: 20px;
+	margin-right: 20px;
 }
+
 .custom-metadata-multifield-grouping .custom-metadata-field:first-child {
 	margin-left: 0;
 }
@@ -224,21 +225,23 @@
 .custom-metadata-multifield-grouping .sort-handle {
 	float: left;
 	width: 30px;
+	width: 5%;
+	margin-right: 1%;
 	height: 23px;
 	background: url(images/move-drag-icon.png) no-repeat;
 	background-size: 30px 23px;
 	margin-top: 31px;
-	margin-right: 10px;
 	cursor: move;
 }
 
 .custom-metadata-multifield-grouping .custom-metadata-multifield-fields {
 	float: left;
+	width: 84%;
 }
 
 .custom-metadata-multifield-grouping .custom-metadata-multifield-actions {
 	float: right;
-	width: 100px;
+	width: 10%;
 	padding-top: 30px;
 	text-align: right;
 }

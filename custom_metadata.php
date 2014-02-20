@@ -1132,7 +1132,7 @@ class custom_metadata_manager {
 			
 			printf( '<a title="%s" class="button custom-metadata-multifield-clone hide-if-no-js" href="#">%s</a>', __( 'duplicate this set of fields' ), __( 'Clone' ) );
 
-			printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">%s</a>', __( 'remove this set of fields' ), __( 'Delete' ) );
+			printf( '<br /><a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">%s</a>', __( 'remove this set of fields' ), __( 'Delete' ) );
 			
 			echo '</div>';
 			echo '<div class="clear"></div>';
