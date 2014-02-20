@@ -100,11 +100,11 @@
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
 			e.preventDefault();
 			var $this = $( this ),
-				$parent = $this.parents('.custom-metadata-multifield-grouping'),
+				$element_to_clone = $this.parents('.custom-metadata-multifield-grouping'),
 				$container = $this.parents('.custom-metadata-multifield'),
-				$clone = $parent.clone();
+				$clone = $element_to_clone.clone();
 
-			$clone.insertAfter( $parent ).hide();
+			$clone.insertAfter( $element_to_clone ).hide();
 
 			multifield_after_change( $container );
 
@@ -116,13 +116,17 @@
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-delete', function(e){
 			e.preventDefault();
 			var $this = $( this ),
-				$parent = $this.parents('.custom-metadata-multifield-grouping'),
+				$element_to_delete = $this.parents('.custom-metadata-multifield-grouping'),
 				$container = $this.parents('.custom-metadata-multifield');
 
-			$parent.fadeOut('normal', function(){
-				$(this).remove();
-				multifield_after_change( $container );
-			});
+			if( $container.find('.custom-metadata-multifield-grouping').length === 1 ) {
+				$element_to_delete.find( ':input:not(:button)' ).val('');
+			} else {
+				$element_to_delete.fadeOut('normal', function(){
+					$(this).remove();
+					multifield_after_change( $container );
+				});
+			}
 		});
 
 		// init upload fields
