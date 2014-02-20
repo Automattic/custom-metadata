@@ -34,19 +34,12 @@
 			});
 		});
 
-		// cloning multifields
-		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
-			e.preventDefault();
-			var $this = $( this ),
-				$parent = $this.parent().parent(),
-				$slug = $parent.attr( 'data-slug' ),
-				$last = $this.parent(),
-				$clone = $last.clone();
+		// reset field names, container ids, etc
+		var multifield_after_change = function( $container ) {
+			var $slug = $container.attr( 'data-slug' ),
+				$groupings = $container.find('.custom-metadata-multifield-grouping');
 
-			$clone.find( ':input:not(:button)' ).val('');
-			$clone.insertAfter( $last ).hide();
-
-			$groupings = $parent.find('.custom-metadata-multifield-grouping');
+			$groupings = $container.find('.custom-metadata-multifield-grouping');
 
 			$.each( $groupings, function( i, grouping ){
 
@@ -83,6 +76,37 @@
 				});
 
 			});
+		};
+
+		// adding multifields
+		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-add', function(e){
+			e.preventDefault();
+			var $this = $( this ),
+				$container = $this.parents('.custom-metadata-multifield'),
+				$elements = $container.find('.custom-metadata-multifield-grouping'),
+				$element_to_clone = $elements.first(),
+				$clone = $element_to_clone.clone();
+
+			$clone.find( ':input:not(:button)' ).val('');
+			$clone.insertAfter( $elements.last() ).hide();
+
+			multifield_after_change( $container );
+
+			$clone.fadeIn();
+
+		});
+
+		// cloning multifields
+		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
+			e.preventDefault();
+			var $this = $( this ),
+				$parent = $this.parents('.custom-metadata-multifield-grouping'),
+				$container = $this.parents('.custom-metadata-multifield'),
+				$clone = $parent.clone();
+
+			$clone.insertAfter( $parent ).hide();
+
+			multifield_after_change( $container );
 
 			$clone.fadeIn();
 
@@ -91,9 +115,13 @@
 		// deleting multifields
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-delete', function(e){
 			e.preventDefault();
-			var $this = $( this );
-			$this.parent().fadeOut('normal', function(){
+			var $this = $( this ),
+				$parent = $this.parents('.custom-metadata-multifield-grouping'),
+				$container = $this.parents('.custom-metadata-multifield');
+
+			$parent.fadeOut('normal', function(){
 				$(this).remove();
+				multifield_after_change( $container );
 			});
 		});
 
@@ -103,15 +131,21 @@
 			e.preventDefault();
 
 			var $this = $(this),
-			$this_field = $this.parent();
+				$this_field = $this.parent();
 
-			custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
-				title: $this.data( 'uploader-title' ),
-				button: {
-					text: $this.data( 'uploader-button-text' )
-				},
-				multiple: false
-			});
+			// if the media frame doesn't exist yet, create it
+			if ( ! custom_metadata_file_frame ) {
+				custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
+					title: $this.data( 'uploader-title' ),
+					button: {
+						text: $this.data( 'uploader-button-text' )
+					},
+					multiple: false
+				});
+			}
+
+			// unbind prior events first
+			custom_metadata_file_frame.off( 'select' );
 
 			custom_metadata_file_frame.on( 'select', function() {
 				attachment = custom_metadata_file_frame.state().get( 'selection' ).first().toJSON();
@@ -187,7 +221,7 @@
 
 		// select2
 		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
-			$(this).select2();
+			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
 		});
 
 	});

@@ -1086,13 +1086,21 @@ class custom_metadata_manager {
 	function _display_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
 		echo '<div class="custom-metadata-multifield" data-slug="' . esc_attr( $slug ) . '" id="' . esc_attr( 'custom-metadata-multifield-' . str_replace( '_', '-', str_replace( '_x_multifield_', '', $slug ) ) ) . '">';
 
+		echo '<div class="custom-metadata-multifield-label-wrapper">';
 		if ( ! empty( $multifield->label ) ) {
 			printf( '<h2>%s</h2>', esc_html( $multifield->label ) );
 		}
 
+		printf( '<a title="%s" class="custom-metadata-multifield-add hide-if-no-js add-new-h2" href="#">%s</a>', __( 'Add new' ), __( 'Add new' ) );
+		
+		echo '<div class="clear"></div>';
+		
 		if ( ! empty( $multifield->description ) ) {
 			printf( '<p class="description">%s</p>', esc_html( $multifield->description ) );
 		}
+
+		echo '</div>';
+		
 
 		$fields = $this->get_fields_in_multifield( $multifield->group, $slug, $object_type );
 
@@ -1111,19 +1119,22 @@ class custom_metadata_manager {
 			$grouping_count++;
 			$grouping_id = $slug . '-' . $grouping_count;
 			printf( '<div id="%s" class="custom-metadata-multifield-grouping">', esc_attr( $grouping_id ) );
+			echo '<div class="custom-metadata-multifield-fields">';
 				foreach ( $fields as $field_slug => $field ) {
 					$value = ( isset( $grouping_of_values[$field_slug] ) ) ? $grouping_of_values[$field_slug] : false;
 					$field_id = $slug . '[' . ( $grouping_count - 1 ) . ']' . '[' . $field_slug . ']';
 					$display_field_slug = $field_slug . '-' . $grouping_count;
 					$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
 				}
+			echo '</div>';
+			echo '<div class="custom-metadata-multifield-actions">';
+			
+			printf( '<a title="%s" class="button custom-metadata-multifield-clone hide-if-no-js" href="#">%s</a>', __( 'duplicate this set of fields' ), __( 'Clone' ) );
+
+			printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">%s</a>', __( 'remove this set of fields' ), __( 'Delete' ) );
+			
+			echo '</div>';
 			echo '<div class="clear"></div>';
-			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', __( 'duplicate this set of fields' ) );
-
-			if ( $grouping_count > 1 ) {
-				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', __( 'remove this set of fields' ) );
-			}
-
 			echo '</div>';
 		}
 
