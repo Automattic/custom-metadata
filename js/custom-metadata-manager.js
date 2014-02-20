@@ -34,19 +34,12 @@
 			});
 		});
 
-		// cloning multifields
-		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
-			e.preventDefault();
-			var $this = $( this ),
-				$parent = $this.parent().parent(),
-				$slug = $parent.attr( 'data-slug' ),
-				$last = $this.parent(),
-				$clone = $last.clone();
+		// reset field names, container ids, etc
+		var multifield_after_change = function( $container ) {
+			var $slug = $container.attr( 'data-slug' ),
+				$groupings = $container.find('.custom-metadata-multifield-grouping');
 
-			$clone.find( ':input:not(:button)' ).val('');
-			$clone.insertAfter( $last ).hide();
-
-			$groupings = $parent.find('.custom-metadata-multifield-grouping');
+			$groupings = $container.find('.custom-metadata-multifield-grouping');
 
 			$.each( $groupings, function( i, grouping ){
 
@@ -83,6 +76,47 @@
 				});
 
 			});
+		};
+
+		// Adds sortable functionality to multifields
+		$('.custom-metadata-multifield').sortable({
+		    items: '.custom-metadata-multifield-grouping',
+		    handle: '.sort-handle'
+		});
+
+		$('.custom-metadata-multifield').sortable().bind('sortupdate', function(e) {
+			multifield_after_change( $(this) );
+		});
+
+		// adding multifields
+		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-add', function(e){
+			e.preventDefault();
+			var $this = $( this ),
+				$container = $this.parents('.custom-metadata-multifield'),
+				$elements = $container.find('.custom-metadata-multifield-grouping'),
+				$element_to_clone = $elements.first(),
+				$clone = $element_to_clone.clone();
+
+			$clone.find( ':input:not(:button)' ).val('');
+			$clone.insertAfter( $elements.last() ).hide();
+
+			multifield_after_change( $container );
+
+			$clone.fadeIn();
+
+		});
+
+		// cloning multifields
+		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
+			e.preventDefault();
+			var $this = $( this ),
+				$element_to_clone = $this.parents('.custom-metadata-multifield-grouping'),
+				$container = $this.parents('.custom-metadata-multifield'),
+				$clone = $element_to_clone.clone();
+
+			$clone.insertAfter( $element_to_clone ).hide();
+
+			multifield_after_change( $container );
 
 			$clone.fadeIn();
 
@@ -91,10 +125,18 @@
 		// deleting multifields
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-delete', function(e){
 			e.preventDefault();
-			var $this = $( this );
-			$this.parent().fadeOut('normal', function(){
-				$(this).remove();
-			});
+			var $this = $( this ),
+				$element_to_delete = $this.parents('.custom-metadata-multifield-grouping'),
+				$container = $this.parents('.custom-metadata-multifield');
+
+			if( $container.find('.custom-metadata-multifield-grouping').length === 1 ) {
+				$element_to_delete.find( ':input:not(:button)' ).val('');
+			} else {
+				$element_to_delete.fadeOut('normal', function(){
+					$(this).remove();
+					multifield_after_change( $container );
+				});
+			}
 		});
 
 		// init upload fields

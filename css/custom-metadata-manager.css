@@ -173,15 +173,31 @@
 .custom-metadata-multifield {
 	padding-top: 5px;
 }
+
+.custom-metadata-multifield-label-wrapper {
+	padding-bottom: 5px;
+}
+
+.custom-metadata-multifield-label-wrapper h2 {
+	float: left;
+}
+
+.custom-metadata-multifield-label-wrapper a {
+	float: right;
+}
+
+
 #poststuff .custom-metadata-multifield h2 {
 	margin: 0;
 }
 .custom-metadata-multifield-grouping {
 	border-top: 1px dashed #ccc;
+	background: #f5f5f5;
 	padding: 5px 0;
 	margin: 2px;
 	position: relative;
 }
+
 .custom-metadata-multifield-grouping .custom-metadata-field {
 	float: left;
 	width: auto;
@@ -197,36 +213,42 @@
 	width: 150px;
 }
 
-.custom-metadata-multifield-clone,
+.custom-metadata-multifield-grouping .sort-handle {
+	float: left;
+	width: 30px;
+	height: 23px;
+	background: url(images/move-drag-icon.png) no-repeat;
+	background-size: 30px 23px;
+	margin-top: 31px;
+	margin-right: 10px;
+	cursor: move;
+}
+
+.custom-metadata-multifield-grouping .custom-metadata-multifield-fields {
+	float: left;
+}
+
+.custom-metadata-multifield-grouping .custom-metadata-multifield-actions {
+	float: right;
+	width: 100px;
+	padding-top: 15px;
+	text-align: right;
+}
+
+.custom-metadata-multifield-grouping .custom-metadata-multifield-actions a {
+	margin-bottom: 5px;
+}
+
 .custom-metadata-multifield-delete {
-	position: absolute;
-	display: block;
-	top: 50%;
-	right: 25px;
-	padding: 0 3px 4px;
-	font-size: 35px;
-	line-height: 20px;
-	text-decoration: none;
-	border: 1px solid;
-	border-radius: 50%;
+	display: inline-block;
+	color: #f00;
+	border-bottom-color: #f00;
+	margin-right: 3px;
 }
-.custom-metadata-multifield-clone {
-	margin-top: -17px;
-	color: green;
-	border-color: green;
-}
-.custom-metadata-multifield-delete ~ .custom-metadata-multifield-clone {
-	margin-top: -35px;
-}
-.custom-metadata-multifield-delete {
-	margin-top: 17px;
-	padding: 1px 6px 4px;
-	color: red;
-	border-color: red;
-}
-.custom-metadata-multifield-clone:hover,
-.custom-metadata-multifield-clone:active,
+
 .custom-metadata-multifield-delete:hover,
 .custom-metadata-multifield-delete:active {
-	border-color: #d54e21;
+	color: #fff;
+	background-color: #f00;
+	border-bottom-color: #f00;
 }
