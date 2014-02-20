@@ -171,7 +171,7 @@
 
 /* multifields */
 .custom-metadata-multifield {
-	padding-top: 5px;
+	padding-top: 15px;
 }
 
 .custom-metadata-multifield-label-wrapper {
@@ -180,10 +180,19 @@
 
 .custom-metadata-multifield-label-wrapper h2 {
 	float: left;
+	margin-top: 3px;
+	line-height: 1;
 }
 
-.custom-metadata-multifield-label-wrapper a {
+.custom-metadata-multifield-label-wrapper p.description {
+	float: left;
+	margin-left: 10px;
+	margin-bottom: 0;
+}
+
+.custom-metadata-multifield-label-wrapper a.custom-metadata-multifield-add {
 	float: right;
+	margin-top: -3px;
 }
 
 
@@ -230,7 +239,7 @@
 .custom-metadata-multifield-grouping .custom-metadata-multifield-actions {
 	float: right;
 	width: 100px;
-	padding-top: 15px;
+	padding-top: 30px;
 	text-align: right;
 }
 

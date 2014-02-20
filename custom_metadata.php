@@ -1091,13 +1091,13 @@ class custom_metadata_manager {
 			printf( '<h2>%s</h2>', esc_html( $multifield->label ) );
 		}
 
-		printf( '<a title="%s" class="custom-metadata-multifield-add hide-if-no-js add-new-h2" href="#">%s</a>', __( 'Add new' ), __( 'Add new' ) );
-		
-		echo '<div class="clear"></div>';
-		
 		if ( ! empty( $multifield->description ) ) {
 			printf( '<p class="description">%s</p>', esc_html( $multifield->description ) );
 		}
+
+		printf( '<a title="%s" class="custom-metadata-multifield-add hide-if-no-js button button-primary" href="#">%s</a>', __( 'Add new' ), __( 'Add new' ) );
+		
+		echo '<div class="clear"></div>';
 
 		echo '</div>';
 		
