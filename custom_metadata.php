@@ -67,7 +67,7 @@ class custom_metadata_manager {
 
 	// field types that support being part of a multifield group
 	// @todo: workarounds needed for other field types
-	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
+	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select', 'checkbox', 'datepicker', 'datetimepicker', 'timepicker', 'link', 'upload' );
 
 	// taxonomy types
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );

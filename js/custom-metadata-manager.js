@@ -10,6 +10,61 @@
 			});
 		};
 
+		var destroy_date_pickers = function( ) {
+			var $datepickers = $( '.custom-metadata-field.datepicker input' ),
+				$datetimepickers = $( '.custom-metadata-field.datetimepicker input' ),
+				$timepickers = $( '.custom-metadata-field.timepicker input' );
+
+			$datepickers.each(function() {
+				var $this = $(this);
+				if( $this.hasClass('hasDatepicker') ) {
+					$this.datepicker( 'destroy' );
+					$this.removeClass('hasDatepicker');
+				}
+			});
+
+			$datetimepickers.each(function() {
+				var $this = $(this);
+				if( $this.hasClass('hasDatepicker') ) {
+					$this.datetimepicker( 'destroy' );
+					$this.removeClass('hasDatepicker');
+				}
+			});
+
+			$timepickers.each(function() {
+				var $this = $(this);
+				if( $this.hasClass('hasDatepicker') ) {
+					$this.timepicker( 'destroy' );
+					$this.removeClass('hasDatepicker');
+				}
+			});
+		};
+
+		var bind_date_pickers = function() {
+
+			var $datepickers = $( '.custom-metadata-field.datepicker input' ),
+				$datetimepickers = $( '.custom-metadata-field.datetimepicker input' ),
+				$timepickers = $( '.custom-metadata-field.timepicker input' );
+
+			// init the datepicker fields
+			$datepickers.datepicker({
+				changeMonth: true,
+				changeYear: true
+			});
+
+			// init the datetimepicker fields
+			$datetimepickers.datetimepicker({
+				changeMonth: true,
+				changeYear: true
+			});
+
+			// init the timepicker fields
+			$timepickers.timepicker({
+				changeMonth: true,
+				changeYear: true
+			});
+		};
+
 		// duplicating fields
 		$custom_metadata_field.on( 'click.custom_metadata', '.add-multiple', function(e){
 			e.preventDefault();
@@ -33,6 +88,97 @@
 				$(this).remove();
 			});
 		});
+
+		// init upload fields
+		var custom_metadata_file_frame;
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
+			e.preventDefault();
+
+			var $this = $(this),
+				$this_field = $this.parent();
+
+			// if the media frame doesn't exist yet, create it
+			if ( ! custom_metadata_file_frame ) {
+				custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
+					title: $this.data( 'uploader-title' ),
+					button: {
+						text: $this.data( 'uploader-button-text' )
+					},
+					multiple: false
+				});
+			}
+
+			// unbind prior events first
+			custom_metadata_file_frame.off( 'select' );
+
+			custom_metadata_file_frame.on( 'select', function() {
+				attachment = custom_metadata_file_frame.state().get( 'selection' ).first().toJSON();
+				$this_field.find( '.custom-metadata-upload-url' ).val( attachment.url );
+				$this_field.find( '.custom-metadata-upload-id' ).val( attachment.id );
+			});
+
+			custom_metadata_file_frame.open();
+		});
+
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-clear-button', function(e){
+			e.preventDefault();
+			var $this = $(this),
+			$this_field = $this.parent();
+			$this_field.find( 'input:not( [type=button] )' ).val( '' );
+		});
+
+		// init link fields
+		var custom_metadata_link_selector_is_open = false;
+		var custom_metadata_link_selector_target = null;
+
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-link-button', function(e){
+			alert('test');
+		});
+		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-link-button', function(e){
+			e.preventDefault();
+			custom_metadata_link_selector_is_open = true;
+			custom_metadata_link_selector_target = $(this).parent().find( 'input[type="text"]' );
+			wpActiveEditor = true;
+			wpLink.open();
+			var $wp_link = $( '#wp-link' );
+			wpLink.textarea = custom_metadata_link_selector_target;
+			$wp_link.find( '.link-target' ).remove(); // remove the "new tab" checkbox
+			$wp_link.find( '#link-title-field' ).parents( '#link-options div' ).remove(); // remove the "title" field
+		});
+
+		$(document).on( 'click.custom_metadata', '#wp-link-submit', function(e){
+			e.preventDefault();
+			if ( null === custom_metadata_link_selector_target)
+				return;
+
+			var linkAtts = wpLink.getAttrs();
+			custom_metadata_link_selector_target.val(linkAtts.href);
+			wpLink.textarea = custom_metadata_link_selector_target;
+			wpLink.close();
+			custom_metadata_link_selector_target = null;
+		});
+
+		$(document).on( 'click.custom_metadata', '#wp-link-cancel, .ui-dialog-titlebar-close', function(e){
+			e.preventDefault();
+			if ( null === custom_metadata_link_selector_target)
+				return;
+
+			wpLink.textarea = custom_metadata_link_selector_target;
+			wpLink.close();
+			custom_metadata_link_selector_target = null;
+			custom_metadata_link_selector_is_open = false;
+		});
+
+		// First initialization of datepickers
+		bind_date_pickers();
+
+		// select2
+		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
+			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
+		});
+
+
+		/* MULTIFIELDS */
 
 		// reset field names, container ids, etc
 		var multifield_after_change = function( $container ) {
@@ -91,16 +237,20 @@
 		// adding multifields
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-add', function(e){
 			e.preventDefault();
+
+			destroy_date_pickers();
+
 			var $this = $( this ),
 				$container = $this.parents('.custom-metadata-multifield'),
 				$elements = $container.find('.custom-metadata-multifield-grouping'),
 				$element_to_clone = $elements.first(),
-				$clone = $element_to_clone.clone();
+				$clone = $element_to_clone.clone(true);
 
 			$clone.find( ':input:not(:button)' ).val('');
 			$clone.insertAfter( $elements.last() ).hide();
 
 			multifield_after_change( $container );
+			bind_date_pickers();
 
 			$clone.fadeIn();
 
@@ -108,15 +258,20 @@
 
 		// cloning multifields
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-clone', function(e){
+			
 			e.preventDefault();
+
+			destroy_date_pickers();
+
 			var $this = $( this ),
 				$element_to_clone = $this.parents('.custom-metadata-multifield-grouping'),
 				$container = $this.parents('.custom-metadata-multifield'),
-				$clone = $element_to_clone.clone();
+				$clone = $element_to_clone.clone(true);
 
 			$clone.insertAfter( $element_to_clone ).hide();
 
 			multifield_after_change( $container );
+			bind_date_pickers();
 
 			$clone.fadeIn();
 
@@ -125,6 +280,7 @@
 		// deleting multifields
 		$custom_metadata_multifield.on( 'click.custom_metadata', '.custom-metadata-multifield-delete', function(e){
 			e.preventDefault();
+			destroy_date_pickers();
 			var $this = $( this ),
 				$element_to_delete = $this.parents('.custom-metadata-multifield-grouping'),
 				$container = $this.parents('.custom-metadata-multifield');
@@ -137,105 +293,7 @@
 					multifield_after_change( $container );
 				});
 			}
-		});
-
-		// init upload fields
-		var custom_metadata_file_frame;
-		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-upload-button', function(e) {
-			e.preventDefault();
-
-			var $this = $(this),
-				$this_field = $this.parent();
-
-			// if the media frame doesn't exist yet, create it
-			if ( ! custom_metadata_file_frame ) {
-				custom_metadata_file_frame = wp.media.frames.file_frame = wp.media({
-					title: $this.data( 'uploader-title' ),
-					button: {
-						text: $this.data( 'uploader-button-text' )
-					},
-					multiple: false
-				});
-			}
-
-			// unbind prior events first
-			custom_metadata_file_frame.off( 'select' );
-
-			custom_metadata_file_frame.on( 'select', function() {
-				attachment = custom_metadata_file_frame.state().get( 'selection' ).first().toJSON();
-				$this_field.find( '.custom-metadata-upload-url' ).val( attachment.url );
-				$this_field.find( '.custom-metadata-upload-id' ).val( attachment.id );
-			});
-
-			custom_metadata_file_frame.open();
-		});
-
-		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-clear-button', function(e){
-			e.preventDefault();
-			var $this = $(this),
-			$this_field = $this.parent();
-			$this_field.find( 'input:not( [type=button] )' ).val( '' );
-		});
-
-		// init link fields
-		var custom_metadata_link_selector_is_open = false;
-		var custom_metadata_link_selector_target = null;
-		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-link-button', function(e){
-			e.preventDefault();
-			custom_metadata_link_selector_is_open = true;
-			custom_metadata_link_selector_target = $(this).parent().find( 'input[type="text"]' );
-			wpActiveEditor = true;
-			wpLink.open();
-			var $wp_link = $( '#wp-link' );
-			wpLink.textarea = custom_metadata_link_selector_target;
-			$wp_link.find( '.link-target' ).remove(); // remove the "new tab" checkbox
-			$wp_link.find( '#link-title-field' ).parents( '#link-options div' ).remove(); // remove the "title" field
-		});
-
-		$(document).on( 'click.custom_metadata', '#wp-link-submit', function(e){
-			e.preventDefault();
-			if ( null === custom_metadata_link_selector_target)
-				return;
-
-			var linkAtts = wpLink.getAttrs();
-			custom_metadata_link_selector_target.val(linkAtts.href);
-			wpLink.textarea = custom_metadata_link_selector_target;
-			wpLink.close();
-			custom_metadata_link_selector_target = null;
-		});
-
-		$(document).on( 'click.custom_metadata', '#wp-link-cancel, .ui-dialog-titlebar-close', function(e){
-			e.preventDefault();
-			if ( null === custom_metadata_link_selector_target)
-				return;
-
-			wpLink.textarea = custom_metadata_link_selector_target;
-			wpLink.close();
-			custom_metadata_link_selector_target = null;
-			custom_metadata_link_selector_is_open = false;
-		});
-
-	 	// init the datepicker fields
-		$( '.custom-metadata-field.datepicker' ).find( 'input' ).datepicker({
-			changeMonth: true,
-			changeYear: true
-		});
-
-		// init the datetimepicker fields
-		$( '.custom-metadata-field.datetimepicker' ).find( 'input' ).datetimepicker({
-			changeMonth: true,
-			changeYear: true
-		});
-
-		// init the timepicker fields
-		$( '.custom-metadata-field.timepicker' ).find( 'input' ).timepicker({
-			changeMonth: true,
-			changeYear: true
-		});
-
-		// select2
-		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
-			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
+			bind_date_pickers();
 		});
 
 	});
