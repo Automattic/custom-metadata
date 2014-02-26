@@ -132,9 +132,6 @@
 		var custom_metadata_link_selector_target = null;
 
 		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-link-button', function(e){
-			alert('test');
-		});
-		$custom_metadata_field.on( 'click.custom_metadata', '.custom-metadata-link-button', function(e){
 			e.preventDefault();
 			custom_metadata_link_selector_is_open = true;
 			custom_metadata_link_selector_target = $(this).parent().find( 'input[type="text"]' );
