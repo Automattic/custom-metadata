@@ -160,10 +160,10 @@ class custom_metadata_manager {
 		// Handle actions related to users
 		if ( $object_type == 'user' ) {
 			global $user_id;
-			
+
 			if ( empty( $user_id ) )
 				$user_id = get_current_user_id();
-				
+
 			// Editing another user's profile
 			add_action( 'edit_user_profile', array( $this, 'add_user_metadata_groups' ) );
 			add_action( 'edit_user_profile_update', array( $this, 'save_user_metadata' ) );
@@ -1254,7 +1254,8 @@ class custom_metadata_manager {
 					break;
 				case 'upload' :
 					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
-					$attachment_id = array_shift( array_values( $_attachment_id ) ); // get the first value in the array
+					$values = array_values( $_attachment_id );
+					$attachment_id = array_shift( $values ); // get the first value in the array
 					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
 					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
