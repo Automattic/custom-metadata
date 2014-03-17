@@ -51,7 +51,7 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
@@ -160,10 +160,10 @@ class custom_metadata_manager {
 		// Handle actions related to users
 		if ( $object_type == 'user' ) {
 			global $user_id;
-			
+
 			if ( empty( $user_id ) )
 				$user_id = get_current_user_id();
-				
+
 			// Editing another user's profile
 			add_action( 'edit_user_profile', array( $this, 'add_user_metadata_groups' ) );
 			add_action( 'edit_user_profile_update', array( $this, 'save_user_metadata' ) );
@@ -226,6 +226,7 @@ class custom_metadata_manager {
 		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
 		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
+		wp_enqueue_script( 'wp-color-picker' );
 	}
 
 	function enqueue_styles() {
@@ -234,6 +235,7 @@ class custom_metadata_manager {
 		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom_metadata_manager_default_css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'jquery-ui-datepicker', apply_filters( 'custom_metadata_manager_jquery_ui_css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'select2', apply_filters( 'custom_metadata_manager_select2_css', CUSTOM_METADATA_MANAGER_URL .'css/select2.css' ), array(), CUSTOM_METADATA_MANAGER_SELECT2_VERSION );
+	    wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	function add_metadata_column_headers( $columns ) {
@@ -1239,6 +1241,9 @@ class custom_metadata_manager {
 				case 'datepicker' :
 					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
+					break;
+				case 'colorpicker':
+					printf( '<input type="text" name=%s value="%s"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'datetimepicker' :
 					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : '';
