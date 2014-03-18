@@ -235,7 +235,7 @@ class custom_metadata_manager {
 		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom_metadata_manager_default_css', CUSTOM_METADATA_MANAGER_URL .'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'jquery-ui-datepicker', apply_filters( 'custom_metadata_manager_jquery_ui_css', CUSTOM_METADATA_MANAGER_URL .'css/jquery-ui-smoothness.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
 		wp_enqueue_style( 'select2', apply_filters( 'custom_metadata_manager_select2_css', CUSTOM_METADATA_MANAGER_URL .'css/select2.css' ), array(), CUSTOM_METADATA_MANAGER_SELECT2_VERSION );
-	    wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	function add_metadata_column_headers( $columns ) {
@@ -1243,7 +1243,7 @@ class custom_metadata_manager {
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
 					break;
 				case 'colorpicker':
-					printf( '<input type="text" name=%s value="%s"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'datetimepicker' :
 					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : '';
@@ -1259,8 +1259,9 @@ class custom_metadata_manager {
 					break;
 				case 'upload' :
 					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
-					$attachment_id = array_shift( array_values( $_attachment_id ) ); // get the first value in the array
-					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					$values = array_values( $_attachment_id );
+					$attachment_id = array_shift( $values ); // get the first value in the array
+ 					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
 					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
 					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
