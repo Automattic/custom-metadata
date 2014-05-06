@@ -111,7 +111,7 @@
 }
 
 /* textarea fields */
-.custom-metadata-field textarea {
+.custom-metadata-field.textarea textarea {
 	width: 99%;
 	height: 4em;
 	margin-top: 5px;
