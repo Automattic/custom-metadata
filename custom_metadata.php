@@ -1295,6 +1295,12 @@ class custom_metadata_manager {
 						echo '</label>';
 					}
 					break;
+				case 'sortable_select' :
+					$container_class = sanitize_html_class( $field_slug );
+					printf( '<div class="%s" id="%s">', esc_attr( $container_class ), esc_attr( $field_id ) );
+					printf( '<input type="hidden" id="%s" name="%s" value="%s" data-possible-values="%s" class="select2-sortable" />', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), esc_attr( json_encode($field->values) ) );
+					echo '</div>';
+					break;
 			endswitch;
 
 			if ( $cloneable && $count > 1 )

@@ -4,6 +4,25 @@
 		var $custom_metadata_field = $( '.custom-metadata-field' ),
 			$custom_metadata_multifield = $( '.custom-metadata-multifield' );
 
+		var initMultiselectSortable = function() {
+			$('.select2-sortable').each(function() {
+				var select = $(this);
+				var values = $.makeArray(jQuery.parseJSON($(this).attr('data-possible-values')));
+				$(this).select2({
+					data: values,
+					multiple: true
+				});
+
+				$(this).select2("container").find("ul.select2-choices").sortable({
+					containment: 'parent',
+					start: function() { select.select2('onSortStart'); },
+					update: function() { select.select2('onSortEnd'); }
+				});
+			});
+		};
+
+		initMultiselectSortable();
+
 		var incrementor = function(v) {
 			return v.replace( /[0-9]+(?!.*[0-9])/ , function( match ) {
 				return parseInt(match, 10) + 1;

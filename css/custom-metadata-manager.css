@@ -263,3 +263,7 @@
 	background-color: #f00;
 	border-bottom-color: #f00;
 }
+
+.custom-metadata-field.select2-sortable-wrapper .select2-container {
+  width: 65%;
+}
