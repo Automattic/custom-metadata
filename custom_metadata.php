@@ -51,7 +51,7 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link', 'sortable_select' );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
