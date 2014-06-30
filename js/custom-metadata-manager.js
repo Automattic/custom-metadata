@@ -68,9 +68,9 @@
 					$div.attr( 'id', $field_id + '-1' ).attr( 'class', $field_id );
 
 					$.each( $field_inputs, function( k, field_input ){
-						
+	
 						var $field_input = $( field_input );
-						
+
 						if ( ! _.isEmpty( $field_input.attr( 'id' ) ) ) {
 							$field_input.attr( 'id', $field_id );
 						}
@@ -196,8 +196,10 @@
 			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
 		});
 		
+		// init the color picker fields
+		$( '.colorpicker' ).find( 'input' ).wpColorPicker();
 		
-		
+		// featured-image fields
 		$(document).on( 'click.set-custom-media-container', '.add-custom-metadata-media', function(event){
 		
 					var options, attachment;
@@ -217,13 +219,12 @@
 												library: { type: 'image' },
 												button: { text: txt_title }
 										});
-					// set up our select handler
+					// set up select handler
 					img_modal.on( 'select' , function() {
 
 						selection = img_modal.state().get('selection');
 						
-						if ( ! selection )
-							return;
+						if ( ! selection ) return;
 
 						$div.find('.add-custom-metadata-media').hide();
 
@@ -239,6 +240,7 @@
 
 						$div.find('.remove-custom-metadata-media').show();
 					});
+					
 					img_modal.open();
 													
 		});
