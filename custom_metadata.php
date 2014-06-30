@@ -1256,7 +1256,7 @@ class custom_metadata_manager {
 					}
 					
 					// Image ID
-					printf( '<input class="custom-metadata-media-id" type="hidden" name="%s" value="" />', esc_attr( $field_slug ), esc_attr( $image_id ) );
+					printf( '<input class="custom-metadata-media-id" type="hidden" name="%s" value="%s" />', esc_attr( $field_slug ), esc_attr( $image_id ) );
 					echo '</p><p class="hide-if-no-js">';
 					
 					// Remove image link
