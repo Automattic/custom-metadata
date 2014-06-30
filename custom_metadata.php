@@ -51,7 +51,7 @@ class custom_metadata_manager {
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link' );
+	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio',  'taxonomy_checkbox', 'link', 'featured-image'  );
 
 	// field types that are cloneable
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
@@ -160,10 +160,10 @@ class custom_metadata_manager {
 		// Handle actions related to users
 		if ( $object_type == 'user' ) {
 			global $user_id;
-
+			
 			if ( empty( $user_id ) )
 				$user_id = get_current_user_id();
-
+				
 			// Editing another user's profile
 			add_action( 'edit_user_profile', array( $this, 'add_user_metadata_groups' ) );
 			add_action( 'edit_user_profile_update', array( $this, 'save_user_metadata' ) );
@@ -1237,6 +1237,33 @@ class custom_metadata_manager {
 					}
 					echo '</select>';
 					break;
+				case 'featured-image':
+					$image_id   = ! empty( $v )? intval( $v ) : '' ;
+					$set_css    = ( !empty( $image_id ) ) ? 'display:none;' : '';
+					$reset_css  = ( empty( $image_id )  ) ? 'display:none;' : '';
+					
+					echo '<span class="set-custom-media-container"><p class="hide-if-no-js">';
+					
+					// Set image link
+					printf( '<a title="Set %s" href="#" id="add-custom-%s-media" class="add-custom-metadata-media" style="%s" >Set %s</a>', esc_attr( $field->label ), esc_attr( $field_slug ), esc_attr( $set_css ), esc_attr( $field->label ) );
+					
+					// Image
+					echo '</p><p class="hide-if-no-js"><p class="hide-if-no-js">';
+					if ( !empty( $image_id ) ) {
+						echo wp_get_attachment_image( $image_id, 'thumbnail', false, array( 'class' => 'custom-metadata-media-image' ) );
+					} else {
+						echo '<img class="custom-metadata-media-image" src="" style="display: none" />';
+					}
+					
+					// Image ID
+					printf( '<input class="custom-metadata-media-id" type="hidden" name="%s" value="" />', esc_attr( $field_slug ), esc_attr( $image_id ) );
+					echo '</p><p class="hide-if-no-js">';
+					
+					// Remove image link
+					printf( '<a title="Remove %s" href="#" class="remove-custom-metadata-media" style="%s">Remove %s</a>', esc_attr( $field->label ), esc_attr( $reset_css ), esc_attr( $field->label ) );
+					echo '</p></span>';
+				
+				break;
 				case 'datepicker' :
 					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
