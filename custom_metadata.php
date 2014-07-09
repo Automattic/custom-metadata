@@ -745,6 +745,15 @@ class custom_metadata_manager {
 			return $callback;
 		return '';
 	}
+    
+    function _get_delete_callback( $field, $object_type ) {
+		$callback = isset( $field->delete_callback ) ? $field->delete_callback : '';
+
+		if ( ! ( $callback && is_callable( $callback ) ) )
+			$callback = '';
+
+		return apply_filters( 'custom_metadata_manager_get_delete_callback', $callback, $field, $object_type );
+	}
 
 	function get_sanitize_callback( $field ) {
 		$callback = $field->sanitize_callback;
@@ -763,7 +772,7 @@ class custom_metadata_manager {
 	function _get_field_value( $field_slug, $field, $object_type, $object_id ) {
 
 		$get_value_callback = $this->_get_value_callback( $field );
-		echo $get_value_callback;
+		
 		if( $get_value_callback )
 			return call_user_func( $get_value_callback, $object_type, $object_id, $field_slug );
 
@@ -813,7 +822,14 @@ class custom_metadata_manager {
 	}
 
 	function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
-		if( ! in_array( $object_type, $this->_non_post_types ) )
+		
+        $delete_callback = $this->_get_delete_callback( $field, $object_type );
+            return call_user_func( $delete_callback, $object_type, $object_id, $field_slug );
+        
+        if($delete_callback)
+                return $delete_callback;
+        
+        if( ! in_array( $object_type, $this->_non_post_types ) )
 			$object_type = 'post';
 
 		$field_slug = sanitize_key( $field_slug );
