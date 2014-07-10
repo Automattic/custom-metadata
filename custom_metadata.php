@@ -295,6 +295,7 @@ class custom_metadata_manager {
 			'select2' => false, // applies select2.js (work on select and multi select field types)
 			'min' => false, // a minimum value (for number field only)
 			'max' => false, // a maximum value (for number field only)
+			'step' => false, // a step value number intervals (for number field only)
 			'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
 			'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
 			'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
@@ -1208,7 +1209,9 @@ class custom_metadata_manager {
 				case 'number' :
 					$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"': '';
 					$max = ( ! empty( $field->max ) ) ? ' max="' . (int) $field->max . '"': '';
-					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str, $min, $max );
+					$step = ( ! empty( $field->step ) ) ? ' step="' . (int) $field->step . '"': '';
+
+					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str, $min, $max, $step );
 					break;
 				case 'textarea' :
 					printf( '<textarea id="%s" name="%s"%s%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, $placeholder_str, esc_textarea( $v ) );

@@ -264,14 +264,14 @@ function x_init_custom_fields() {
 			'select2' => true,
 		) );
 
-	// adds a number field in the first group (with no min/max)
+	// adds a number field in the first group (with no min/max and step)
 	x_add_metadata_field( 'x_field_number', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'field_type' => 'number',
 			'label' => 'Number field',
 		) );
 
-	// adds a number field in the first group (with min/max)
+	// adds a number field in the first group (with min/max and no step)
 	x_add_metadata_field( 'x_field_number_with_min_max', 'x_test', array(
 			'group' => 'x_metaBox1',
 			'field_type' => 'number',
@@ -279,6 +279,17 @@ function x_init_custom_fields() {
 			'max' => '25',
 			'multiple' => true,
 			'label' => 'Number field (with min/max + cloneable)',
+		) );
+
+	// adds a number field in the first group (with min/max and step)
+	x_add_metadata_field( 'x_field_number_with_min_max_step', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type' => 'number',
+			'min' => '-3',
+			'max' => '25',
+			'step' => '5',
+			'multiple' => true,
+			'label' => 'Number field (with min/max and step + cloneable)',
 		) );
 
 	// adds an email field in the first group
