@@ -824,10 +824,9 @@ class custom_metadata_manager {
 	function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
 		
         $delete_callback = $this->_get_delete_callback( $field, $object_type );
-            return call_user_func( $delete_callback, $object_type, $object_id, $field_slug );
         
         if($delete_callback)
-                return $delete_callback;
+                return call_user_func( $delete_callback, $object_type, $object_id, $field_slug );
         
         if( ! in_array( $object_type, $this->_non_post_types ) )
 			$object_type = 'post';
