@@ -1063,13 +1063,13 @@ class custom_metadata_manager {
 
 		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
 
+		if ( $sanitize_callback )
+			return call_user_func( $sanitize_callback, $field_slug, $field, $object_type, $object_id, $value );
+
 		// convert date to unix timestamp
 		if ( in_array( $field->field_type, array( 'datepicker', 'datetimepicker', 'timepicker' ) ) ) {
 			$value = strtotime( $value );
 		}
-
-		if ( $sanitize_callback )
-			return call_user_func( $sanitize_callback, $field_slug, $field, $object_type, $object_id, $value );
 
 		return $value;
 	}
