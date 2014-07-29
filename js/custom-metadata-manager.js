@@ -68,7 +68,7 @@
 					$div.attr( 'id', $field_id + '-1' ).attr( 'class', $field_id );
 
 					$.each( $field_inputs, function( k, field_input ){
-
+	
 						var $field_input = $( field_input );
 
 						if ( ! _.isEmpty( $field_input.attr( 'id' ) ) ) {
@@ -195,10 +195,76 @@
 		$custom_metadata_field.find( '.custom-metadata-select2' ).each(function(index) {
 			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
 		});
-
+		
 		// init the color picker fields
 		$( '.colorpicker' ).find( 'input' ).wpColorPicker();
+		
+		// thumbnail fields
+		$(document).on( 'click.set-custom-media-container', '.add-custom-metadata-media', function(event){
+		
+					var options, attachment;
 
+					event.preventDefault();
+				
+					$self = $(event.target);
+					$div = $self.closest('span.set-custom-media-container');
+					
+					var txt_title = $self.attr('title');
+					
+					
+					
+					var img_modal  = wp.media({
+												title: txt_title,
+												multiple: false,
+												library: { type: 'image' },
+												button: { text: txt_title }
+										});
+					// set up select handler
+					img_modal.on( 'select' , function() {
+
+						selection = img_modal.state().get('selection');
+						
+						if ( ! selection ) return;
+
+						$div.find('.add-custom-metadata-media').hide();
+
+						// loop through the selected files
+						selection.each( function( attachment ) {
+							
+							var src     = attachment.attributes.sizes.thumbnail.url;
+							var preview = $div.find('.add-custom-metadata-media').first().attr( 'data-preview' );
+							if( attachment.attributes.sizes[preview] ) {
+								src = attachment.attributes.sizes[preview].url;
+							}
+							var id = attachment.id;
+							
+							$div.find('.custom-metadata-media-image').prop('src', src).show();
+							$div.find('.custom-metadata-media-id').val(id);
+						} );
+
+						$div.find('.remove-custom-metadata-media').show();
+					});
+					
+					img_modal.open();
+													
+		});
+		
+		//thumbnail remove
+		$('.remove-custom-metadata-media').on( 'click', function( event ) {
+					event.preventDefault();
+
+					$self = $(event.target);
+					$div = $self.closest('span.set-custom-media-container');
+					
+					$div.find('.remove-custom-metadata-media').hide();
+					
+					$div.find('.custom-metadata-media-image').prop('src', '').hide();
+					$div.find('.custom-metadata-media-id').val('');
+
+					$div.find('.add-custom-metadata-media').show();
+		});
+		
+		
 
 	});
 })(jQuery);

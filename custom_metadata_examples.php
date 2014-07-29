@@ -207,7 +207,15 @@ function x_init_custom_fields() {
 			),
 			'label' => 'Multi Select field',
 		) );
-
+	
+	// adds a thumbnail control to the first group
+	x_add_metadata_field( 'x_thumbnail', 'x_test', array(
+			'group' => 'x_metaBox1',
+			'field_type'  => 'thumbnail',
+			'preview' => 'full', // possible values: thumbnail, medium, full [ default: thumbnail ]
+			'label' => 'Thumbnail Selector',
+		) );
+	
 	// adds a multi-select field with chosen in the first group
 	// note: `select2` and `chosen` args do the exact same (add select2)
 	// but for the purposes of testing, we're using chosen here
