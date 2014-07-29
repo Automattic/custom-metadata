@@ -199,7 +199,7 @@
 		// init the color picker fields
 		$( '.colorpicker' ).find( 'input' ).wpColorPicker();
 		
-		// featured-image fields
+		// thumbnail fields
 		$(document).on( 'click.set-custom-media-container', '.add-custom-metadata-media', function(event){
 		
 					var options, attachment;
@@ -231,7 +231,11 @@
 						// loop through the selected files
 						selection.each( function( attachment ) {
 							
-							var src = attachment.attributes.sizes.thumbnail.url;
+							var src     = attachment.attributes.sizes.thumbnail.url;
+							var preview = $div.find('.add-custom-metadata-media').first().attr( 'data-preview' );
+							if( attachment.attributes.sizes[preview] ) {
+								src = attachment.attributes.sizes[preview].url;
+							}
 							var id = attachment.id;
 							
 							$div.find('.custom-metadata-media-image').prop('src', src).show();
@@ -245,7 +249,7 @@
 													
 		});
 		
-		//featured-image remove
+		//thumbnail remove
 		$('.remove-custom-metadata-media').on( 'click', function( event ) {
 					event.preventDefault();
 
