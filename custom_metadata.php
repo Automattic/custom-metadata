@@ -1068,7 +1068,17 @@ class custom_metadata_manager {
 
 		// convert date to unix timestamp
 		if ( in_array( $field->field_type, array( 'datepicker', 'datetimepicker', 'timepicker' ) ) ) {
-			$value = strtotime( $value );
+			
+			// if $value is an array, we need to sanitize every value in the array
+			if( is_array( $value ) ) {
+				$result = array();
+				foreach ( $value as $val ) {
+					$result[] = strtotime( $val );
+				}
+				$value = $result;
+			} else {
+				$value = strtotime( $value );
+			}
 		}
 
 		return $value;
