@@ -275,33 +275,36 @@ class custom_metadata_manager {
 	}
 
 	function add_metadata_field( $field_slug, $object_types = array( 'post' ), $args = array() ) {
+		static $defaults;
 
-		$defaults = array(
-			'group' => '', // To which meta_box the field should be added
-			'multifield' => false, // which multifield does this field belong to, if any
-			'field_type' => 'text', // The type of field; possibly values: text, checkbox, radio, select, image
-			'label' => $field_slug, // Label for the field
-			'slug' => $field_slug, // Slug for the field
-			'description' => '', // Description of the field, displayed below the input
-			'values' => array(), // values for select, checkbox, radio buttons
-			'default_value' => '', // default value
-			'placeholder' => '',
-			'display_callback' => '', // function to custom render the input
-			'sanitize_callback' => '',
-			'display_column' => false, // Add the field to the columns when viewing all posts
-			'display_column_callback' => '',
-			'add_to_quick_edit' => false, // (post only) Add the field to Quick edit
-			'required_cap' => false, // the cap required to view and edit the field
-			'multiple' => false, // can the field be duplicated with a click of a button
-			'readonly' => false, // makes the field be readonly
-			'select2' => false, // applies select2.js (work on select and multi select field types)
-			'min' => false, // a minimum value (for number field only)
-			'max' => false, // a maximum value (for number field only)
-			'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
-			'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
-			'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
-			'link_modal_button_text' => __( 'Select', 'custom-metadata' ), // link field button text
-		);
+		if ( ! $defaults ) {
+			$defaults = array(
+				'group' => '', // To which meta_box the field should be added
+				'multifield' => false, // which multifield does this field belong to, if any
+				'field_type' => 'text', // The type of field; possibly values: text, checkbox, radio, select, image
+				'label' => $field_slug, // Label for the field
+				'slug' => $field_slug, // Slug for the field
+				'description' => '', // Description of the field, displayed below the input
+				'values' => array(), // values for select, checkbox, radio buttons
+				'default_value' => '', // default value
+				'placeholder' => '',
+				'display_callback' => '', // function to custom render the input
+				'sanitize_callback' => '',
+				'display_column' => false, // Add the field to the columns when viewing all posts
+				'display_column_callback' => '',
+				'add_to_quick_edit' => false, // (post only) Add the field to Quick edit
+				'required_cap' => false, // the cap required to view and edit the field
+				'multiple' => false, // can the field be duplicated with a click of a button
+				'readonly' => false, // makes the field be readonly
+				'select2' => false, // applies select2.js (work on select and multi select field types)
+				'min' => false, // a minimum value (for number field only)
+				'max' => false, // a maximum value (for number field only)
+				'upload_modal_title' => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
+				'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
+				'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
+				'link_modal_button_text' => __( 'Select', 'custom-metadata' ), // link field button text
+			);
+		}
 
 		// upload field is readonly by default (can be set explicitly to false though)
 		if ( ! empty( $args['field_type'] ) && in_array( $args['field_type'], $this->_field_types_that_are_read_only ) )
