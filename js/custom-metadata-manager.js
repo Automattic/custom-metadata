@@ -181,12 +181,14 @@
 
 		// init the datetimepicker fields
 		$( '.custom-metadata-field.datetimepicker' ).find( 'input' ).datetimepicker({
+			timeFormat: "HH:mm Z",
 			changeMonth: true,
 			changeYear: true
 		});
 
 		// init the timepicker fields
 		$( '.custom-metadata-field.timepicker' ).find( 'input' ).timepicker({
+			timeFormat: "HH:mm Z",
 			changeMonth: true,
 			changeYear: true
 		});
