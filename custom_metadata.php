@@ -684,8 +684,14 @@ class custom_metadata_manager {
 				foreach ( $fields as $field_slug => $field ) {
 					if ( ! empty( $grouping[$field_slug] ) ) {
 						$grouping_values[$field_slug] = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $grouping[$field_slug] );
+						if ( $field->field_type == 'upload' ) {
+							$grouping_values[$field_slug . '_attachment_id'] = $this->_sanitize_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, $grouping[$field_slug . '_attachment_id'] );
+						}
 					} else {
 						$grouping_values[$field_slug] = '';
+						if ( $field->field_type == 'upload' ) {
+							$grouping_values[$field_slug . '_attachment_id'] = '';
+						}
 					}
 				}
 				$multifield_value[] = $grouping_values;
@@ -712,15 +718,15 @@ class custom_metadata_manager {
 			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[$field_slug] );
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
 
-
 			// save the attachment ID of the upload field as well
-			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
+			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) ) {
 				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[$field_slug . '_attachment_id'] ) );
+			}
 		} else {
 			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
 
 			// delete the attachment ID of the upload field as well
-			if ( $field->field_type == 'upload' && isset( $_POST[$field_slug . '_attachment_id'] ) )
+			if ( $field->field_type == 'upload' )
 				$this->_delete_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 		}
 	}
@@ -1122,7 +1128,16 @@ class custom_metadata_manager {
 			echo '<div class="sort-handle"></div>';
 			echo '<div class="custom-metadata-multifield-fields">';
 				foreach ( $fields as $field_slug => $field ) {
-					$value = ( isset( $grouping_of_values[$field_slug] ) ) ? $grouping_of_values[$field_slug] : false;
+
+					if( $field->field_type == 'upload' ) {
+						$value[] = array(
+							'url' => ( isset( $grouping_of_values[$field_slug] ) ) ? $grouping_of_values[$field_slug] : false,
+							'id' => ( isset( $grouping_of_values[$field_slug . '_attachment_id'] ) ) ? $grouping_of_values[$field_slug . '_attachment_id'] : false
+						);
+					} else {
+						$value = ( isset( $grouping_of_values[$field_slug] ) ) ? $grouping_of_values[$field_slug] : false;
+					}
+
 					$field_id = $slug . '[' . ( $grouping_count - 1 ) . ']' . '[' . $field_slug . ']';
 					$display_field_slug = $field_slug . '-' . $grouping_count;
 					$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
@@ -1194,6 +1209,7 @@ class custom_metadata_manager {
 		$container_class = sanitize_html_class( $field_slug );
 		$container_class .= ( $cloneable ) ? ' cloneable' : '';
 		foreach ( $value as $v ) :
+			
 			$container_id = $field_slug . '-' . $count;
 			printf( '<div class="%s" id="%s">', esc_attr( $container_class ), esc_attr( $container_id ) );
 
@@ -1261,13 +1277,18 @@ class custom_metadata_manager {
 					wp_editor( $v, $field_id, $wysiwyg_args );
 					break;
 				case 'upload' :
-					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
-					$_attachment_id_values = array_values( $_attachment_id );
-					$attachment_id = array_shift( $_attachment_id_values ); // get the first value in the array
-					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					if( isset($field->multifield) && $field->multifield != '' ) {
+						printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v['url'] ), $readonly_str, $placeholder_str );
+					 	printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( str_replace('image]', 'image_attachment_id]', $field_id) ), esc_attr( $v['id'] ) );
+					} else {
+						$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
+						$_attachment_id_values = array_values( $_attachment_id );
+						$attachment_id = array_shift( $_attachment_id_values ); // get the first value in the array
+						printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+						printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
+					}
 					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
 					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
-					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
 					break;
 				case 'taxonomy_select' :
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
