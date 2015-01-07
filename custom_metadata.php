@@ -224,7 +224,7 @@ class custom_metadata_manager {
 		wp_enqueue_script( 'wpdialogs-popup' );
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
 		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
-		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
+		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_timepicker_js', CUSTOM_METADATA_MANAGER_URL .'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL .'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 		wp_enqueue_script( 'wp-color-picker' );
 	}
