@@ -62,15 +62,12 @@
 						$label = $field.find( 'label' ),
 						$div = $field.find( 'div' ),
 						$field_inputs = $field.find( ':input:not(:button)' ),
-						$field_id = $field_slug + '-' + num;
-
+						$field_id = $field_slug + '_' + num;
 					$label.attr( 'for', $field_id );
-					$div.attr( 'id', $field_id + '-1' ).attr( 'class', $field_id );
-
+					$div.attr( 'id', $field_id + '_1' ).attr( 'class', $field_id );
 					$.each( $field_inputs, function( k, field_input ){
 
 						var $field_input = $( field_input );
-
 						if ( ! _.isEmpty( $field_input.attr( 'id' ) ) ) {
 							$field_input.attr( 'id', $field_id );
 						}
@@ -78,14 +75,20 @@
 						if ( ! _.isEmpty( $field_input.attr( 'name' ) ) ) {
 							$field_input.attr( 'name', $slug + '[' + i + '][' + $field_slug + ']');
 						}
-					});
 
+						if($field_input.is('.textarea_wysiwyg')) {
+							var $textarea = $field_input;
+							var $textarea_parent = $field_input.parent();
+							$textarea_parent.html('');
+							$textarea.appendTo($textarea_parent).show();
+						}
+					});
 				});
 
 			});
 
+			startTinyMCE('.custom-metadata-field .textarea_wysiwyg');
 			$clone.fadeIn();
-
 		});
 
 		// deleting multifields
@@ -196,9 +199,37 @@
 			$(this).select2({ placeholder : $(this).attr('data-placeholder'), allowClear : true });
 		});
 
-		// init the color picker fields
-		$( '.colorpicker' ).find( 'input' ).wpColorPicker();
+		function startTinyMCE(id) {
+			selector = id;
+			if(typeof(id) == 'undefined') {
+				selector = 'textarea';
+			}
+			tinyMCE.init({
+				selector: selector,
+				toolbar1: "bold,italic,strikethrough,bullist,numlist,blockquote,hr,alignleft,aligncenter,alignright,link,unlink,wp_more,spellchecker,fullscreen,wp_adv",
+				forced_root_block: false,
+				remove_linebreaks: false,
+				gecko_spellcheck: false,
+				keep_styles: true,
+				accessibility_focus: true,
+				tabfocus_elements: 'major-publishing-actions',
+				media_strict: false,
+				wpeditimage_disable_captions: true,
+				wpautop: true,
+				apply_source_formatting: false,
+				block_formats: "Paragraph=p, Heading 3=h3, Heading 4=h4",
+				menubar: false,
+				setup: function (editor) {
+	        editor.on('change', function () {
+		        editor.save();
+		      });
+		    }
+			});
+		}
 
+		jQuery(document).ready(function(){
+			startTinyMCE('.custom-metadata-field .textarea_wysiwyg');
+		});
 
 	});
 })(jQuery);
