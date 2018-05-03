@@ -1069,19 +1069,20 @@ class custom_metadata_manager {
 		delete_metadata( $object_type, $object_id, $field_slug, $value );
 	}
 
-	function _sanitize_field_value( $field_slug, $field, $object_type, $object_id, $value ) {
+	function _sanitize_field_value( $field_slug, $field, $object_type, $object_id, $original_value ) {
+		$new_value = $original_value;
 
 		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
 
 		// convert date to unix timestamp
 		if ( in_array( $field->field_type, array( 'datepicker', 'datetimepicker', 'timepicker' ) ) ) {
-			$value = strtotime( $value );
+			$new_value = strtotime( $original_value );
 		}
 
 		if ( $sanitize_callback )
-			return call_user_func( $sanitize_callback, $field_slug, $field, $object_type, $object_id, $value );
+			return call_user_func( $sanitize_callback, $field_slug, $field, $object_type, $object_id, $new_value, $original_value );
 
-		return $value;
+		return $new_value;
 	}
 
 	function _metadata_column_content( $field_slug, $field, $object_type, $object_id ) {
