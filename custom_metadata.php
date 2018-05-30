@@ -1171,7 +1171,7 @@ class custom_metadata_manager {
 			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata-manager' ) );
 		}
 
-		if ( empty( $field_id ) ) {
+		if ( ! isset( $field_id ) ) {
 			$field_id = ( ! empty( $field->multiple ) || in_array( $field->field_type, $this->_always_multiple_fields ) ) ? $field_slug . '[]' : $field_slug;
 		}
 
