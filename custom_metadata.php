@@ -650,6 +650,9 @@ class custom_metadata_manager {
 	}
 
 	function save_post_metadata( $post_id ) {
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
 		$post_type = $this->_get_object_type_context();
 		$groups = $this->get_groups_in_object_type( $post_type );
 
