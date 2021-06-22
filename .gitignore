@@ -1,8 +1,4 @@
-.DS_Store
-.vscode/
 composer.lock
 vendor/
 wpcom-helper.php
 custom-metadata.php
-.svn/
-icon.png
