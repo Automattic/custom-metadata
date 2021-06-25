@@ -1,31 +1,30 @@
 <?php
-/*
-Plugin Name: Custom Metadata Manager
-Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
-Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
-Author: Automattic, Stresslimit & Contributors
-Version: 0.8-dev
-Author URI: https://github.com/Automattic/custom-metadata/
-
-Copyright 2010-2013 The Contributors
-
-GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
+/**
+ * Plugin Name: Custom Metadata Manager
+ * Plugin URI: http://wordpress.org/extend/plugins/custom-metadata/
+ * Description: An easy way to add custom fields to your object types (post, pages, custom post types, users)
+ * Author: Automattic, Stresslimit & Contributors
+ * Version: 0.8-dev
+ * Author URI: https://github.com/Automattic/custom-metadata/
+ *
+ * Copyright 2010-2013 The Contributors
+ *
+ * GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 /**
  * set this to true in your wp-config.php file to enable debug/test mode
@@ -46,50 +45,50 @@ class custom_metadata_manager {
 
 	var $_non_post_types = array( 'user', 'comment' );
 
-	// Object types that come "built-in" with WordPress
+	// Object types that come "built-in" with WordPress.
 	var $_builtin_object_types = array( 'post', 'page', 'user', 'comment' );
 
-	// Column filter names
+	// Column filter names.
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
-	// field types
+	// field types.
 	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'link' );
 
-	// field types that are cloneable
+	// field types that are cloneable.
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
-	// field types that support a default value
+	// field types that support a default value.
 	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
-	// field types that support the placeholder attribute
+	// field types that support the placeholder attribute.
 	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
-	// field types that are read only by default
+	// field types that are read only by default.
 	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
-	// field types that support being part of a multifield group
-	// @todo: workarounds needed for other field types
+	// field types that support being part of a multifield group.
+	// @todo: workarounds needed for other field types.
 	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
 
-	// taxonomy types
+	// taxonomy types.
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
 
-	// filed types that are saved as multiples but not cloneable
+	// filed types that are saved as multiples but not cloneable.
 	var $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
 
-	// fields that always save as an array
+	// fields that always save as an array.
 	var $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select', 'taxonomy_multi_select' );
 
-	// Object types whose columns are generated through apply_filters instead of do_action
+	// Object types whose columns are generated through apply_filters instead of do_action.
 	var $_column_filter_object_types = array( 'user' );
 
-	// Whitelisted pages that get stylesheets and scripts
+	// Whitelisted pages that get stylesheets and scripts.
 	var $_pages_whitelist = array( 'edit.php', 'post.php', 'post-new.php', 'users.php', 'profile.php', 'user-edit.php', 'edit-comments.php', 'comment.php' );
 
-	// the default args used for the wp_editor function
+	// the default args used for the wp_editor function.
 	var $default_editor_args = array();
 
-	// singleton instance
+	// singleton instance.
 	private static $instance;
 
 	public static function instance() {
@@ -102,7 +101,7 @@ class custom_metadata_manager {
 		return self::$instance;
 	}
 
-	// do nothing on construct
+	// do nothing on construct.
 	function __construct() {}
 
 	function run_initial_hooks() {
@@ -112,7 +111,7 @@ class custom_metadata_manager {
 	function admin_init() {
 		global $pagenow;
 
-		// filter our vars
+		// filter our vars.
 		$this->_non_post_types                         = apply_filters( 'custom_metadata_manager_non_post_types', $this->_non_post_types );
 		$this->_builtin_object_types                   = apply_filters( 'custom_metadata_manager_builtin_object_types', $this->_builtin_object_types );
 		$this->_column_types                           = apply_filters( 'custom_metadata_manager_column_types', $this->_column_types );
@@ -127,19 +126,19 @@ class custom_metadata_manager {
 		$this->_pages_whitelist                        = apply_filters( 'custom_metadata_manager_pages_whitelist', $this->_pages_whitelist );
 		$this->default_editor_args                     = apply_filters( 'custom_metadata_manager_default_editor_args', $this->default_editor_args );
 
-		define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js
-		define( 'CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION', '1.2' ); // version for included timepicker
+		define( 'CUSTOM_METADATA_MANAGER_SELECT2_VERSION', '3.2' ); // version for included select2.js.
+		define( 'CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION', '1.2' ); // version for included timepicker.
 		define( 'CUSTOM_METADATA_MANAGER_VERSION', '0.8-dev' );
 		define( 'CUSTOM_METADATA_MANAGER_URL', apply_filters( 'custom_metadata_manager_url', trailingslashit( plugins_url( '', __FILE__ ) ) ) );
 
 		$this->init_object_types();
 
-		// Hook into load to initialize custom columns
+		// Hook into load to initialize custom columns.
 		if ( in_array( $pagenow, $this->_pages_whitelist ) ) {
 			add_action( 'load-' . $pagenow, array( $this, 'init_metadata' ) );
 		}
 
-		// Hook into admin_notices to show errors
+		// Hook into admin_notices to show errors.
 		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_notices', array( $this, '_display_registration_errors' ) );
 		}
@@ -162,7 +161,7 @@ class custom_metadata_manager {
 
 		$this->init_columns();
 
-		// Handle actions related to users
+		// Handle actions related to users.
 		if ( $object_type == 'user' ) {
 			global $user_id;
 
@@ -170,18 +169,18 @@ class custom_metadata_manager {
 				$user_id = get_current_user_id();
 			}
 
-			// Editing another user's profile
+			// Editing another user's profile.
 			add_action( 'edit_user_profile', array( $this, 'add_user_metadata_groups' ) );
 			add_action( 'edit_user_profile_update', array( $this, 'save_user_metadata' ) );
-			// Allow user-editable fields on "Your Profile"
+			// Allow user-editable fields on "Your Profile".
 			add_action( 'show_user_profile', array( $this, 'add_user_metadata_groups' ) );
 			add_action( 'personal_options_update', array( $this, 'save_user_metadata' ) );
 		} else {
 
-			// Hook in to metaboxes
+			// Hook in to metaboxes.
 			add_action( 'add_meta_boxes', array( $this, 'add_post_metadata_groups' ) );
 
-			// Hook in to save
+			// Hook in to save.
 			add_action( 'save_post', array( $this, 'save_post_metadata' ) );
 			add_action( 'edit_comment', array( $this, 'save_comment_metadata' ) );
 		}
@@ -202,14 +201,14 @@ class custom_metadata_manager {
 			$column_header_name  = 'edit-comments';
 			$column_content_name = 'comments';
 		} else {
-			// users
+			// users.
 			$column_header_name = $column_content_name = $object_type . 's';
 		}
 
-		// Hook into Column Headers
+		// Hook into Column Headers.
 		add_filter( "manage_{$column_header_name}_columns", array( $this, 'add_metadata_column_headers' ) );
 
-		// User and Posts have different functions
+		// User and Posts have different functions.
 		$custom_column_content_function = array( $this, "add_{$object_type}_metadata_column_content" );
 		if ( ! is_callable( $custom_column_content_function ) ) {
 			$custom_column_content_function = array( $this, 'add_metadata_column_content' );
@@ -283,60 +282,60 @@ class custom_metadata_manager {
 
 		if ( ! $localized_strings ) {
 			$localized_strings = (object) array(
-				'upload_modal_title'       => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only)
-				'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only)
-				'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only)
-				'link_modal_button_text'   => __( 'Select', 'custom-metadata' ), // link field button text
+				'upload_modal_title'       => __( 'Choose a file', 'custom-metadata' ), // upload modal title (for upload field only).
+				'upload_modal_button_text' => __( 'Select this file', 'custom-metadata' ), // upload modal button text (for upload field only).
+				'upload_clear_button_text' => __( 'Clear', 'custom-metadata' ), // upload clear field text (for upload field only).
+				'link_modal_button_text'   => __( 'Select', 'custom-metadata' ), // link field button text.
 			);
 		}
 
 		$defaults = array(
-			'group'                    => '', // To which meta_box the field should be added
-			'multifield'               => false, // which multifield does this field belong to, if any
-			'field_type'               => 'text', // The type of field; possibly values: text, checkbox, radio, select, image
-			'label'                    => $field_slug, // Label for the field
-			'slug'                     => $field_slug, // Slug for the field
-			'description'              => '', // Description of the field, displayed below the input
-			'values'                   => array(), // values for select, checkbox, radio buttons
-			'default_value'            => '', // default value
+			'group'                    => '', // To which meta_box the field should be added.
+			'multifield'               => false, // which multifield does this field belong to, if any.
+			'field_type'               => 'text', // The type of field; possibly values: text, checkbox, radio, select, image.
+			'label'                    => $field_slug, // Label for the field.
+			'slug'                     => $field_slug, // Slug for the field.
+			'description'              => '', // Description of the field, displayed below the input.
+			'values'                   => array(), // values for select, checkbox, radio buttons.
+			'default_value'            => '', // default value.
 			'placeholder'              => '',
-			'display_callback'         => '', // function to custom render the input
+			'display_callback'         => '', // function to custom render the input.
 			'sanitize_callback'        => '',
-			'display_column'           => false, // Add the field to the columns when viewing all posts
+			'display_column'           => false, // Add the field to the columns when viewing all posts.
 			'display_column_callback'  => '',
-			'add_to_quick_edit'        => false, // (post only) Add the field to Quick edit
-			'required_cap'             => false, // the cap required to view and edit the field
-			'multiple'                 => false, // can the field be duplicated with a click of a button
-			'readonly'                 => false, // makes the field be readonly
-			'select2'                  => false, // applies select2.js (work on select and multi select field types)
-			'min'                      => false, // a minimum value (for number field only)
-			'max'                      => false, // a maximum value (for number field only)
+			'add_to_quick_edit'        => false, // (post only) Add the field to Quick edit.
+			'required_cap'             => false, // the cap required to view and edit the field.
+			'multiple'                 => false, // can the field be duplicated with a click of a button.
+			'readonly'                 => false, // makes the field be readonly.
+			'select2'                  => false, // applies select2.js (work on select and multi select field types).
+			'min'                      => false, // a minimum value (for number field only).
+			'max'                      => false, // a maximum value (for number field only).
 			'upload_modal_title'       => $localized_strings->upload_modal_title,
 			'upload_modal_button_text' => $localized_strings->upload_modal_button_text,
 			'upload_clear_button_text' => $localized_strings->upload_clear_button_text,
 			'link_modal_button_text'   => $localized_strings->link_modal_button_text,
 		);
 
-		// upload field is readonly by default (can be set explicitly to false though)
+		// upload field is readonly by default (can be set explicitly to false though).
 		if ( ! empty( $args['field_type'] ) && in_array( $args['field_type'], $this->_field_types_that_are_read_only ) ) {
 			$defaults['readonly'] = true;
 		}
 
-		// `chosen` arg is the same as `select2` arg
+		// `chosen` arg is the same as `select2` arg.
 		if ( isset( $args['chosen'] ) ) {
 			$args['select2'] = $args['chosen'];
 			unset( $args['chosen'] );
 		}
 
-		// Merge defaults with args
+		// Merge defaults with args.
 		$field = wp_parse_args( $args, $defaults );
 		$field = (object) $field;
 
-		// Sanitize slug
+		// Sanitize slug.
 		$field_slug = sanitize_key( $field_slug );
 		$group_slug = sanitize_key( $field->group );
 
-		// Check to see if the user should see this field
+		// Check to see if the user should see this field.
 		if ( ! empty( $field->required_cap ) && ! current_user_can( $field->required_cap ) ) {
 			return;
 		}
@@ -347,33 +346,28 @@ class custom_metadata_manager {
 			return;
 		}
 
-		// $object_types = (array) $object_type;
-		// if ( $field->multifield && $this->_multifield_exists_for_group_object( $field->multifield, $group_slug, array_shift( $object_types ) ) ) {
-		// $this->add_field_to_multifield( $field_slug, $field, $group_slug, $object_types );
-		// } else {
-			// add to group
-			$this->add_field_to_group( $field_slug, $field, $group_slug, $object_types );
-		// }
+		// add to group.
+		$this->add_field_to_group( $field_slug, $field, $group_slug, $object_types );
 	}
 
 	function add_multifield( $slug, $object_types = array( 'post' ), $args = array() ) {
 		$defaults = array(
-			'group'        => '', // To which meta_box the multifield should be added
-			'label'        => $slug, // Label for the multifield
-			'description'  => '', // Description of the multifield, displayed below all the fields
-			'required_cap' => false, // the cap required to view and edit the multifield
+			'group'        => '', // To which meta_box the multifield should be added.
+			'label'        => $slug, // Label for the multifield.
+			'description'  => '', // Description of the multifield, displayed below all the fields.
+			'required_cap' => false, // the cap required to view and edit the multifield.
 		);
 
-		// Merge defaults with args
+		// Merge defaults with args.
 		$multifield               = wp_parse_args( $args, $defaults );
-		$multifield['multifield'] = true; // force it
+		$multifield['multifield'] = true; // force it.
 		$multifield               = (object) $multifield;
 
-		// Sanitize slug
+		// Sanitize slug.
 		$slug       = sanitize_key( $slug );
 		$group_slug = sanitize_key( $multifield->group );
 
-		// Check to see if the user should see this field
+		// Check to see if the user should see this field.
 		if ( ! empty( $multifield->required_cap ) && ! current_user_can( $multifield->required_cap ) ) {
 			return;
 		}
@@ -384,30 +378,30 @@ class custom_metadata_manager {
 			return;
 		}
 
-		// Add to group
+		// Add to group.
 		$this->add_multifield_to_group( $slug, $multifield, $group_slug, $object_types );
 	}
 
 	function add_metadata_group( $group_slug, $object_types, $args = array() ) {
 		$defaults = array(
-			'label'        => $group_slug, // Label for the group
-			'description'  => '', // Description of the group
-			'context'      => 'normal', // (post only)
-			'priority'     => 'default', // (post only)
+			'label'        => $group_slug, // Label for the group.
+			'description'  => '', // Description of the group.
+			'context'      => 'normal', // (post only).
+			'priority'     => 'default', // (post only).
 			'autosave'     => false, // (post only) Should the group be saved in autosave?
-			'required_cap' => false, // the cap required to view and edit the group
+			'required_cap' => false, // the cap required to view and edit the group.
 		);
 
-		// Merge defaults with args
+		// Merge defaults with args.
 		$group = wp_parse_args( $args, $defaults );
 		$group = (object) $group;
 
-		// Sanitize slug
+		// Sanitize slug.
 		$group_slug = sanitize_key( $group_slug );
 
 		$group = apply_filters( 'custom_metadata_manager_add_metadata_group', $group, $group_slug, $object_types );
 
-		// Check to see if the user has caps to view/edit this group
+		// Check to see if the user has caps to view/edit this group.
 		if ( ! empty( $group->required_cap ) && ! current_user_can( $group->required_cap ) ) {
 			return;
 		}
@@ -428,7 +422,7 @@ class custom_metadata_manager {
 				$group_slug = sprintf( 'single-group-%1$s-%2$s', $object_type, $field_slug );
 			}
 
-			// If group doesn't exist, create group
+			// If group doesn't exist, create group.
 			if ( ! $this->is_registered_group( $group_slug, $object_type ) ) {
 				$this->add_metadata_group( $group_slug, $object_type, array( 'label' => ( ! empty( $field->label ) ) ? $field->label : $field_slug ) );
 				$field->group = $group_slug;
@@ -446,7 +440,7 @@ class custom_metadata_manager {
 				$group_slug = sprintf( 'single-group-%1$s-%2$s', $object_type, $slug );
 			}
 
-			// If group doesn't exist, create group
+			// If group doesn't exist, create group.
 			if ( ! $this->is_registered_group( $group_slug, $object_type ) ) {
 				$this->add_metadata_group( $group_slug, $object_type, array( 'label' => ( ! empty( $multifield->label ) ) ? $multifield->label : $slug ) );
 				$multifield->group = $group_slug;
@@ -551,7 +545,7 @@ class custom_metadata_manager {
 				array(
 					'group'  => $group,
 					'fields' => $fields,
-				) 
+				)
 			);
 		}
 	}
@@ -632,7 +626,7 @@ class custom_metadata_manager {
 			}
 		}
 
-		// Each group gets its own nonce
+		// Each group gets its own nonce.
 		$this->_display_group_nonce( $group_slug, $object_type );
 	}
 
@@ -677,7 +671,7 @@ class custom_metadata_manager {
 		$groups    = $this->get_groups_in_object_type( $post_type );
 
 		foreach ( $groups as $group_slug => $group ) {
-			// TODO: Allow hook into autosave
+			// TODO: Allow hook into autosave.
 			if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE && ! $group->autosave ) {
 				return $post_id;
 			}
@@ -752,14 +746,14 @@ class custom_metadata_manager {
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
 
 
-			// save the attachment ID of the upload field as well
+			// save the attachment ID of the upload field as well.
 			if ( $field->field_type == 'upload' && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
 				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[ $field_slug . '_attachment_id' ] ) );
 			}
 		} else {
 			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
 
-			// delete the attachment ID of the upload field as well
+			// delete the attachment ID of the upload field as well.
 			if ( $field->field_type == 'upload' && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
 				$this->_delete_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 			}
@@ -928,14 +922,14 @@ class custom_metadata_manager {
 		if ( is_array( $id_array ) ) {
 			if ( isset( $id_array[ $object_type ] ) ) {
 				if ( is_array( $id_array[ $object_type ] ) ) {
-					// array( 'user' => array( 123, 'postname' ) )
+					// array( 'user' => array( 123, 'postname' ) ).
 					return $this->does_id_array_match_object( $id_array[ $object_type ], $object_type, $object_id, $object_slug );
 				} else {
-					// array( 'post' => 123 )
+					// array( 'post' => 123 ).
 					return $this->does_id_match_object( $id_array[ $object_type ], $object_id, $object_slug );
 				}
 			} else {
-				// array( 123, 456, 'postname' )
+				// array( 123, 456, 'postname' ).
 				$match = false;
 				foreach ( $id_array as $id ) {
 					if ( $this->does_id_match_object( $id, $object_id, $object_slug ) ) {
@@ -946,14 +940,14 @@ class custom_metadata_manager {
 				return $match;
 			}
 		} else {
-			// 123 || 'postname' || 'username' || 'comment-name'(?)
+			// 123 || 'postname' || 'username' || 'comment-name'(?).
 			return $this->does_id_match_object( $id_array, $object_id, $object_slug );
 		}
 	}
 
 	function does_id_match_object( $id, $object_id, $object_slug = '' ) {
 		if ( is_int( $id ) ) {
-			// 123
+			// 123.
 			return $id == $object_id;
 		} elseif ( is_string( $id ) ) {
 			// 'postname' || 'username' || 'comment-name' ??
@@ -963,7 +957,7 @@ class custom_metadata_manager {
 	}
 
 	function is_restricted_field( $field_slug, $object_type ) {
-		// TODO: Build this out
+		// TODO: Build this out.
 		$post_restricted = array( 'post_title', 'post_author' );
 		$page_restricted = array();
 		$user_restricted = array();
@@ -981,7 +975,7 @@ class custom_metadata_manager {
 	}
 
 	function is_restricted_group( $group_slug, $object_type ) {
-		// TODO: Build this out
+		// TODO: Build this out.
 		// Built-in metaboxes: title, custom-fields, revisions, author, etc.
 		return false;
 	}
@@ -1078,23 +1072,23 @@ class custom_metadata_manager {
 
 		$field_slug = sanitize_key( $field_slug );
 
-		// save the taxonomy as a taxonomy [as well as a custom field]
+		// save the taxonomy as a taxonomy [as well as a custom field].
 		if ( in_array( $field->field_type, $this->_taxonomy_fields ) && ! in_array( $object_type, $this->_non_post_types ) ) {
 			wp_set_object_terms( $object_id, $value, $field->taxonomy );
 		}
 
 		if ( is_array( $value ) ) {
-			// multiple values
-			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones
+			// multiple values.
+			delete_metadata( $object_type, $object_id, $field_slug ); // delete the old values and add the new ones.
 			foreach ( $value as $v ) {
 				add_metadata( $object_type, $object_id, $field_slug, $v, false );
 			}
 		} else {
-			// single value
+			// single value.
 			update_metadata( $object_type, $object_id, $field_slug, $value );
 		}
 
-		// delete metadata entries if empty
+		// delete metadata entries if empty.
 		if ( empty( $value ) ) {
 			delete_metadata( $object_type, $object_id, $field_slug );
 		}
@@ -1115,7 +1109,7 @@ class custom_metadata_manager {
 
 		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
 
-		// convert date to unix timestamp
+		// convert date to unix timestamp.
 		if ( in_array( $field->field_type, array( 'datepicker', 'datetimepicker', 'timepicker' ) ) ) {
 			$new_value = strtotime( $original_value );
 		}
@@ -1155,7 +1149,7 @@ class custom_metadata_manager {
 
 		$fields = $this->get_fields_in_multifield( $multifield->group, $slug, $object_type );
 
-		// validate/weed out the fields that can't be part of mulitified
+		// validate/weed out the fields that can't be part of mulitified.
 		foreach ( $fields as $field_slug => $field ) {
 			if ( ! in_array( $field->field_type, $this->_field_types_that_support_multifield ) ) {
 				unset( $fields[ $field_slug ] );
@@ -1191,7 +1185,7 @@ class custom_metadata_manager {
 
 	function _display_metadata_field( $field_slug, $field, $object_type, $object_id, $field_id = null, $value = null ) {
 
-		// this is a safety to prevent multifields from being displayed as a field
+		// this is a safety to prevent multifields from being displayed as a field.
 		if ( true === $field->multifield ) {
 			return;
 		}
@@ -1227,18 +1221,18 @@ class custom_metadata_manager {
 
 		printf( '<label for="%s">%s</label>', esc_attr( $field_slug ), esc_html( $field->label ) );
 
-		// check if there is a default value and set it if no value currently set
+		// check if there is a default value and set it if no value currently set.
 		if ( empty( $value ) && in_array( $field->field_type, $this->_field_types_that_support_default_value ) && ! empty( $field->default_value ) ) {
 			$value = sanitize_text_field( $field->default_value );
 		}
 
 
-		// if value is empty set to an empty string
+		// if value is empty set to an empty string.
 		if ( empty( $value ) ) {
 			$value = '';
 		}
 
-		// make sure $value is an array
+		// make sure $value is an array.
 		$value = (array) $value;
 
 		$count            = 1;
@@ -1317,7 +1311,7 @@ class custom_metadata_manager {
 					break;
 				case 'upload':
 					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
-					$attachment_id  = array_shift( array_values( $_attachment_id ) ); // get the first value in the array
+					$attachment_id  = array_shift( array_values( $_attachment_id ) ); // get the first value in the array.
 					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
 					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
@@ -1368,7 +1362,7 @@ class custom_metadata_manager {
 			printf( '<div class="%s" id="%s">', esc_attr( $container_class ), esc_attr( $container_id ) );
 
 
-			// fields that save as arrays are not part of the foreach, otherwise they would display for each value, which is not the desired behaviour
+			// fields that save as arrays are not part of the foreach, otherwise they would display for each value, which is not the desired behaviour.
 			switch ( $field->field_type ) :
 				case 'multi_select':
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
@@ -1451,7 +1445,7 @@ class custom_metadata_manager {
 	}
 }
 
-global $custom_metadata_manager; // for backwards-compatibility we keep the global around, but it shouldn't be used
+global $custom_metadata_manager; // for backwards-compatibility we keep the global around, but it shouldn't be used.
 $custom_metadata_manager = custom_metadata_manager::instance();
 
 function x_add_metadata_field( $slug, $object_types = 'post', $args = array() ) {
