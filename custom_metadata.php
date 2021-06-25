@@ -27,7 +27,7 @@
  */
 
 /**
- * set this to true in your wp-config.php file to enable debug/test mode
+ * Set this to true in your wp-config.php file to enable debug/test mode
  */
 if ( ! defined( 'CUSTOM_METADATA_MANAGER_DEBUG' ) ) {
 	define( 'CUSTOM_METADATA_MANAGER_DEBUG', false );
@@ -37,60 +37,134 @@ if ( CUSTOM_METADATA_MANAGER_DEBUG ) {
 	require_once 'custom_metadata_examples.php';
 }
 
+/**
+ * The custom_metadata_manager class.
+ */
 class custom_metadata_manager {
 
+	/**
+	 * @var array
+	 */
 	var $errors = array();
 
+	/**
+	 * @var array
+	 */
 	var $metadata = array();
 
+	/**
+	 * @var array
+	 */
 	var $_non_post_types = array( 'user', 'comment' );
 
-	// Object types that come "built-in" with WordPress.
+	/**
+	 * Object types that come "built-in" with WordPress.
+	 *
+	 * @var array
+	 */
 	var $_builtin_object_types = array( 'post', 'page', 'user', 'comment' );
 
-	// Column filter names.
+	/**
+	 * Column filter names.
+	 *
+	 * @var array
+	 */
 	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
-	// field types.
+	/**
+	 * Field types.
+	 *
+	 * @var array
+	 */
 	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'link' );
 
-	// field types that are cloneable.
+	/**
+	 * Field types that are cloneable.
+	 *
+	 * @var array
+	 */
 	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
-	// field types that support a default value.
+	/**
+	 * Field types that support a default value.
+	 *
+	 * @var array
+	 */
 	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
-	// field types that support the placeholder attribute.
+	/**
+	 * Field types that support the placeholder attribute.
+	 *
+	 * @var array
+	 */
 	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
 	// field types that are read only by default.
 	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
-	// field types that support being part of a multifield group.
-	// @todo: workarounds needed for other field types.
+	/**
+	 * Field types that support being part of a multifield group.
+	 *
+	 * @todo: workarounds needed for other field types.
+	 *
+	 * @var array
+	 */
 	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
 
-	// taxonomy types.
+	/**
+	 * Taxonomy types.
+	 *
+	 * @var array
+	 */
 	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
 
-	// filed types that are saved as multiples but not cloneable.
+	/**
+	 * Field types that are saved as multiples but not cloneable.
+	 *
+	 * @var array
+	 */
 	var $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
 
-	// fields that always save as an array.
+	/**
+	 * Fields that always save as an array.
+	 *
+	 * @var array
+	 */
 	var $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select', 'taxonomy_multi_select' );
 
-	// Object types whose columns are generated through apply_filters instead of do_action.
+	/**
+	 * Object types whose columns are generated through apply_filters instead of do_action.
+	 *
+	 * @var array
+	 */
 	var $_column_filter_object_types = array( 'user' );
 
-	// Whitelisted pages that get stylesheets and scripts.
+	/**
+	 * Whitelisted pages that get stylesheets and scripts.
+	 *
+	 * @var array
+	 */
 	var $_pages_whitelist = array( 'edit.php', 'post.php', 'post-new.php', 'users.php', 'profile.php', 'user-edit.php', 'edit-comments.php', 'comment.php' );
 
-	// the default args used for the wp_editor function.
+	/**
+	 * The default args used for the wp_editor function.
+	 *
+	 * @var array
+	 */
 	var $default_editor_args = array();
 
-	// singleton instance.
+	/**
+	 * Singleton instance.
+	 *
+	 * @var custom_metadata_manager
+	 */
 	private static $instance;
 
+	/**
+	 * Get/Create our singleton instance
+	 *
+	 * @return custom_metadata_manager Singelton
+	 */
 	public static function instance() {
 		if ( isset( self::$instance ) ) {
 			return self::$instance;
@@ -101,13 +175,21 @@ class custom_metadata_manager {
 		return self::$instance;
 	}
 
-	// do nothing on construct.
+	/**
+	 * Do nothing on construct.
+	 */
 	function __construct() {}
 
+	/**
+	 * Main plugin hook.
+	 */
 	function run_initial_hooks() {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
 	}
 
+	/**
+	 * Set up plugin config.
+	 */
 	function admin_init() {
 		global $pagenow;
 
@@ -222,17 +304,23 @@ class custom_metadata_manager {
 		}
 	}
 
+	/**
+	 * Enqueues necessary scripts.
+	 */
 	function enqueue_scripts() {
 		wp_enqueue_media();
 		wp_enqueue_script( 'wplink' );
 		wp_enqueue_script( 'wpdialogs-popup' );
-		wp_enqueue_style( 'wp-jquery-ui-dialog' );
+		wp_enqueue_style( 'wp-jquery-ui-dialog' ); // @todo Is this here for a reason?
 		wp_enqueue_script( 'select2', apply_filters( 'custom_metadata_manager_select2_js', CUSTOM_METADATA_MANAGER_URL . 'js/select2.min.js' ), array( 'jquery' ), CUSTOM_METADATA_MANAGER_SELECT2_VERSION, true );
 		wp_enqueue_script( 'timepicker', apply_filters( 'custom_metadata_manager_timepicker_js', CUSTOM_METADATA_MANAGER_URL . 'js/jquery-ui-timepicker.min.js' ), array( 'jquery', 'jquery-ui-datepicker' ), CUSTOM_METADATA_MANAGER_TIMEPICKER_VERSION, true );
 		wp_enqueue_script( 'custom-metadata-manager-js', apply_filters( 'custom_metadata_manager_default_js', CUSTOM_METADATA_MANAGER_URL . 'js/custom-metadata-manager.js' ), array( 'jquery', 'jquery-ui-datepicker', 'select2' ), CUSTOM_METADATA_MANAGER_VERSION, true );
 		wp_enqueue_script( 'wp-color-picker' );
 	}
 
+	/**
+	 * Enqueues necessary styles.
+	 */
 	function enqueue_styles() {
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
 		wp_enqueue_style( 'editor-buttons' );
@@ -507,7 +595,7 @@ class custom_metadata_manager {
 	}
 
 	function _add_registration_error( $field_slug, $error_message ) {
-		$this->errors[] = sprintf( __( '<strong>%1$s:</strong> %2$s', 'custom-metadata-manager' ), $field_slug, $error_message );
+		$this->errors[] = sprintf( __( '<strong>%1$s:</strong> %2$s', 'custom-metadata' ), $field_slug, $error_message );
 	}
 
 	function add_post_metadata_groups() {
@@ -610,7 +698,7 @@ class custom_metadata_manager {
 		} elseif ( isset( $object->ID ) ) {
 			$object_id = $object->ID;
 		} else {
-			_e( 'Uh oh, something went wrong!', 'custom-metadata-manager' );
+			_e( 'Uh oh, something went wrong!', 'custom-metadata' );
 			return;
 		}
 
@@ -1171,10 +1259,10 @@ class custom_metadata_manager {
 				$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
 			}
 			echo '<div class="clear"></div>';
-			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', __( 'duplicate this set of fields' ) );
+			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', esc_attr__( 'duplicate this set of fields', 'custom-metadata' ) );
 
 			if ( $grouping_count > 1 ) {
-				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', __( 'remove this set of fields' ) );
+				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', esc_attr__( 'remove this set of fields', 'custom-metadata' ) );
 			}
 
 			echo '</div>';
@@ -1208,7 +1296,7 @@ class custom_metadata_manager {
 
 		if ( ! empty( $field->multiple ) && ( empty( $this->_cloneable_field_types ) || ! in_array( $field->field_type, $this->_cloneable_field_types ) ) ) {
 			$field->multiple = false;
-			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata-manager' ) );
+			printf( '<p class="error">%s</p>', esc_html__( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata' ) );
 		}
 
 		if ( ! isset( $field_id ) ) {
@@ -1320,7 +1408,7 @@ class custom_metadata_manager {
 				case 'taxonomy_select':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
-						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
@@ -1335,7 +1423,7 @@ class custom_metadata_manager {
 				case 'taxonomy_radio':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
-						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
 					foreach ( $terms as $term ) {
@@ -1348,7 +1436,7 @@ class custom_metadata_manager {
 			endswitch;
 
 			if ( $cloneable && $count > 1 ) {
-					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
+					echo '<a href="#" class="del-multiple hide-if-no-js">' . esc_html__( 'Delete', 'custom-metadata' ) . '</a>';
 			}
 
 			$count++;
@@ -1378,7 +1466,7 @@ class custom_metadata_manager {
 				case 'taxonomy_checkbox':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
-						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
 					foreach ( $terms as $term ) {
@@ -1391,7 +1479,7 @@ class custom_metadata_manager {
 				case 'taxonomy_multi_select':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
-						printf( __( 'There are no %s to select from yet.', $field->taxonomy ) );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
@@ -1408,7 +1496,7 @@ class custom_metadata_manager {
 		endif;
 
 		if ( $cloneable ) {
-			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), __( '+ Add New', 'custom-metadata-manager' ) );
+			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), esc_html__( '+ Add New', 'custom-metadata' ) );
 		}
 
 		$this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value );
@@ -1418,7 +1506,7 @@ class custom_metadata_manager {
 
 	function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) {
 		if ( $field->description ) {
-			echo '<span class="description">' . $field->description . '</span>';
+			echo '<span class="description">' . esc_html( $field->description ) . '</span>';
 		}
 	}
 
@@ -1448,14 +1536,23 @@ class custom_metadata_manager {
 global $custom_metadata_manager; // for backwards-compatibility we keep the global around, but it shouldn't be used.
 $custom_metadata_manager = custom_metadata_manager::instance();
 
+/**
+ * Helper function for add_metadata_field method
+ */
 function x_add_metadata_field( $slug, $object_types = 'post', $args = array() ) {
 	custom_metadata_manager::instance()->add_metadata_field( $slug, $object_types, $args );
 }
 
+/**
+ * Helper function for add_multifield method
+ */
 function x_add_metadata_multifield( $slug, $object_types = 'post', $args = array() ) {
 	custom_metadata_manager::instance()->add_multifield( $slug, $object_types, $args );
 }
 
+/**
+ * Helper function for add_metadata_group method
+ */
 function x_add_metadata_group( $slug, $object_types, $args = array() ) {
 	custom_metadata_manager::instance()->add_metadata_group( $slug, $object_types, $args );
 }
