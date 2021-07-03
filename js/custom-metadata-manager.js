@@ -22,7 +22,7 @@
 
 			id_name = split_id[0] + '-' + instance_num;
 			$clone.attr( 'id', id_name );
-			$clone.insertAfter( $last ).hide().fadeIn().find( ':input' ).not( 'type="button"' ).val(''); // todo: figure out if default value
+			$clone.insertAfter( $last ).hide().fadeIn().find( ':input' ).not( '[type=button]' ).val(''); // todo: figure out if default value
 		});
 
 		// deleting fields
