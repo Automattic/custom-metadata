@@ -57,5 +57,11 @@
 	"support": {
 		"issues": "https://github.com/Automattic/custom-metadata/issues",
 		"source": "https://github.com/Automattic/custom-metadata"
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }
