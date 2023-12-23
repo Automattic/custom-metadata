@@ -199,34 +199,41 @@
 
 .custom-metadata-multifield-clone,
 .custom-metadata-multifield-delete {
+	color: #fff;
 	position: absolute;
 	display: block;
 	top: 50%;
 	right: 25px;
-	padding: 0 3px 4px;
-	font-size: 35px;
-	line-height: 20px;
+	padding: 5px;
+	font: 20px/1 dashicons;	
 	text-decoration: none;
-	border: 1px solid;
 	border-radius: 50%;
 }
+.custom-metadata-multifield-clone:hover,
+.custom-metadata-multifield-delete:hover {
+	color: #fff;
+}
 .custom-metadata-multifield-clone {
+	background-color: #5cb85c;
 	margin-top: -17px;
-	color: green;
-	border-color: green;
+}
+.custom-metadata-multifield-clone:hover {
+	background-color: #4cae4c;
+}
+.custom-metadata-multifield-clone:before {
+	content: "\f132";
 }
 .custom-metadata-multifield-delete ~ .custom-metadata-multifield-clone {
 	margin-top: -35px;
 }
 .custom-metadata-multifield-delete {
+	background-color: #d9534f;
 	margin-top: 17px;
-	padding: 1px 6px 4px;
-	color: red;
-	border-color: red;
 }
-.custom-metadata-multifield-clone:hover,
-.custom-metadata-multifield-clone:active,
-.custom-metadata-multifield-delete:hover,
-.custom-metadata-multifield-delete:active {
-	border-color: #d54e21;
+.custom-metadata-multifield-delete:hover {
+	background-color: #d43f3a;
+}
+
+.custom-metadata-multifield-delete:before {
+	content: "\f158";
 }
