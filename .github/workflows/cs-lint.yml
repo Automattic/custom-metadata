@@ -37,7 +37,7 @@ jobs:
         uses: korelstar/xmllint-problem-matcher@1bd292d642ddf3d369d02aaa8b262834d61198c0 # v1.2.0
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6.0.2
 
       # Validate the composer.json file.
       # @link https://getcomposer.org/doc/03-cli.md#validate
