@@ -142,7 +142,11 @@
 			e.preventDefault();
 			custom_metadata_link_selector_is_open = true;
 			custom_metadata_link_selector_target = $(this).parent().find( 'input[type="text"]' );
-			wpActiveEditor = true;
+			// wpLink reads the global wpActiveEditor to locate the field it should
+			// write into; point it at this link input's id (a string) rather than a
+			// boolean, otherwise wpLink.open() dereferences an undefined element and
+			// throws "Cannot read property 'selectionStart' of undefined".
+			wpActiveEditor = custom_metadata_link_selector_target.attr( 'id' );
 			wpLink.open();
 			var $wp_link = $( '#wp-link' );
 			wpLink.textarea = custom_metadata_link_selector_target;
