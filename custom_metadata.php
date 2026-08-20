@@ -326,7 +326,8 @@ class custom_metadata_manager {
 			$column_content_name = 'comments';
 		} else {
 			// users.
-			$column_header_name = $column_content_name = $object_type . 's';
+			$column_content_name = $object_type . 's';
+			$column_header_name  = $column_content_name;
 		}
 
 		// Hook into Column Headers.
@@ -837,11 +838,11 @@ class custom_metadata_manager {
 	/**
 	 * Renders the fields of a group inside a post or comment meta box.
 	 *
-	 * @param object $object The post or comment object being edited.
-	 * @param array  $meta_box Meta box arguments, including the group and its fields.
+	 * @param object $wp_object The post or comment object being edited.
+	 * @param array  $meta_box  Meta box arguments, including the group and its fields.
 	 * @return void
 	 */
-	public function _display_post_metadata_box( $object, $meta_box ) {
+	public function _display_post_metadata_box( $wp_object, $meta_box ) {
 
 		$group_slug  = $meta_box['id'];
 		$group       = $meta_box['args']['group'];
@@ -849,10 +850,10 @@ class custom_metadata_manager {
 		$object_type = $this->_get_object_type_context();
 
 		// I really don't like using variable variables, but this is the path of least resistence.
-		if ( isset( $object->{$object_type . '_ID'} ) ) {
-			$object_id = $object->{$object_type . '_ID'};
-		} elseif ( isset( $object->ID ) ) {
-			$object_id = $object->ID;
+		if ( isset( $wp_object->{$object_type . '_ID'} ) ) {
+			$object_id = $wp_object->{$object_type . '_ID'};
+		} elseif ( isset( $wp_object->ID ) ) {
+			$object_id = $wp_object->ID;
 		} else {
 			_e( 'Uh oh, something went wrong!', 'custom-metadata' );
 			return;
@@ -1859,7 +1860,7 @@ class custom_metadata_manager {
 			printf( '<div id="%s" class="custom-metadata-multifield-grouping">', esc_attr( $grouping_id ) );
 			foreach ( $fields as $field_slug => $field ) {
 				$value              = ( isset( $grouping_of_values[ $field_slug ] ) ) ? $grouping_of_values[ $field_slug ] : false;
-				$field_id           = $slug . '[' . ( $grouping_count - 1 ) . ']' . '[' . $field_slug . ']';
+				$field_id           = $slug . '[' . ( $grouping_count - 1 ) . '][' . $field_slug . ']';
 				$display_field_slug = $field_slug . '-' . $grouping_count;
 				$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
 			}
