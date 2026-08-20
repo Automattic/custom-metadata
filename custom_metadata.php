@@ -688,6 +688,24 @@ class custom_metadata_manager {
 			return $object_id;
 		}
 
+		// The nonce only proves the request came from a form this user was shown; it is not an
+		// authorization check. Confirm the user may actually edit this object before saving.
+		switch ( $object_type ) {
+			case 'user':
+				$capability = 'edit_user';
+				break;
+			case 'comment':
+				$capability = 'edit_comment';
+				break;
+			default:
+				$capability = 'edit_post'; // every registered post type maps through the edit_post meta cap.
+				break;
+		}
+
+		if ( ! current_user_can( $capability, $object_id ) ) {
+			return $object_id;
+		}
+
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 
 		foreach ( $fields as $field_slug => $field ) {
@@ -1094,7 +1112,68 @@ class custom_metadata_manager {
 		if ( $sanitize_callback )
 			return call_user_func( $sanitize_callback, $field_slug, $field, $object_type, $object_id, $new_value, $original_value );
 
+		// No explicit sanitize_callback: apply a safe, field-type-aware default (defense-in-depth).
+		// Opt out globally by returning false from the filter, or per field by registering a sanitize_callback.
+		if ( apply_filters( 'custom_metadata_manager_apply_default_sanitize', true, $field, $object_type ) )
+			$new_value = $this->_default_sanitize_field_value( $field, $new_value );
+
 		return $new_value;
+	}
+
+	/**
+	 * Apply a safe default sanitizer based on the field type.
+	 *
+	 * Used only when a field has no explicit sanitize_callback. This complements the
+	 * escaping done on output: it keeps attacker-controlled markup out of the stored
+	 * value, which is also read by themes via get_post_meta(), by custom display
+	 * callbacks, and (for taxonomy fields) by wp_set_object_terms() — none of which
+	 * the column escaping can reach.
+	 *
+	 * @param object $field the field object
+	 * @param mixed  $value the value to sanitize (a scalar, or an array for multi-value fields)
+	 * @return mixed the sanitized value
+	 */
+	function _default_sanitize_field_value( $field, $value ) {
+		// Multi-value fields (multi_select, taxonomy_checkbox, taxonomy_multi_select, cloneable) arrive as arrays.
+		if ( is_array( $value ) ) {
+			$sanitized = array();
+			foreach ( $value as $key => $item ) {
+				$sanitized[ $key ] = $this->_default_sanitize_field_value( $field, $item );
+			}
+			return $sanitized;
+		}
+
+		switch ( $field->field_type ) {
+			case 'wysiwyg':
+				// HTML is the point of this field; strip only scripts, event handlers and bad protocols.
+				return wp_kses_post( $value );
+			case 'textarea':
+				// Like sanitize_text_field() but preserves newlines.
+				return sanitize_textarea_field( $value );
+			case 'email':
+				return sanitize_email( $value );
+			case 'number':
+				// Keep floats and negatives; reject anything non-numeric.
+				return is_numeric( $value ) ? $value + 0 : '';
+			case 'link':
+			case 'upload':
+				// URL fields: esc_url_raw() neutralizes javascript:/data: that sanitize_text_field() would leave intact.
+				return esc_url_raw( $value );
+			case 'colorpicker':
+				$hex = sanitize_hex_color( $value );
+				return $hex ? $hex : sanitize_text_field( $value );
+			case 'datepicker':
+			case 'datetimepicker':
+			case 'timepicker':
+				// Already normalised to a timestamp (int) or false by strtotime() upstream.
+				return $value;
+			case 'password':
+				// Do not mangle secrets.
+				return $value;
+			default:
+				// text, tel, checkbox, radio, select, and any unrecognized type.
+				return sanitize_text_field( $value );
+		}
 	}
 
 	function _metadata_column_content( $field_slug, $field, $object_type, $object_id ) {
@@ -1105,9 +1184,10 @@ class custom_metadata_manager {
 		if ( $display_column_callback )
 			return call_user_func( $display_column_callback, $field_slug, $field, $object_type, $object_id, $value );
 
+		// Escape on output. A custom `display_column_callback` (above) is responsible for its own escaping.
 		if ( is_array( $value ) )
-			return implode( ', ', $value );
-		return $value;
+			return implode( ', ', array_map( 'esc_html', $value ) );
+		return esc_html( $value );
 	}
 
 	function _display_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
