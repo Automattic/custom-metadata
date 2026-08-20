@@ -909,7 +909,7 @@ class custom_metadata_manager {
 	public function verify_group_nonce( $group_slug, $object_type ) {
 		$nonce_key = $this->build_nonce_key( $group_slug, $object_type );
 		if ( isset( $_POST[ $nonce_key ] ) ) {
-			return wp_verify_nonce( $_POST[ $nonce_key ], 'save-metadata' );
+			return wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ $nonce_key ] ) ), 'save-metadata' );
 		} else {
 			return false;
 		}
@@ -1032,9 +1032,9 @@ class custom_metadata_manager {
 	 */
 	public function save_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
 
-		if ( isset( $_POST[ $slug ] ) ) {
+		if ( isset( $_POST[ $slug ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce and capability are verified in save_metadata_group() before this runs.
 			$multifield_value = array();
-			$groupings        = $_POST[ $slug ];
+			$groupings        = wp_unslash( $_POST[ $slug ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified upstream; each value is sanitised below by _sanitize_field_value().
 			$fields           = $this->get_fields_in_multifield( $multifield->group, $slug, $object_type );
 			foreach ( $groupings as $grouping ) {
 				$grouping_values = array();
@@ -1076,20 +1076,20 @@ class custom_metadata_manager {
 	 * @return void
 	 */
 	public function save_metadata_field( $field_slug, $field, $object_type, $object_id ) {
-		if ( isset( $_POST[ $field_slug ] ) ) {
-			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[ $field_slug ] );
+		if ( isset( $_POST[ $field_slug ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce and capability are verified in save_metadata_group() before this runs.
+			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, wp_unslash( $_POST[ $field_slug ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified upstream; sanitised by _sanitize_field_value().
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
 
 
 			// save the attachment ID of the upload field as well.
-			if ( 'upload' == $field->field_type && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
-				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[ $field_slug . '_attachment_id' ] ) );
+			if ( 'upload' == $field->field_type && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in save_metadata_group() before this runs.
+				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[ $field_slug . '_attachment_id' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified upstream; sanitised with absint().
 			}
 		} else {
 			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
 
 			// delete the attachment ID of the upload field as well.
-			if ( 'upload' == $field->field_type && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
+			if ( 'upload' == $field->field_type && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in save_metadata_group() before this runs.
 				$this->_delete_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 			}
 		}
