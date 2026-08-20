@@ -1,0 +1,41 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+*'
+
+# Disable all permissions by default; grant minimal permissions per job.
+permissions: {}
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Create distribution ZIP
+        run: |
+          PLUGIN_SLUG="custom-metadata"
+          mkdir -p "/tmp/dist/${PLUGIN_SLUG}"
+
+          # Copy files, respecting .distignore.
+          rsync -rc --exclude-from=".distignore" ./ "/tmp/dist/${PLUGIN_SLUG}/"
+
+          # Create a ZIP with a single top-level plugin directory.
+          cd /tmp/dist
+          zip -r "/tmp/${PLUGIN_SLUG}.zip" "${PLUGIN_SLUG}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+        with:
+          files: /tmp/*.zip
+          generate_release_notes: true
+          draft: false

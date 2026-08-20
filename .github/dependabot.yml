@@ -1,22 +1,37 @@
 version: 2
+
 updates:
+  # GitHub Actions.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 10
     groups:
-      actions-minor-patch:
+      actions:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
-      actions-major:
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "Actions"
+      include: "scope"
+    open-pull-requests-limit: 5
+
+  # Composer (development tooling, plus the composer/installers plugin).
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    groups:
+      dev-dependencies:
         patterns:
           - "*"
-        update-types:
-          - "major"
-    cooldown:
-      default-days: 7
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "Composer"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy: increase-if-necessary
