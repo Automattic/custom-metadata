@@ -50,4 +50,16 @@ if ( $is_integration ) {
 
 	// Bootstrap WordPress, the Composer autoloader and the PHPUnit polyfills.
 	WPIntegration\bootstrap_it();
+} else {
+	/*
+	 * Unit tests run without WordPress. The manager class lives in its own file with
+	 * no load-time side effects — it is instantiated only from custom_metadata.php, the
+	 * WordPress-only entry point — so it can be required directly here. Neither
+	 * WordPress nor a Brain\Monkey shim is needed simply to define the class.
+	 *
+	 * Brain\Monkey is still initialised per test by Yoast\WPTestUtils\BrainMonkey\TestCase,
+	 * so individual tests can mock WordPress functions when they need to.
+	 */
+	require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+	require_once dirname( __DIR__ ) . '/includes/class-custom-metadata-manager.php';
 }
