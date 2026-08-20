@@ -1,67 +1,55 @@
 {
 	"name": "automattic/custom-metadata",
-	"type": "wordpress-plugin",
-	"description": "An easy way to add custom fields to your object types",
-	"homepage": "https://github.com/Automattic/custom-metadata/",
+	"description": "An easy way to add custom fields to your object types (posts, pages, custom post types, users, comments).",
 	"license": "GPL-2.0-or-later",
+	"type": "wordpress-plugin",
+	"keywords": [
+		"wordpress",
+		"custom fields",
+		"metadata",
+		"meta boxes"
+	],
 	"authors": [
 		{
 			"name": "Automattic",
 			"homepage": "https://automattic.com/"
+		},
+		{
+			"name": "Contributors",
+			"homepage": "https://github.com/Automattic/custom-metadata/graphs/contributors"
 		}
 	],
-	"require": {
-		"php": ">=5.6",
-		"composer/installers": "~1.0"
-	},
-	"require-dev": {
-		"automattic/vipwpcs": "^2.2",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7",
-		"php-parallel-lint/php-parallel-lint": "^1.0",
-		"phpcompatibility/phpcompatibility-wp": "^2.1",
-		"phpunit/phpunit": "^4 || ^5 || ^6 || ^7",
-		"squizlabs/php_codesniffer": "^3.5",
-		"wp-coding-standards/wpcs": "^2.3.0",
-		"yoast/phpunit-polyfills": "^0.2.0"
-	},
-	"scripts": {
-		"cbf": [
-			"@php ./vendor/bin/phpcbf"
-		],
-		"coverage": [
-			"@php ./vendor/bin/phpunit --coverage-html ./build/coverage-html"
-		],
-		"coverage-ci": [
-			"@php ./vendor/bin/phpunit"
-		],
-		"cs": [
-			"@php ./vendor/bin/phpcs"
-		],
-		"lint": [
-			"@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git"
-		],
-		"lint-ci": [
-			"@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git --checkstyle"
-		],
-		"prepare-ci": [
-			"bash bin/install-wp-tests.sh wordpress_test root root localhost"
-		],
-		"test": [
-			"@php ./vendor/bin/phpunit --testsuite WP_Tests"
-		],
-		"test-ms": [
-			"@putenv WP_MULTISITE=1",
-			"@composer test"
-		]
-	},
+	"homepage": "https://github.com/Automattic/custom-metadata/",
 	"support": {
 		"issues": "https://github.com/Automattic/custom-metadata/issues",
 		"source": "https://github.com/Automattic/custom-metadata"
+	},
+	"require": {
+		"php": ">=7.4",
+		"composer/installers": "^1.0 || ^2.0"
+	},
+	"require-dev": {
+		"automattic/vipwpcs": "^3.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"php-parallel-lint/php-parallel-lint": "^1.4",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpunit/phpunit": "^9.6",
+		"yoast/wp-test-utils": "^1.2"
 	},
 	"config": {
 		"allow-plugins": {
 			"composer/installers": true,
 			"dealerdirect/phpcodesniffer-composer-installer": true
-		}
+		},
+		"sort-packages": true
+	},
+	"scripts": {
+		"coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/custom-metadata ./vendor/bin/phpunit --testsuite integration --coverage-html coverage",
+		"cs": "@php ./vendor/bin/phpcs",
+		"cs-fix": "@php ./vendor/bin/phpcbf",
+		"lint": "@php ./vendor/bin/parallel-lint --exclude vendor --exclude node_modules .",
+		"lint-ci": "@php ./vendor/bin/parallel-lint --exclude vendor --exclude node_modules --checkstyle .",
+		"test:integration": "wp-env run tests-cli --env-cwd=wp-content/plugins/custom-metadata ./vendor/bin/phpunit --testsuite integration",
+		"test:integration-ms": "wp-env run tests-cli --env-cwd=wp-content/plugins/custom-metadata /bin/bash -c 'WP_MULTISITE=1 ./vendor/bin/phpunit --testsuite integration'"
 	}
 }

@@ -1,0 +1,57 @@
+name: Build Test ZIP
+
+on:
+  pull_request:
+    types: [labeled]
+
+# Disable all permissions by default; grant minimal permissions per job.
+permissions: {}
+
+jobs:
+  build:
+    if: github.event.label.name == 'needs-test-zip'
+    name: Build test ZIP
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          # Pin to the immutable head SHA (never the mutable head.ref) to avoid ref injection.
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Create test ZIP
+        run: |
+          PLUGIN_SLUG="custom-metadata"
+          mkdir -p "/tmp/test-build/${PLUGIN_SLUG}"
+
+          # Copy files, respecting .distignore.
+          rsync -rc --exclude-from=".distignore" ./ "/tmp/test-build/${PLUGIN_SLUG}/"
+
+          # Create a ZIP with a single top-level plugin directory.
+          cd /tmp/test-build
+          zip -r "/tmp/${PLUGIN_SLUG}-test.zip" "${PLUGIN_SLUG}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: test-build-pr-${{ github.event.pull_request.number }}
+          path: /tmp/*-test.zip
+          retention-days: 14
+
+      - name: Comment on PR
+        # PRs from forks receive a read-only token, so let the comment fail without failing the job.
+        continue-on-error: true
+        uses: actions/github-script@60a0d83913bde9eb5b52d3c3f51f76a5bb0f3e99 # v7.0.1
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 📦 Test build ready\n\nA test build is available from the workflow artifacts.\n\n[Download from the workflow run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n⚠️ Test builds expire after 14 days.`
+            });

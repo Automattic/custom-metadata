@@ -1,0 +1,60 @@
+name: PHP Lint
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - '.phpcs.xml.dist'
+      - '.github/workflows/php-lint.yml'
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - '**.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - '.phpcs.xml.dist'
+      - '.github/workflows/php-lint.yml'
+  workflow_dispatch:
+
+# Disable all permissions by default; grant minimal permissions per job.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: PHP syntax and coding standards
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer, cs2pr
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # 3.1.1
+        with:
+          composer-options: --prefer-dist --no-progress
+
+      - name: Validate composer.json
+        run: composer validate --no-check-all --strict
+
+      - name: PHP syntax lint
+        run: composer lint-ci | cs2pr
+
+      - name: PHP coding standards
+        run: composer cs -- --report=checkstyle | cs2pr

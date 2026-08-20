@@ -1,58 +1,42 @@
 <?xml version="1.0"?>
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="custom-metadata" xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
-	<description>Custom ruleset for custom-metadata plugin.</description>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Custom Metadata Manager" xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+	<description>Coding standards for the Custom Metadata Manager plugin.</description>
 
-	<!-- For help in understanding this file: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
-	<!-- For help in using PHPCS: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
-
-	<!-- What to scan -->
+	<!-- What to scan: the whole plugin, excluding dependencies, tests and generated files. -->
 	<file>.</file>
-	<!-- Ignoring Files and Folders:
-		https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-files-and-folders -->
-	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 
-	<!-- How to scan -->
-	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
-	<!-- Annotated ruleset: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
-	<!-- Show sniff and progress -->
-	<arg value="sp"/>
-	<!-- Strip the file paths down to the relevant bit -->
-	<arg name="basepath" value="./"/>
-	<!-- Show results with colors -->
-	<arg name="colors"/>
-	<!-- Limit to PHP files -->
-	<arg name="extensions" value="php"/>
-	<!-- Enables parallel processing when available for faster results. -->
-	<arg name="parallel" value="8"/>
+	<!-- How to scan. -->
+	<arg value="sp"/><!-- Show sniff codes and progress. -->
+	<arg name="basepath" value="."/><!-- Strip file paths down to the relevant bit. -->
+	<arg name="colors"/><!-- Colour the output. Disable if working on Windows. -->
+	<arg name="extensions" value="php"/><!-- Only scan PHP files. -->
+	<arg name="parallel" value="8"/><!-- Run sniffs in parallel for faster results. -->
 
-	<!-- Rules: Check PHP version compatibility - see
-		https://github.com/PHPCompatibility/PHPCompatibilityWP -->
-	<rule ref="PHPCompatibilityWP"/>
-	<!-- For help in understanding this testVersion:
-		https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="5.6-"/>
-
-	<!-- Rules: WordPress Coding Standards - see
-		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
-	<!-- WordPress-Extra includes WordPress-Core -->
+	<!-- Rules: WordPress VIP coding standards. WordPress-Extra includes WordPress-Core. -->
 	<rule ref="WordPress-Extra"/>
 	<rule ref="WordPress-Docs"/>
-	<!-- For help in understanding these custom sniff properties:
-		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
-	<config name="minimum_supported_wp_version" value="5.5"/>
-
-	<!-- Rules: WordPress VIP - see
-		https://github.com/Automattic/VIP-Coding-Standards -->
 	<rule ref="WordPress-VIP-Go"/>
+	<config name="minimum_supported_wp_version" value="6.4"/>
 
+	<!-- Rules: check cross-version PHP compatibility. -->
+	<rule ref="PHPCompatibilityWP"/>
+	<config name="testVersion" value="7.4-"/>
+
+	<!-- Ensure everything in the global namespace is prefixed. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
 				<element value="custom_metadata"/>
+				<element value="x_add_metadata"/>
 			</property>
 		</properties>
 	</rule>
 
+	<!-- Ensure the text domain is used consistently. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
@@ -61,10 +45,10 @@
 		</properties>
 	</rule>
 
+	<!-- Require a blank line check around control structures. -->
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
 		<properties>
 			<property name="blank_line_check" value="true"/>
 		</properties>
 	</rule>
-
 </ruleset>
