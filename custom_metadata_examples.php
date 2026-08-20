@@ -1,31 +1,34 @@
 <?php
-/*
-Copyright 2010-2013 The Contributors
-
-GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-
 /**
- * register a test post type just for the examples
+ * Example field, group and multifield registrations for the Custom Metadata Manager plugin.
+ *
+ * Copyright 2010-2013 The Contributors
+ *
+ * GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @package Automattic\CustomMetadata
+ */
+
+add_action( 'init', 'x_init_custom_post_types' );
+/**
+ * Registers a test post type just for the examples.
  *
  * @return void
  */
-add_action( 'init', 'x_init_custom_post_types' );
 function x_init_custom_post_types() {
 
 	$labels = array(
@@ -62,17 +65,16 @@ function x_init_custom_post_types() {
 }
 
 
-/**
- * register custom metadata groups and fields
- * this is the example code that you should use
- * make sure to use the 'admin_init' hook as below
- *
- * @return void
- */
 add_action( 'custom_metadata_manager_init_metadata', 'x_init_custom_fields' );
+/**
+ * Registers custom metadata groups and fields.
+ *
+ * This is the example code that you should use. Make sure to use the
+ * 'custom_metadata_manager_init_metadata' hook as below.
+ */
 function x_init_custom_fields() {
 
-	// adds a new group to the test post type
+	// adds a new group to the test post type.
 	x_add_metadata_group(
 		'x_metaBox1',
 		'x_test',
@@ -81,7 +83,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds another group to the test post type + posts + users
+	// adds another group to the test post type + posts + users.
 	x_add_metadata_group(
 		'x_metaBox2',
 		array( 'x_test', 'post', 'user' ),
@@ -91,32 +93,32 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a text field to the first group
+	// adds a text field to the first group.
 	x_add_metadata_field(
 		'x_fieldName1',
 		'x_test',
 		array(
-			'group'          => 'x_metaBox1', // the group name
-			'description'    => 'This is field #1. It\'s a simple text field.', // description for the field
-			'label'          => 'Text Field', // field label
-			'display_column' => true, // show this field in the column listings
+			'group'          => 'x_metaBox1', // the group name.
+			'description'    => 'This is field #1. It\'s a simple text field.', // description for the field.
+			'label'          => 'Text Field', // field label.
+			'display_column' => true, // show this field in the column listings.
 		) 
 	);
 
-	// adds a text field to the 2nd group
+	// adds a text field to the 2nd group.
 	x_add_metadata_field(
 		'x_fieldName2',
 		'x_test',
 		array(
 			'group'                   => 'x_metaBox1',
-			'display_column'          => 'My Column (with Custom Callback)', // show this field in the column listings
-			'display_column_callback' => 'x_field_name2_callback', // custom function to display the column results (see below)
+			'display_column'          => 'My Column (with Custom Callback)', // show this field in the column listings.
+			'display_column_callback' => 'x_field_name2_callback', // custom function to display the column results (see below).
 			'label'                   => 'Text with Custom Callback',
 		) 
 	);
 
 
-	// adds a cloneable textarea field to the 1st group
+	// adds a cloneable textarea field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldTextarea1',
 		'x_test',
@@ -128,7 +130,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a readonly textarea field to the 1st group
+	// adds a readonly textarea field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldTextareaReadOnly1',
 		'x_test',
@@ -140,7 +142,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a readonly text field to the 1st group
+	// adds a readonly text field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldTextReadOnly1',
 		'x_test',
@@ -151,7 +153,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a wysiwyg (full editor) field to the 2nd group
+	// adds a wysiwyg (full editor) field to the 2nd group.
 	x_add_metadata_field(
 		'x_fieldWysiwyg1',
 		array( 'x_test', 'user' ),
@@ -162,7 +164,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a datepicker field to the 1st group
+	// adds a datepicker field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldDatepicker1',
 		'x_test',
@@ -173,7 +175,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a datetimepicker field to the 1st group
+	// adds a datetimepicker field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldDatetimepicker1',
 		'x_test',
@@ -184,7 +186,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a timepicker field to the 1st group
+	// adds a timepicker field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldTimepicker1',
 		'x_test',
@@ -195,7 +197,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a colorpicker field to the 1st group
+	// adds a colorpicker field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldColorpicker1',
 		'x_test',
@@ -206,7 +208,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds an upload field to the 1st group
+	// adds an upload field to the 1st group.
 	x_add_metadata_field(
 		'x_fieldUpload1',
 		'x_test',
@@ -218,7 +220,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a checkbox field to the first group
+	// adds a checkbox field to the first group.
 	x_add_metadata_field(
 		'x_fieldCheckbox1',
 		'x_test',
@@ -229,45 +231,45 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a radio button field to the first group
+	// adds a radio button field to the first group.
 	x_add_metadata_field(
 		'x_fieldRadio1',
 		'x_test',
 		array(
 			'group'      => 'x_metaBox1',
 			'field_type' => 'radio',
-			'values'     => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+			'values'     => array(     // set possible value/options.
+				'option1' => 'Option #1', // key => value pair (key is stored in DB).
 				'option2' => 'Option #2',
 			),
 			'label'      => 'Radio field',
 		) 
 	);
 
-	// adds a select box in the first group
+	// adds a select box in the first group.
 	x_add_metadata_field(
 		'x_fieldSelect1',
 		'x_test',
 		array(
 			'group'      => 'x_metaBox1',
 			'field_type' => 'select',
-			'values'     => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+			'values'     => array(     // set possible value/options.
+				'option1' => 'Option #1', // key => value pair (key is stored in DB).
 				'option2' => 'Option #2',
 			),
 			'label'      => 'Select field',
 		) 
 	);
 
-	// adds a multi-select field in the first group
+	// adds a multi-select field in the first group.
 	x_add_metadata_field(
 		'x_field_multi_select',
 		'x_test',
 		array(
 			'group'      => 'x_metaBox1',
 			'field_type' => 'multi_select',
-			'values'     => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+			'values'     => array(     // set possible value/options.
+				'option1' => 'Option #1', // key => value pair (key is stored in DB).
 				'option2' => 'Option #2',
 				'option3' => 'Option #3',
 				'option4' => 'Option #4',
@@ -278,15 +280,15 @@ function x_init_custom_fields() {
 
 	// adds a multi-select field with chosen in the first group
 	// note: `select2` and `chosen` args do the exact same (add select2)
-	// but for the purposes of testing, we're using chosen here
+	// but for the purposes of testing, we're using chosen here.
 	x_add_metadata_field(
 		'x_field_multi_select_chosen',
 		'x_test',
 		array(
 			'group'      => 'x_metaBox1',
 			'field_type' => 'multi_select',
-			'values'     => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+			'values'     => array(     // set possible value/options.
+				'option1' => 'Option #1', // key => value pair (key is stored in DB).
 				'option2' => 'Option #2',
 				'option3' => 'Option #3',
 				'option4' => 'Option #4',
@@ -296,15 +298,15 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a select field with select2 in the first group
+	// adds a select field with select2 in the first group.
 	x_add_metadata_field(
 		'x_field_select_select2',
 		'x_test',
 		array(
 			'group'      => 'x_metaBox1',
 			'field_type' => 'select',
-			'values'     => array(     // set possible value/options
-				'option1' => 'Option #1', // key => value pair (key is stored in DB)
+			'values'     => array(     // set possible value/options.
+				'option1' => 'Option #1', // key => value pair (key is stored in DB).
 				'option2' => 'Option #2',
 				'option3' => 'Option #3',
 				'option4' => 'Option #4',
@@ -314,7 +316,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a taxonomy checkbox field in the first group
+	// adds a taxonomy checkbox field in the first group.
 	x_add_metadata_field(
 		'x_field_taxonomy_checkbox',
 		'x_test',
@@ -326,7 +328,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a taxonomy select field in the first group
+	// adds a taxonomy select field in the first group.
 	x_add_metadata_field(
 		'x_field_taxonomy_select',
 		'x_test',
@@ -338,7 +340,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a taxonomy multiselect field in the first group
+	// adds a taxonomy multiselect field in the first group.
 	x_add_metadata_field(
 		'x_field_taxonomy_multi_select',
 		'x_test',
@@ -350,7 +352,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a taxonomy multiselect w/ select2 field in the first group
+	// adds a taxonomy multiselect w/ select2 field in the first group.
 	x_add_metadata_field(
 		'x_field_taxonomy_multi_select2',
 		'x_test',
@@ -363,7 +365,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a number field in the first group (with no min/max)
+	// adds a number field in the first group (with no min/max).
 	x_add_metadata_field(
 		'x_field_number',
 		'x_test',
@@ -374,7 +376,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a number field in the first group (with min/max)
+	// adds a number field in the first group (with min/max).
 	x_add_metadata_field(
 		'x_field_number_with_min_max',
 		'x_test',
@@ -388,7 +390,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds an email field in the first group
+	// adds an email field in the first group.
 	x_add_metadata_field(
 		'x_field_email',
 		'x_test',
@@ -399,7 +401,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a link field in the first group
+	// adds a link field in the first group.
 	x_add_metadata_field(
 		'x_field_link',
 		'x_test',
@@ -410,7 +412,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a telephone field in the first group (with default value)
+	// adds a telephone field in the first group (with default value).
 	x_add_metadata_field(
 		'x_field_telephone',
 		'x_test',
@@ -422,7 +424,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a text field with a default value
+	// adds a text field with a default value.
 	x_add_metadata_field(
 		'x_field_text_default',
 		'x_test',
@@ -434,7 +436,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a text field with placeholder
+	// adds a text field with placeholder.
 	x_add_metadata_field(
 		'x_field_textarea_placeholder',
 		'x_test',
@@ -446,7 +448,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a password field with placeholder
+	// adds a password field with placeholder.
 	x_add_metadata_field(
 		'x_field_password_placeholder',
 		'x_test',
@@ -458,7 +460,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a number field with placeholder
+	// adds a number field with placeholder.
 	x_add_metadata_field(
 		'x_field_number_placeholder',
 		'x_test',
@@ -470,7 +472,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds an email field with placeholder
+	// adds an email field with placeholder.
 	x_add_metadata_field(
 		'x_field_email_placeholder',
 		'x_test',
@@ -482,7 +484,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a link field with placeholder
+	// adds a link field with placeholder.
 	x_add_metadata_field(
 		'x_field_link_placeholder',
 		'x_test',
@@ -494,7 +496,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds an telephone field with placeholder
+	// adds an telephone field with placeholder.
 	x_add_metadata_field(
 		'x_field_telephone_placeholder',
 		'x_test',
@@ -506,7 +508,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds an upload field with placeholder
+	// adds an upload field with placeholder.
 	x_add_metadata_field(
 		'x_field_upload_placeholder',
 		'x_test',
@@ -518,7 +520,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds an datepicker field with placeholder
+	// adds an datepicker field with placeholder.
 	x_add_metadata_field(
 		'x_field_datepicker_placeholder',
 		'x_test',
@@ -530,7 +532,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a datetimepicker field with placeholder
+	// adds a datetimepicker field with placeholder.
 	x_add_metadata_field(
 		'x_field_datetimepicker_placeholder',
 		'x_test',
@@ -542,7 +544,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a timepicker field with placeholder
+	// adds a timepicker field with placeholder.
 	x_add_metadata_field(
 		'x_field_timepicker_placeholder',
 		'x_test',
@@ -554,7 +556,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a mulitifield
+	// adds a mulitifield.
 	x_add_metadata_multifield(
 		'x_test_multifield',
 		'x_test',
@@ -565,61 +567,61 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a text field to the multifield
+	// adds a text field to the multifield.
 	x_add_metadata_field(
 		'multifield_field_1',
 		'x_test',
 		array(
-			'group'       => 'x_metabox1', // the group name
+			'group'       => 'x_metabox1', // the group name.
 			'multifield'  => 'x_test_multifield',
 			'description' => 'This is field #1 of the multifield.',
-			'label'       => 'Text Field', // field label
+			'label'       => 'Text Field', // field label.
 			'field_type'  => 'text',
 		) 
 	);
 
-	// adds an upload text field to the multifield
+	// adds an upload text field to the multifield.
 	x_add_metadata_field(
 		'multifield_field_2',
 		'x_test',
 		array(
-			'group'       => 'x_metabox1', // the group name
+			'group'       => 'x_metabox1', // the group name.
 			'multifield'  => 'x_test_multifield',
 			'description' => 'This is field #2 of the multifield.',
-			'label'       => 'Upload Field', // field label
+			'label'       => 'Upload Field', // field label.
 			'field_type'  => 'upload',
 		) 
 	);
 
 
-	// adds an upload text field to the multifield
+	// adds an upload text field to the multifield.
 	x_add_metadata_field(
 		'multifield_field_3',
 		'x_test',
 		array(
-			'group'       => 'x_metabox1', // the group name
+			'group'       => 'x_metabox1', // the group name.
 			'multifield'  => 'x_test_multifield',
 			'description' => 'This is field #4 of the multifield.',
-			'label'       => 'Telephone Field', // field label
+			'label'       => 'Telephone Field', // field label.
 			'field_type'  => 'tel',
 		) 
 	);
 
-	// adds a text field to the multifield
+	// adds a text field to the multifield.
 	x_add_metadata_field(
 		'multifield_field_4',
 		'x_test',
 		array(
-			'group'       => 'x_metabox1', // the group name
+			'group'       => 'x_metabox1', // the group name.
 			'multifield'  => 'x_test_multifield',
 			'description' => 'This is field #4 of the multifield.',
-			'label'       => 'Password Field', // field label
+			'label'       => 'Password Field', // field label.
 			'field_type'  => 'password',
 		) 
 	);
 
 
-	// adds a field to posts and users
+	// adds a field to posts and users.
 	x_add_metadata_field(
 		'x_fieldName2',
 		array( 'post', 'user' ),
@@ -629,39 +631,39 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// adds a field with a custom display callback (see below)
+	// adds a field with a custom display callback (see below).
 	x_add_metadata_field(
 		'x_fieldCustomHidden1',
 		'x_test',
 		array(
 			'group'            => 'x_metaBox1',
-			'display_callback' => 'x_field_customhidden1_callback', // this function is defined below
+			'display_callback' => 'x_field_customhidden1_callback', // this function is defined below.
 			'label'            => 'Hidden field',
 		) 
 	);
 
 
-	// field with capabilities limited
+	// field with capabilities limited.
 	x_add_metadata_field(
 		'x_cap-limited-field',
 		'x_test',
 		array(
 			'label'        => 'Cap Limited Field (edit_posts)',
-			'required_cap' => 'edit_posts', // limit to users who can edit posts
+			'required_cap' => 'edit_posts', // limit to users who can edit posts.
 		) 
 	);
 
-	// field with role limited
+	// field with role limited.
 	x_add_metadata_field(
 		'x_author-cap-limited-field',
 		'user',
 		array(
 			'label'        => 'Cap Limited Field (author)',
-			'required_cap' => 'author', // limit to authors
+			'required_cap' => 'author', // limit to authors.
 		) 
 	);
 
-	// comment field
+	// comment field.
 	x_add_metadata_field(
 		'x_commentField1',
 		'comment',
@@ -671,7 +673,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// field that exludes posts
+	// field that exludes posts.
 	x_add_metadata_field(
 		'x_fieldNameExcluded1',
 		'post',
@@ -682,7 +684,7 @@ function x_init_custom_fields() {
 		) 
 	);
 
-	// field that includes certain posts only
+	// field that includes certain posts only.
 	x_add_metadata_field(
 		'x_fieldNameIncluded1',
 		'post',
@@ -704,16 +706,17 @@ function x_init_custom_fields() {
 	);
 
 	/**
+	 * Determines whether a field should be excluded because the post is in the "aside" category.
 	 *
-	 *
-	 * @param unknown $thing_slug  string Slug of the field or group
-	 * @param unknown $thing       object Field or Group args set up when registering
-	 * @param unknown $object_type string What type of object (post, comment, user)
-	 * @param unknown $object_id   int|string ID of the object
-	 * @param unknown $object_slug string
+	 * @param string     $thing_slug Slug of the field or group.
+	 * @param object     $thing Field or group args set up when registering.
+	 * @param string     $object_type Type of object (post, comment, user).
+	 * @param int|string $object_id ID of the object.
+	 * @param string     $object_slug Slug of the object.
+	 * @return bool Whether the field should be excluded.
 	 */
 	function x_custom_exclude_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
-		// exclude from all posts that are in the aside category
+		// exclude from all posts that are in the aside category.
 		return in_category( 'aside', $object_id );
 	}
 
@@ -727,6 +730,16 @@ function x_init_custom_fields() {
 		) 
 	);
 
+	/**
+	 * Includes a field only for posts that are not published.
+	 *
+	 * @param string     $thing_slug Slug of the field or group.
+	 * @param object     $thing Field or group args set up when registering.
+	 * @param string     $object_type Type of object (post, comment, user).
+	 * @param int|string $object_id ID of the object.
+	 * @param string     $object_slug Slug of the object.
+	 * @return bool Whether the field should be included.
+	 */
 	function x_custom_include_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
 		$post = get_post( $object_id );
 		return 'publish' != $post->post_status;
@@ -734,14 +747,15 @@ function x_init_custom_fields() {
 }
 
 /**
- * this is an example of a column callback function
- * it echoes out a bogus description, but it's just so you can see how it works
+ * Example of a column callback function.
  *
- * @param string $field_slug  the slug/id of the field
- * @param object $field       the field object
- * @param string $object_type what object type is the field associated with
- * @param int    $object_id   the ID of the current object
- * @param string $value       the value of the field
+ * It echoes out a bogus description, but it is just so you can see how it works.
+ *
+ * @param string $field_slug The slug/ID of the field.
+ * @param object $field The field object.
+ * @param string $object_type The object type the field is associated with.
+ * @param int    $object_id The ID of the current object.
+ * @param string $value The value of the field.
  * @return void
  */
 function x_field_name2_callback( $field_slug, $field, $object_type, $object_id, $value ) {
@@ -750,12 +764,13 @@ function x_field_name2_callback( $field_slug, $field, $object_type, $object_id, 
 }
 
 /**
- * this is another example of a custom callback function
- * we've chosen not to include all of the params this time
+ * Another example of a custom callback function.
  *
- * @param string $field_slug  the slug/id of the field
- * @param object $field       the field object
- * @param string $object_type what object type is the field associated with
+ * We have chosen not to include all of the params this time.
+ *
+ * @param string $field_slug The slug/ID of the field.
+ * @param object $field The field object.
+ * @param mixed  $value The value of the field.
  * @return void
  */
 function x_field_customhidden1_callback( $field_slug, $field, $value ) {
