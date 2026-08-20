@@ -49,54 +49,54 @@ if ( CUSTOM_METADATA_MANAGER_DEBUG ) {
 
 class custom_metadata_manager {
 
-	var $errors = array();
+	public $errors = array();
 
-	var $metadata = array();
+	public $metadata = array();
 
-	var $_non_post_types = array( 'user', 'comment' );
+	public $_non_post_types = array( 'user', 'comment' );
 
 	// Object types that come "built-in" with WordPress
-	var $_builtin_object_types = array( 'post', 'page', 'user', 'comment' );
+	public $_builtin_object_types = array( 'post', 'page', 'user', 'comment' );
 
 	// Column filter names
-	var $_column_types = array( 'posts', 'pages', 'users', 'comments' );
+	public $_column_types = array( 'posts', 'pages', 'users', 'comments' );
 
 	// field types
-	var $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'link' );
+	public $_field_types = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'checkbox', 'radio', 'select', 'multi_select', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'colorpicker', 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'link' );
 
 	// field types that are cloneable
-	var $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
+	public $_cloneable_field_types = array( 'text', 'textarea', 'upload', 'password', 'number', 'email', 'tel' );
 
 	// field types that support a default value
-	var $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link', 'radio' );
+	public $_field_types_that_support_default_value = array( 'text', 'textarea', 'password', 'number', 'email', 'telephone', 'upload', 'wysiwyg', 'datepicker', 'datetimepicker', 'timepicker', 'link', 'radio' );
 
 	// field types that support the placeholder attribute
-	var $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
+	public $_field_types_that_support_placeholder = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'upload', 'datepicker', 'datetimepicker', 'timepicker', 'link' );
 
 	// field types that are read only by default
-	var $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
+	public $_field_types_that_are_read_only = array( 'upload', 'link', 'datepicker', 'datetimepicker', 'timepicker' );
 
 	// field types that support being part of a multifield group
 	// @todo: workarounds needed for other field types
-	var $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
+	public $_field_types_that_support_multifield = array( 'text', 'textarea', 'password', 'number', 'email', 'tel', 'select' );
 
 	// taxonomy types
-	var $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
+	public $_taxonomy_fields = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_checkbox', 'taxonomy_multi_select' );
 
 	// filed types that are saved as multiples but not cloneable
-	var $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
+	public $_multiple_not_cloneable = array( 'taxonomy_checkbox' );
 
 	// fields that always save as an array
-	var $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select', 'taxonomy_multi_select' );
+	public $_always_multiple_fields = array( 'taxonomy_checkbox', 'multi_select', 'taxonomy_multi_select' );
 
 	// Object types whose columns are generated through apply_filters instead of do_action
-	var $_column_filter_object_types = array( 'user' );
+	public $_column_filter_object_types = array( 'user' );
 
 	// Whitelisted pages that get stylesheets and scripts
-	var $_pages_whitelist = array( 'edit.php', 'post.php', 'post-new.php', 'users.php', 'profile.php', 'user-edit.php', 'edit-comments.php', 'comment.php' );
+	public $_pages_whitelist = array( 'edit.php', 'post.php', 'post-new.php', 'users.php', 'profile.php', 'user-edit.php', 'edit-comments.php', 'comment.php' );
 
 	// the default args used for the wp_editor function
-	var $default_editor_args = array();
+	public $default_editor_args = array();
 
 	// singleton instance
 	private static $instance;
@@ -112,13 +112,13 @@ class custom_metadata_manager {
 	}
 
 	// do nothing on construct
-	function __construct() {}
+	public function __construct() {}
 
-	function run_initial_hooks() {
+	public function run_initial_hooks() {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 1000, 0 );
 	}
 
-	function admin_init() {
+	public function admin_init() {
 		global $pagenow;
 
 		// filter our vars
@@ -157,13 +157,13 @@ class custom_metadata_manager {
 		do_action( 'custom_metadata_manager_admin_init' );
 	}
 
-	function init_object_types() {
+	public function init_object_types() {
 		foreach ( array_merge( get_post_types(), $this->_builtin_object_types ) as $object_type ) {
 			$this->metadata[ $object_type ] = array();
 		}
 	}
 
-	function init_metadata() {
+	public function init_metadata() {
 		$object_type = $this->_get_object_type_context();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -200,7 +200,7 @@ class custom_metadata_manager {
 		add_action( 'admin_footer', array( $this, '_display_wp_link_dialog' ) );
 	}
 
-	function init_columns() {
+	public function init_columns() {
 
 		$object_type = $this->_get_object_type_context();
 
@@ -233,7 +233,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function enqueue_scripts() {
+	public function enqueue_scripts() {
 		wp_enqueue_media();
 		wp_enqueue_script( 'wplink' );
 		wp_enqueue_script( 'wpdialogs-popup' );
@@ -244,7 +244,7 @@ class custom_metadata_manager {
 		wp_enqueue_script( 'wp-color-picker' );
 	}
 
-	function enqueue_styles() {
+	public function enqueue_styles() {
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
 		wp_enqueue_style( 'editor-buttons' );
 		wp_enqueue_style( 'custom-metadata-manager-css', apply_filters( 'custom_metadata_manager_default_css', CUSTOM_METADATA_MANAGER_URL . 'css/custom-metadata-manager.css' ), array(), CUSTOM_METADATA_MANAGER_VERSION );
@@ -253,7 +253,7 @@ class custom_metadata_manager {
 		wp_enqueue_style( 'wp-color-picker' );
 	}
 
-	function add_metadata_column_headers( $columns ) {
+	public function add_metadata_column_headers( $columns ) {
 
 		$object_type = $this->_get_object_type_context();
 
@@ -269,11 +269,11 @@ class custom_metadata_manager {
 		return $columns;
 	}
 
-	function add_user_metadata_column_content( $param, $name, $object_id ) {
+	public function add_user_metadata_column_content( $param, $name, $object_id ) {
 		return $this->add_metadata_column_content( $name, $object_id, $param );
 	}
 
-	function add_metadata_column_content( $name, $object_id, $column_content = '' ) {
+	public function add_metadata_column_content( $name, $object_id, $column_content = '' ) {
 
 		$object_type = $this->_get_object_type_context();
 		$field_slug  = $name;
@@ -290,7 +290,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function add_metadata_field( $field_slug, $object_types = array( 'post' ), $args = array() ) {
+	public function add_metadata_field( $field_slug, $object_types = array( 'post' ), $args = array() ) {
 		static $localized_strings;
 
 		if ( ! $localized_strings ) {
@@ -368,7 +368,7 @@ class custom_metadata_manager {
 		// }
 	}
 
-	function add_multifield( $slug, $object_types = array( 'post' ), $args = array() ) {
+	public function add_multifield( $slug, $object_types = array( 'post' ), $args = array() ) {
 
 		$defaults = array(
 			'group'        => '', // To which meta_box the multifield should be added
@@ -401,7 +401,7 @@ class custom_metadata_manager {
 		$this->add_multifield_to_group( $slug, $multifield, $group_slug, $object_types );
 	}
 
-	function add_metadata_group( $group_slug, $object_types, $args = array() ) {
+	public function add_metadata_group( $group_slug, $object_types, $args = array() ) {
 
 		$defaults = array(
 			'label'        => $group_slug, // Label for the group
@@ -434,7 +434,7 @@ class custom_metadata_manager {
 	}
 
 
-	function add_field_to_group( $field_slug, $field, $group_slug, $object_types ) {
+	public function add_field_to_group( $field_slug, $field, $group_slug, $object_types ) {
 		$object_types = (array) $object_types;
 
 		foreach ( $object_types as $object_type ) {
@@ -452,7 +452,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function add_multifield_to_group( $slug, $multifield, $group_slug, $object_types ) {
+	public function add_multifield_to_group( $slug, $multifield, $group_slug, $object_types ) {
 		$object_types = (array) $object_types;
 
 		foreach ( $object_types as $object_type ) {
@@ -470,7 +470,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function add_group_to_object_type( $group_slug, $group, $object_types ) {
+	public function add_group_to_object_type( $group_slug, $group, $object_types ) {
 		$object_types = (array) $object_types;
 
 		foreach ( $object_types as $object_type ) {
@@ -481,7 +481,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function _validate_metadata_group( $group_slug, $group, $object_type ) {
+	public function _validate_metadata_group( $group_slug, $group, $object_type ) {
 		$valid = true;
 
 		// TODO: only validate when DEBUG is on?
@@ -497,7 +497,7 @@ class custom_metadata_manager {
 		return $valid;
 	}
 
-	function _validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) {
+	public function _validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) {
 
 		// TODO: only validate when DEBUG is on?
 
@@ -526,11 +526,11 @@ class custom_metadata_manager {
 		return $valid;
 	}
 
-	function _add_registration_error( $field_slug, $error_message ) {
+	public function _add_registration_error( $field_slug, $error_message ) {
 		$this->errors[] = sprintf( '<strong>%1$s:</strong> %2$s', $field_slug, $error_message );
 	}
 
-	function add_post_metadata_groups() {
+	public function add_post_metadata_groups() {
 		global $post, $comment;
 
 		$object_id = 0;
@@ -551,7 +551,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function add_post_metadata_group( $group_slug, $group, $object_type, $object_id ) {
+	public function add_post_metadata_group( $group_slug, $group, $object_type, $object_id ) {
 
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 
@@ -571,7 +571,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function add_user_metadata_groups() {
+	public function add_user_metadata_groups() {
 		global $user_id;
 
 		if ( ! $user_id ) {
@@ -589,7 +589,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function add_user_metadata_group( $group_slug, $group, $object_type, $user_id ) {
+	public function add_user_metadata_group( $group_slug, $group, $object_type, $user_id ) {
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 
 		if ( ! empty( $fields ) && $this->is_thing_added_to_object( $group_slug, $group, $object_type, $user_id ) ) {
@@ -598,7 +598,7 @@ class custom_metadata_manager {
 	}
 
 
-	function _display_user_metadata_box( $group_slug, $group, $object_type, $fields ) {
+	public function _display_user_metadata_box( $group_slug, $group, $object_type, $fields ) {
 		global $user_id;
 		?>
 		<h3><?php echo $group->label; ?></h3>
@@ -619,7 +619,7 @@ class custom_metadata_manager {
 		$this->_display_group_nonce( $group_slug, $object_type );
 	}
 
-	function _display_post_metadata_box( $object, $meta_box ) {
+	public function _display_post_metadata_box( $object, $meta_box ) {
 
 		$group_slug  = $meta_box['id'];
 		$group       = $meta_box['args']['group'];
@@ -652,18 +652,18 @@ class custom_metadata_manager {
 		$this->_display_group_nonce( $group_slug, $object_type );
 	}
 
-	function _display_group_description( $group ) {
+	public function _display_group_description( $group ) {
 		if ( ! empty( $group->description ) ) {
 			printf( '<div class="custom-metadata-group-description description">%s</div>', $group->description );
 		}
 	}
 
-	function _display_group_nonce( $group_slug, $object_type ) {
+	public function _display_group_nonce( $group_slug, $object_type ) {
 		$nonce_key = $this->build_nonce_key( $group_slug, $object_type );
 		wp_nonce_field( 'save-metadata', $nonce_key, false );
 	}
 
-	function verify_group_nonce( $group_slug, $object_type ) {
+	public function verify_group_nonce( $group_slug, $object_type ) {
 		$nonce_key = $this->build_nonce_key( $group_slug, $object_type );
 		if ( isset( $_POST[ $nonce_key ] ) ) {
 			return wp_verify_nonce( $_POST[ $nonce_key ], 'save-metadata' );
@@ -672,11 +672,11 @@ class custom_metadata_manager {
 		}
 	}
 
-	function build_nonce_key( $group_slug, $object_type ) {
+	public function build_nonce_key( $group_slug, $object_type ) {
 		return sprintf( 'metadata-%1$s-%2$s', $object_type, $group_slug );
 	}
 
-	function save_user_metadata( $user_id ) {
+	public function save_user_metadata( $user_id ) {
 		$object_type = 'user';
 		$groups      = $this->get_groups_in_object_type( $object_type );
 
@@ -685,7 +685,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function save_post_metadata( $post_id ) {
+	public function save_post_metadata( $post_id ) {
 		if ( wp_is_post_revision( $post_id ) ) {
 			return;
 		}
@@ -702,7 +702,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function save_comment_metadata( $comment_id ) {
+	public function save_comment_metadata( $comment_id ) {
 		$object_type = 'comment';
 		$groups      = $this->get_groups_in_object_type( $object_type );
 
@@ -711,7 +711,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function save_metadata_group( $group_slug, $group, $object_type, $object_id ) {
+	public function save_metadata_group( $group_slug, $group, $object_type, $object_id ) {
 		if ( ! $this->verify_group_nonce( $group_slug, $object_type ) ) {
 			return $object_id;
 		}
@@ -745,7 +745,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function save_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
+	public function save_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
 
 		if ( isset( $_POST[ $slug ] ) ) {
 			$multifield_value = array();
@@ -781,7 +781,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function save_metadata_field( $field_slug, $field, $object_type, $object_id ) {
+	public function save_metadata_field( $field_slug, $field, $object_type, $object_id ) {
 		if ( isset( $_POST[ $field_slug ] ) ) {
 			$value = $this->_sanitize_field_value( $field_slug, $field, $object_type, $object_id, $_POST[ $field_slug ] );
 			$this->_save_field_value( $field_slug, $field, $object_type, $object_id, $value );
@@ -801,23 +801,23 @@ class custom_metadata_manager {
 		}
 	}
 
-	function get_metadata_mulitifield_value( $slug, $multifield, $object_type, $object_id ) {
+	public function get_metadata_mulitifield_value( $slug, $multifield, $object_type, $object_id ) {
 		return $this->_get_field_value( $slug, $multifield, $object_type, $object_id, true );
 	}
 
-	function get_metadata_field_value( $field_slug, $field, $object_type, $object_id ) {
+	public function get_metadata_field_value( $field_slug, $field, $object_type, $object_id ) {
 		return $this->_get_field_value( $field_slug, $field, $object_type, $object_id );
 	}
 
-	function is_registered_object_type( $object_type ) {
+	public function is_registered_object_type( $object_type ) {
 		return array_key_exists( $object_type, $this->metadata ); /*&& is_array( $this->metadata[$object_type] )*/
 	}
 
-	function is_registered_group( $group_slug, $object_type ) {
+	public function is_registered_group( $group_slug, $object_type ) {
 		return $this->is_registered_object_type( $object_type ) && array_key_exists( $group_slug, $this->get_groups_in_object_type( $object_type ) );
 	}
 
-	function is_registered_field( $field_slug, $group_slug = '', $object_type ) {
+	public function is_registered_field( $field_slug, $group_slug = '', $object_type ) {
 		if ( $group_slug ) {
 			return $this->is_registered_group( $group_slug, $object_type ) && array_key_exists( $field_slug, $this->get_fields_in_group( $group_slug, $object_type ) );
 		} else {
@@ -825,19 +825,19 @@ class custom_metadata_manager {
 		}
 	}
 
-	function is_field_in_group( $field_slug, $group_slug, $object_type ) {
+	public function is_field_in_group( $field_slug, $group_slug, $object_type ) {
 		return in_array( $field_slug, $this->get_fields_in_group( $group_slug, $object_type ) );
 	}
 
-	function is_group_in_object_type( $group_slug, $object_type ) {
+	public function is_group_in_object_type( $group_slug, $object_type ) {
 		return array_key_exists( $group_slug, $this->get_groups_in_object_type( $object_type ) );
 	}
 
-	function is_field_addable_to_columns( $field_slug, $field ) {
+	public function is_field_addable_to_columns( $field_slug, $field ) {
 		return is_string( $field->display_column ) || ( is_bool( $field->display_column ) && $field->display_column );
 	}
 
-	function get_field( $field_slug, $group_slug, $object_type ) {
+	public function get_field( $field_slug, $group_slug, $object_type ) {
 		if ( $this->is_registered_field( $field_slug, $group_slug, $object_type ) ) {
 			if ( $group_slug ) {
 				return $this->get_single_field_in_group( $field_slug, $group_slug, $object_type );
@@ -848,7 +848,7 @@ class custom_metadata_manager {
 		return null;
 	}
 
-	function get_group( $group_slug, $object_type ) {
+	public function get_group( $group_slug, $object_type ) {
 		if ( $this->is_registered_group( $group_slug, $object_type ) ) {
 			$groups = $this->get_groups_in_object_type( $object_type );
 			$group  = $groups[ $group_slug ];
@@ -857,23 +857,23 @@ class custom_metadata_manager {
 		return null;
 	}
 
-	function get_object_types() {
+	public function get_object_types() {
 		return array_keys( $this->metadata );
 	}
 
-	function get_groups_in_object_type( $object_type ) {
+	public function get_groups_in_object_type( $object_type ) {
 		if ( $this->is_registered_object_type( $object_type ) ) {
 			return $this->metadata[ $object_type ];
 		}
 		return array();
 	}
 
-	function get_single_field_in_group( $field_slug, $group_slug, $object_type ) {
+	public function get_single_field_in_group( $field_slug, $group_slug, $object_type ) {
 		$fields = $this->get_fields_in_group( $group_slug, $object_type );
 		return isset( $fields[ $field_slug ] ) ? $fields[ $field_slug ] : null;
 	}
 
-	function get_fields_in_group( $group_slug, $object_type ) {
+	public function get_fields_in_group( $group_slug, $object_type ) {
 		$group = $this->get_group( $group_slug, $object_type );
 		if ( $group ) {
 			return (array) $group->fields;
@@ -881,7 +881,7 @@ class custom_metadata_manager {
 		return array();
 	}
 
-	function get_fields_in_multifield( $group_slug, $multifield_slug, $object_type ) {
+	public function get_fields_in_multifield( $group_slug, $multifield_slug, $object_type ) {
 		$group                = $this->get_group( $group_slug, $object_type );
 		$fields_in_multifield = array();
 		if ( empty( $group ) || empty( $group->fields ) || empty( $group->fields[ $multifield_slug ] ) ) {
@@ -902,12 +902,12 @@ class custom_metadata_manager {
 		return $fields_in_multifield;
 	}
 
-	function get_single_field_in_object_type( $field_slug, $object_type ) {
+	public function get_single_field_in_object_type( $field_slug, $object_type ) {
 		$fields = $this->get_fields_in_object_type( $object_type );
 		return isset( $fields[ $field_slug ] ) ? $fields[ $field_slug ] : null;
 	}
 
-	function get_fields_in_object_type( $object_type ) {
+	public function get_fields_in_object_type( $object_type ) {
 		$fields = array();
 		foreach ( $this->get_groups_in_object_type( $object_type ) as $group_slug => $group ) {
 			$fields = array_merge( $fields, $this->get_fields_in_group( $group_slug, $object_type ) );
@@ -915,19 +915,19 @@ class custom_metadata_manager {
 		return $fields;
 	}
 
-	function _push_group( $group_slug, $group, $object_type ) {
+	public function _push_group( $group_slug, $group, $object_type ) {
 		$this->metadata[ $object_type ][ $group_slug ] = $group;
 	}
 
-	function _push_field( $field_slug, $field, $group_slug, $object_type ) {
+	public function _push_field( $field_slug, $field, $group_slug, $object_type ) {
 		$this->metadata[ $object_type ][ $group_slug ]->fields[ $field_slug ] = $field;
 	}
 
-	function _push_multifield( $slug, $multifield, $group_slug, $object_type ) {
+	public function _push_multifield( $slug, $multifield, $group_slug, $object_type ) {
 		$this->metadata[ $object_type ][ $group_slug ]->fields[ '_x_multifield_' . $slug ] = $multifield;
 	}
 
-	function _multifield_exists_for_group_object( $slug, $group_slug, $object_type ) {
+	public function _multifield_exists_for_group_object( $slug, $group_slug, $object_type ) {
 		$slug = '_x_multifield_' . $slug;
 		return (
 			! empty( $this->metadata[ $object_type ] ) &&
@@ -937,11 +937,11 @@ class custom_metadata_manager {
 		);
 	}
 
-	function _is_multifield( $slug ) {
+	public function _is_multifield( $slug ) {
 		return ( 0 === strpos( $slug, '_x_multifield' ) );
 	}
 
-	function is_thing_added_to_object( $thing_slug, $thing, $object_type, $object_id, $object_slug = '' ) {
+	public function is_thing_added_to_object( $thing_slug, $thing, $object_type, $object_id, $object_slug = '' ) {
 
 		if ( isset( $thing->exclude ) ) {
 			if ( is_callable( $thing->exclude ) ) {
@@ -960,7 +960,7 @@ class custom_metadata_manager {
 		return true;
 	}
 
-	function does_id_array_match_object( $id_array, $object_type, $object_id, $object_slug = '' ) {
+	public function does_id_array_match_object( $id_array, $object_type, $object_id, $object_slug = '' ) {
 		if ( is_array( $id_array ) ) {
 			if ( isset( $id_array[ $object_type ] ) ) {
 				if ( is_array( $id_array[ $object_type ] ) ) {
@@ -987,7 +987,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function does_id_match_object( $id, $object_id, $object_slug = '' ) {
+	public function does_id_match_object( $id, $object_id, $object_slug = '' ) {
 		if ( is_int( $id ) ) {
 			// 123
 			return $id == $object_id;
@@ -998,7 +998,7 @@ class custom_metadata_manager {
 		return false;
 	}
 
-	function is_restricted_field( $field_slug, $object_type ) {
+	public function is_restricted_field( $field_slug, $object_type ) {
 		// TODO: Build this out
 		$post_restricted = array( 'post_title', 'post_author' );
 		$page_restricted = array();
@@ -1016,13 +1016,13 @@ class custom_metadata_manager {
 		return false;
 	}
 
-	function is_restricted_group( $group_slug, $object_type ) {
+	public function is_restricted_group( $group_slug, $object_type ) {
 		// TODO: Build this out
 		// Built-in metaboxes: title, custom-fields, revisions, author, etc.
 		return false;
 	}
 
-	function _get_object_type_context() {
+	public function _get_object_type_context() {
 		global $current_screen, $pagenow;
 
 		$object_type = '';
@@ -1045,7 +1045,7 @@ class custom_metadata_manager {
 		return $object_type;
 	}
 
-	function _get_value_callback( $field, $object_type ) {
+	public function _get_value_callback( $field, $object_type ) {
 		$callback = isset( $field->value_callback ) ? $field->value_callback : '';
 
 		if ( ! ( $callback && is_callable( $callback ) ) ) {
@@ -1055,7 +1055,7 @@ class custom_metadata_manager {
 		return apply_filters( 'custom_metadata_manager_get_value_callback', $callback, $field, $object_type );
 	}
 
-	function _get_save_callback( $field, $object_type ) {
+	public function _get_save_callback( $field, $object_type ) {
 		$callback = isset( $field->save_callback ) ? $field->save_callback : '';
 
 		if ( ! ( $callback && is_callable( $callback ) ) ) {
@@ -1065,7 +1065,7 @@ class custom_metadata_manager {
 		return apply_filters( 'custom_metadata_manager_get_save_callback', $callback, $field, $object_type );
 	}
 
-	function get_sanitize_callback( $field, $object_type ) {
+	public function get_sanitize_callback( $field, $object_type ) {
 		$callback = $field->sanitize_callback;
 
 		if ( ! ( $callback && is_callable( $callback ) ) ) {
@@ -1075,7 +1075,7 @@ class custom_metadata_manager {
 		return apply_filters( 'custom_metadata_manager_get_sanitize_callback', $callback, $field, $object_type );
 	}
 
-	function get_display_column_callback( $field, $object_type ) {
+	public function get_display_column_callback( $field, $object_type ) {
 		$callback = $field->display_column_callback;
 
 		if ( ! ( $callback && is_callable( $callback ) ) ) {
@@ -1085,7 +1085,7 @@ class custom_metadata_manager {
 		return apply_filters( 'custom_metadata_manager_get_display_column_callback', $callback, $field, $object_type );
 	}
 
-	function _get_field_value( $field_slug, $field, $object_type, $object_id, $single = false ) {
+	public function _get_field_value( $field_slug, $field, $object_type, $object_id, $single = false ) {
 
 		$get_value_callback = $this->_get_value_callback( $field, $object_type );
 
@@ -1102,7 +1102,7 @@ class custom_metadata_manager {
 		return $value;
 	}
 
-	function _save_field_value( $field_slug, $field, $object_type, $object_id, $value ) {
+	public function _save_field_value( $field_slug, $field, $object_type, $object_id, $value ) {
 
 		$save_callback = $this->_get_save_callback( $field, $object_type );
 
@@ -1138,7 +1138,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
+	public function _delete_field_value( $field_slug, $field, $object_type, $object_id, $value = false ) {
 		if ( ! in_array( $object_type, $this->_non_post_types ) ) {
 			$object_type = 'post';
 		}
@@ -1148,7 +1148,7 @@ class custom_metadata_manager {
 		delete_metadata( $object_type, $object_id, $field_slug, $value );
 	}
 
-	function _sanitize_field_value( $field_slug, $field, $object_type, $object_id, $original_value ) {
+	public function _sanitize_field_value( $field_slug, $field, $object_type, $object_id, $original_value ) {
 		$new_value = $original_value;
 
 		$sanitize_callback = $this->get_sanitize_callback( $field, $object_type );
@@ -1184,7 +1184,7 @@ class custom_metadata_manager {
 	 * @param mixed  $value the value to sanitize (a scalar, or an array for multi-value fields)
 	 * @return mixed the sanitized value
 	 */
-	function _default_sanitize_field_value( $field, $value ) {
+	public function _default_sanitize_field_value( $field, $value ) {
 		// Multi-value fields (multi_select, taxonomy_checkbox, taxonomy_multi_select, cloneable) arrive as arrays.
 		if ( is_array( $value ) ) {
 			$sanitized = array();
@@ -1227,7 +1227,7 @@ class custom_metadata_manager {
 		}
 	}
 
-	function _metadata_column_content( $field_slug, $field, $object_type, $object_id ) {
+	public function _metadata_column_content( $field_slug, $field, $object_type, $object_id ) {
 		$value = $this->get_metadata_field_value( $field_slug, $field, $object_type, $object_id );
 
 		$display_column_callback = $this->get_display_column_callback( $field, $object_type );
@@ -1243,7 +1243,7 @@ class custom_metadata_manager {
 		return esc_html( $value );
 	}
 
-	function _display_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
+	public function _display_metadata_multifield( $slug, $multifield, $object_type, $object_id ) {
 		echo '<div class="custom-metadata-multifield" data-slug="' . esc_attr( $slug ) . '" id="' . esc_attr( 'custom-metadata-multifield-' . str_replace( '_', '-', str_replace( '_x_multifield_', '', $slug ) ) ) . '">';
 
 		if ( ! empty( $multifield->label ) ) {
@@ -1290,7 +1290,7 @@ class custom_metadata_manager {
 		echo '</div>';
 	}
 
-	function _display_metadata_field( $field_slug, $field, $object_type, $object_id, $field_id = null, $value = null ) {
+	public function _display_metadata_field( $field_slug, $field, $object_type, $object_id, $field_id = null, $value = null ) {
 
 		// this is a safety to prevent multifields from being displayed as a field
 		if ( true === $field->multifield ) {
@@ -1523,13 +1523,13 @@ class custom_metadata_manager {
 		echo '</div>';
 	}
 
-	function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) {
+	public function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) {
 		if ( $field->description ) {
 			echo '<span class="description">' . $field->description . '</span>';
 		}
 	}
 
-	function _display_registration_errors() {
+	public function _display_registration_errors() {
 		if ( empty( $this->errors ) ) {
 			return;
 		}
@@ -1541,7 +1541,7 @@ class custom_metadata_manager {
 		echo '</div>';
 	}
 
-	function _display_wp_link_dialog() {
+	public function _display_wp_link_dialog() {
 		if ( ! class_exists( '_WP_Editors' ) ) {
 			require ABSPATH . WPINC . '/class-wp-editor.php';
 		}
