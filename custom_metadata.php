@@ -493,15 +493,15 @@ class custom_metadata_manager {
 		/*
 		if( !$field_slug ) {
 			// Check that
-			$this->_add_registration_error( $field_slug, __( 'You entered an empty slug name for this field!', 'custom-metadata-manager' ) );
+			$this->_add_registration_error( $field_slug, __( 'You entered an empty slug name for this field!', 'custom-metadata' ) );
 			$valid = false;
 		} else if( $this->is_registered_field( $field_slug, $group_slug, $object_type ) ) {
 			// does field name already exists
-			$this->_add_registration_error( $field_slug, __( 'This field already exists. Check to see that you\'re not registering the field twice, or use a different slug.', 'custom-metadata-manager' ) );
+			$this->_add_registration_error( $field_slug, __( 'This field already exists. Check to see that you\'re not registering the field twice, or use a different slug.', 'custom-metadata' ) );
 			$valid = false;
 		} else if( $this->is_restricted_field( $field_slug, $object_type ) ) {
 			// is field restricted
-			$this->_add_registration_error( $field_slug, __( 'This field is restricted. Please use a different slug.', 'custom-metadata-manager' ) );
+			$this->_add_registration_error( $field_slug, __( 'This field is restricted. Please use a different slug.', 'custom-metadata' ) );
 			$valid = false;
 		}
 		// if display_callback not defined
@@ -515,7 +515,7 @@ class custom_metadata_manager {
 	}
 
 	function _add_registration_error( $field_slug, $error_message ) {
-		$this->errors[] = sprintf( __( '<strong>%1$s:</strong> %2$s', 'custom-metadata-manager' ), $field_slug, $error_message );
+		$this->errors[] = sprintf( __( '<strong>%1$s:</strong> %2$s', 'custom-metadata' ), $field_slug, $error_message );
 	}
 
 	function add_post_metadata_groups() {
@@ -606,7 +606,7 @@ class custom_metadata_manager {
 		} elseif ( isset( $object->ID ) ) {
 			$object_id = $object->ID;
 		} else {
-			_e( 'Uh oh, something went wrong!', 'custom-metadata-manager' );
+			_e( 'Uh oh, something went wrong!', 'custom-metadata' );
 			return;
 		}
 
@@ -1180,7 +1180,7 @@ class custom_metadata_manager {
 
 		if ( ! empty ($field->multiple ) && ( empty( $this->_cloneable_field_types ) || ! in_array( $field->field_type, $this->_cloneable_field_types ) ) ) {
 			$field->multiple = false;
-			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata-manager' ) );
+			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata' ) );
 		}
 
 		if ( ! isset( $field_id ) ) {
@@ -1318,7 +1318,7 @@ class custom_metadata_manager {
 			endswitch;
 
 			if ( $cloneable && $count > 1 )
-					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata-manager' ) . '</a>';
+					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata' ) . '</a>';
 
 			$count++;
 
@@ -1378,7 +1378,7 @@ class custom_metadata_manager {
 		endif;
 
 		if ( $cloneable )
-			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), __( '+ Add New', 'custom-metadata-manager' ) );
+			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), __( '+ Add New', 'custom-metadata' ) );
 
 		$this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value );
 
