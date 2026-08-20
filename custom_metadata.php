@@ -430,7 +430,7 @@ class custom_metadata_manager {
 		}
 
 		if ( $column_content && ! in_array( $object_type, $this->_column_filter_object_types ) ) {
-			echo $column_content;
+			echo $column_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by _metadata_column_content(), or by the field's display_column_callback.
 		} else {
 			return $column_content;
 		}
@@ -817,7 +817,7 @@ class custom_metadata_manager {
 	public function _display_user_metadata_box( $group_slug, $group, $object_type, $fields ) {
 		global $user_id;
 		?>
-		<h3><?php echo $group->label; ?></h3>
+		<h3><?php echo esc_html( $group->label ); ?></h3>
 
 		<table class="form-table user-metadata-group">
 			<?php foreach ( $fields as $field_slug => $field ) : ?>
@@ -883,7 +883,7 @@ class custom_metadata_manager {
 	 */
 	public function _display_group_description( $group ) {
 		if ( ! empty( $group->description ) ) {
-			printf( '<div class="custom-metadata-group-description description">%s</div>', $group->description );
+			printf( '<div class="custom-metadata-group-description description">%s</div>', wp_kses_post( $group->description ) );
 		}
 	}
 
@@ -1865,10 +1865,10 @@ class custom_metadata_manager {
 				$this->_display_metadata_field( $display_field_slug, $field, $object_type, $object_id, $field_id, $value );
 			}
 			echo '<div class="clear"></div>';
-			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', __( 'duplicate this set of fields', 'custom-metadata' ) );
+			printf( '<a title="%s" class="custom-metadata-multifield-clone hide-if-no-js" href="#">+</a>', esc_attr__( 'duplicate this set of fields', 'custom-metadata' ) );
 
 			if ( $grouping_count > 1 ) {
-				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', __( 'remove this set of fields', 'custom-metadata' ) );
+				printf( '<a title="%s" class="custom-metadata-multifield-delete hide-if-no-js" href="#">-</a>', esc_attr__( 'remove this set of fields', 'custom-metadata' ) );
 			}
 
 			echo '</div>';
@@ -1913,7 +1913,7 @@ class custom_metadata_manager {
 
 		if ( ! empty( $field->multiple ) && ( empty( $this->_cloneable_field_types ) || ! in_array( $field->field_type, $this->_cloneable_field_types ) ) ) {
 			$field->multiple = false;
-			printf( '<p class="error">%s</p>', __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata' ) );
+			printf( '<p class="error">%s</p>', wp_kses_post( __( '<strong>Note:</strong> this field type cannot be multiplied', 'custom-metadata' ) ) );
 		}
 
 		if ( ! isset( $field_id ) ) {
@@ -1949,28 +1949,28 @@ class custom_metadata_manager {
 
 			switch ( $field->field_type ) :
 				case 'text':
-					printf( '<input type="text" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="text" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'password':
-					printf( '<input type="password" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="password" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'email':
-					printf( '<input type="email" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="email" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'tel':
-					printf( '<input type="tel" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="tel" id="%s" name="%s" value="%s"%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'link':
-					printf( '<input type="text" id="%s" name="%s" value="%s" %s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="text" id="%s" name="%s" value="%s" %s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					printf( '<input type="button" class="button custom-metadata-link-button" value="%s"/>', esc_attr( $field->link_modal_button_text ) );
 					break;
 				case 'number':
 					$min = ( ! empty( $field->min ) ) ? ' min="' . (int) $field->min . '"' : '';
 					$max = ( ! empty( $field->max ) ) ? ' max="' . (int) $field->max . '"' : '';
-					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str, $min, $max );
+					printf( '<input type="number" id="%s" name="%s" value="%s"%s%s%s%s/>', esc_attr( $field_slug ), esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str, $min, $max ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'textarea':
-					printf( '<textarea id="%s" name="%s"%s%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, $placeholder_str, esc_textarea( $v ) );
+					printf( '<textarea id="%s" name="%s"%s%s>%s</textarea>', esc_attr( $field_slug ), esc_attr( $field_id ), $readonly_str, $placeholder_str, esc_textarea( $v ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'checkbox':
 					printf( '<input type="checkbox" id="%s" name="%s" %s/>', esc_attr( $field_slug ), esc_attr( $field_id ), checked( $v, 'on', false ) );
@@ -1987,7 +1987,7 @@ class custom_metadata_manager {
 				case 'select':
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
 					$select2 .= ( $field->placeholder ) ? ' data-placeholder="' . esc_attr( $field->placeholder ) . '" ' : ' ';
-					printf( '<select id="%s" name="%s"%s>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 );
+					printf( '<select id="%s" name="%s"%s>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					foreach ( $field->values as $value_slug => $value_label ) {
 						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( $v, $value_slug, false ) );
 						echo esc_html( $value_label );
@@ -1997,18 +1997,18 @@ class custom_metadata_manager {
 					break;
 				case 'datepicker':
 					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : ''; // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Saved via strtotime() in server time and displayed the same way; gmdate() would break the round-trip.
-					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'colorpicker':
-					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'datetimepicker':
 					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : ''; // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Saved via strtotime() in server time and displayed the same way; gmdate() would break the round-trip.
-					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datetimepicker_value, $readonly_str, $placeholder_str );
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datetimepicker_value, $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'timepicker':
 					$timepicker = ! empty( $v ) ? esc_attr( date( 'G:i', $v ) ) : ''; // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Saved via strtotime() in server time and displayed the same way; gmdate() would break the round-trip.
-					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $timepicker, $readonly_str, $placeholder_str );
+					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $timepicker, $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					break;
 				case 'wysiwyg':
 					$wysiwyg_args = apply_filters( 'custom_metadata_manager_wysiwyg_args_field_' . $field_id, $this->default_editor_args, $field_slug, $field, $object_type, $object_id );
@@ -2017,9 +2017,9 @@ class custom_metadata_manager {
 				case 'upload':
 					$_attachment_id = $this->get_metadata_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 					$attachment_id  = reset( $_attachment_id ); // get the first value in the array.
-					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
+					printf( '<input type="text" name="%s" value="%s" class="custom-metadata-upload-url"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					printf( '<input type="button" data-uploader-title="%s" data-uploader-button-text="%s" class="button custom-metadata-upload-button" value="%s"/>', esc_attr( $field->upload_modal_title ), esc_attr( $field->upload_modal_button_text ), esc_attr( $field->upload_modal_title ) );
-					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', $field->upload_clear_button_text );
+					printf( '<input type="button" class="button custom-metadata-clear-button" value="%s"/>', esc_attr( $field->upload_clear_button_text ) );
 					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
 					break;
 				case 'taxonomy_select':
@@ -2031,12 +2031,12 @@ class custom_metadata_manager {
 					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
-						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), esc_html( $field->taxonomy ) );
 						break;
 					}
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
 					$select2 .= ( $field->placeholder ) ? ' data-placeholder="' . esc_attr( $field->placeholder ) . '" ' : ' ';
-					printf( '<select name="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 );
+					printf( '<select name="%s" id="%s"%s>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 						echo '<option value=""></option>';
 					foreach ( $terms as $term ) {
 						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( $v, $term->slug, false ), esc_html( $term->name ) );
@@ -2052,7 +2052,7 @@ class custom_metadata_manager {
 					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
-						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), esc_html( $field->taxonomy ) );
 						break;
 					}
 					foreach ( $terms as $term ) {
@@ -2065,7 +2065,7 @@ class custom_metadata_manager {
 			endswitch;
 
 			if ( $cloneable && $count > 1 ) {
-					echo '<a href="#" class="del-multiple hide-if-no-js">' . __( 'Delete', 'custom-metadata' ) . '</a>';
+					echo '<a href="#" class="del-multiple hide-if-no-js">' . esc_html__( 'Delete', 'custom-metadata' ) . '</a>';
 			}
 
 			++$count;
@@ -2084,7 +2084,7 @@ class custom_metadata_manager {
 				case 'multi_select':
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
 					$select2 .= ( $field->placeholder ) ? ' data-placeholder="' . esc_attr( $field->placeholder ) . '" ' : ' ';
-					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 );
+					printf( '<select id="%s" name="%s"%smultiple>', esc_attr( $field_slug ), esc_attr( $field_id ), $select2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					foreach ( $field->values as $value_slug => $value_label ) {
 						printf( '<option value="%s"%s>', esc_attr( $value_slug ), selected( in_array( $value_slug, $value ), true, false ) );
 						echo esc_html( $value_label );
@@ -2101,7 +2101,7 @@ class custom_metadata_manager {
 					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
-						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), esc_html( $field->taxonomy ) );
 						break;
 					}
 					foreach ( $terms as $term ) {
@@ -2120,12 +2120,12 @@ class custom_metadata_manager {
 					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
-						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
+						printf( esc_html__( 'There are no %s to select from yet.', 'custom-metadata' ), esc_html( $field->taxonomy ) );
 						break;
 					}
 					$select2  = ( $field->select2 ) ? ' class="custom-metadata-select2" ' : ' ';
 					$select2 .= ( $field->placeholder ) ? ' data-placeholder="' . esc_attr( $field->placeholder ) . '" ' : ' ';
-					printf( '<select name="%s" id="%s"%smultiple>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 );
+					printf( '<select name="%s" id="%s"%smultiple>', esc_attr( $field_id ), esc_attr( $field_slug ), $select2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from integer-cast and esc_attr()-escaped values with static markup.
 					foreach ( $terms as $term ) {
 						printf( '<option value="%s"%s>%s</option>', esc_attr( $term->slug ), selected( in_array( $term->slug, $value ), true, false ), esc_html( $term->name ) );
 					}
@@ -2137,7 +2137,7 @@ class custom_metadata_manager {
 		endif;
 
 		if ( $cloneable ) {
-			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), __( '+ Add New', 'custom-metadata' ) );
+			printf( '<p><a href="#" class="add-multiple hide-if-no-js" id="%s">%s</a></p>', esc_attr( 'add-' . $field_slug ), esc_html__( '+ Add New', 'custom-metadata' ) );
 		}
 
 		$this->_display_field_description( $field_slug, $field, $object_type, $object_id, $value );
@@ -2157,7 +2157,7 @@ class custom_metadata_manager {
 	 */
 	public function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Signature matches the other _display_* callbacks.
 		if ( $field->description ) {
-			echo '<span class="description">' . $field->description . '</span>';
+			echo '<span class="description">' . wp_kses_post( $field->description ) . '</span>';
 		}
 	}
 
