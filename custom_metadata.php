@@ -512,13 +512,7 @@ class custom_metadata_manager {
 			return;
 		}
 
-		// $object_types = (array) $object_type;
-		// if ( $field->multifield && $this->_multifield_exists_for_group_object( $field->multifield, $group_slug, array_shift( $object_types ) ) ) {
-		// $this->add_field_to_multifield( $field_slug, $field, $group_slug, $object_types );
-		// } else {
-			// add to group
-			$this->add_field_to_group( $field_slug, $field, $group_slug, $object_types );
-		// }
+		$this->add_field_to_group( $field_slug, $field, $group_slug, $object_types );
 	}
 
 	/**
@@ -685,19 +679,8 @@ class custom_metadata_manager {
 	 * @return bool Whether the group is valid.
 	 */
 	public function _validate_metadata_group( $group_slug, $group, $object_type ) {
-		$valid = true;
-
-		// TODO: only validate when DEBUG is on?
-		/*
-		if( ! $group_slug ) {
-
-		} elseif ( $this->is_registered_group( $group_slug, $object_type ) ) {
-			// TODO: check that it hasn't been registered already
-		} elseif ( $this->is_restricted_group( $group_slug, $object_type ) ) {
-			// TODO: check that it isn't restricted
-		}
-		*/
-		return $valid;
+		// Registration validation is not yet implemented; see https://github.com/Automattic/custom-metadata/issues/153.
+		return true;
 	}
 
 	/**
@@ -710,32 +693,8 @@ class custom_metadata_manager {
 	 * @return bool Whether the field is valid.
 	 */
 	public function _validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) {
-
-		// TODO: only validate when DEBUG is on?
-
-		$valid = true;
-		/*
-		if( !$field_slug ) {
-			// Check that
-			$this->_add_registration_error( $field_slug, __( 'You entered an empty slug name for this field!', 'custom-metadata' ) );
-			$valid = false;
-		} else if( $this->is_registered_field( $field_slug, $group_slug, $object_type ) ) {
-			// does field name already exists
-			$this->_add_registration_error( $field_slug, __( 'This field already exists. Check to see that you\'re not registering the field twice, or use a different slug.', 'custom-metadata' ) );
-			$valid = false;
-		} else if( $this->is_restricted_field( $field_slug, $object_type ) ) {
-			// is field restricted
-			$this->_add_registration_error( $field_slug, __( 'This field is restricted. Please use a different slug.', 'custom-metadata' ) );
-			$valid = false;
-		}
-		// if display_callback not defined
-				// show admin_notices error
-				// show as text field (?)
-
-		*/
-		// TODO: valid object_type?
-
-		return $valid;
+		// Registration validation is not yet implemented; see https://github.com/Automattic/custom-metadata/issues/153.
+		return true;
 	}
 
 	/**
@@ -995,7 +954,6 @@ class custom_metadata_manager {
 		$groups    = $this->get_groups_in_object_type( $post_type );
 
 		foreach ( $groups as $group_slug => $group ) {
-			// TODO: Allow hook into autosave.
 			if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE && ! $group->autosave ) {
 				return $post_id;
 			}
@@ -1169,7 +1127,7 @@ class custom_metadata_manager {
 	 * @return bool Whether the object type is registered.
 	 */
 	public function is_registered_object_type( $object_type ) {
-		return array_key_exists( $object_type, $this->metadata ); /*&& is_array( $this->metadata[$object_type] )*/
+		return array_key_exists( $object_type, $this->metadata );
 	}
 
 	/**
@@ -1481,14 +1439,14 @@ class custom_metadata_manager {
 		if ( is_array( $id_array ) ) {
 			if ( isset( $id_array[ $object_type ] ) ) {
 				if ( is_array( $id_array[ $object_type ] ) ) {
-					// array( 'user' => array( 123, 'postname' ) )
+					// Object type keyed to an array of IDs and/or slugs.
 					return $this->does_id_array_match_object( $id_array[ $object_type ], $object_type, $object_id, $object_slug );
 				} else {
-					// array( 'post' => 123 )
+					// Object type keyed to a single ID.
 					return $this->does_id_match_object( $id_array[ $object_type ], $object_id, $object_slug );
 				}
 			} else {
-				// array( 123, 456, 'postname' )
+				// A flat list of IDs and/or slugs.
 				$match = false;
 				foreach ( $id_array as $id ) {
 					if ( $this->does_id_match_object( $id, $object_id, $object_slug ) ) {
@@ -1499,7 +1457,7 @@ class custom_metadata_manager {
 				return $match;
 			}
 		} else {
-			// 123 || 'postname' || 'username' || 'comment-name'(?)
+			// A single scalar ID or slug.
 			return $this->does_id_match_object( $id_array, $object_id, $object_slug );
 		}
 	}
@@ -1514,10 +1472,10 @@ class custom_metadata_manager {
 	 */
 	public function does_id_match_object( $id, $object_id, $object_slug = '' ) {
 		if ( is_int( $id ) ) {
-			// 123
+			// Match against the numeric object ID.
 			return $id == $object_id;
 		} elseif ( is_string( $id ) ) {
-			// 'postname' || 'username' || 'comment-name' ??
+			// Match against the object slug.
 			return $id == $object_slug;
 		}
 		return false;
@@ -1531,7 +1489,6 @@ class custom_metadata_manager {
 	 * @return bool Whether the field is restricted.
 	 */
 	public function is_restricted_field( $field_slug, $object_type ) {
-		// TODO: Build this out.
 		$post_restricted = array( 'post_title', 'post_author' );
 		$page_restricted = array();
 		$user_restricted = array();
@@ -1556,8 +1513,7 @@ class custom_metadata_manager {
 	 * @return bool Whether the group is restricted.
 	 */
 	public function is_restricted_group( $group_slug, $object_type ) {
-		// TODO: Build this out
-		// Built-in metaboxes: title, custom-fields, revisions, author, etc.
+		// Group restriction is not yet implemented; see https://github.com/Automattic/custom-metadata/issues/152.
 		return false;
 	}
 
