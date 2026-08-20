@@ -5,33 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.8.0] - 2026-08-20
 
-- Security: escape stored metadata values when they are output in admin list-table columns, fixing a stored cross-site scripting (XSS) issue. Output rendered by a custom `display_column_callback` must be escaped by that callback.
-- Security: sanitize field values on save with a safe, field-type-aware default when a field has no `sanitize_callback`. Enabled by default; as a result, plain-text fields (such as `text` and `textarea`) no longer store raw HTML. Use a `wysiwyg` field for HTML, register a `sanitize_callback`, or filter `custom_metadata_manager_apply_default_sanitize` to opt out. See DEVELOPERS.md.
-- Security: require the current user to be able to edit the object (`edit_post`, `edit_comment` or `edit_user`) before saving its metadata, in addition to the existing nonce check.
+This release raises the minimum requirements to **WordPress 6.4** and **PHP 7.4**.
+
+It also changes some default behaviour that integrators should be aware of: plain-text fields no longer store raw HTML, the `upload` field is now `readonly` by default, and saving metadata now requires the current user to be able to edit the object. See the Security section for details.
+
+### Security
+
+- Escape stored metadata values when they are output in admin list-table columns, fixing a stored cross-site scripting (XSS) issue. Output rendered by a custom `display_column_callback` must be escaped by that callback.
+- Sanitize field values on save with a safe, field-type-aware default when a field has no `sanitize_callback`. Enabled by default; as a result, plain-text fields (such as `text` and `textarea`) no longer store raw HTML. Use a `wysiwyg` field for HTML, register a `sanitize_callback`, or filter `custom_metadata_manager_apply_default_sanitize` to opt out. See DEVELOPERS.md.
+- Require the current user to be able to edit the object (`edit_post`, `edit_comment` or `edit_user`) before saving its metadata, in addition to the existing nonce check.
+
+### Added
+
 - Added the ability to group several fields as a `multifield`; see `x_add_metadata_multifield()`, props @greatislander, @rinatkhaziev and @PhilippSchreiber for their contributions there.
-- Allow field types that save as multiples but do not display as cloneable or multiples.
 - Added the `taxonomy_checkbox` and `taxonomy_multi_select` field types, props @greatislander.
-- Made use of the `selected()` and `checked()` functions in WordPress instead of clumsy if statements.
+- Added new field types: `number`, `email`, `telephone`, `datetimepicker`, `timepicker` and `link` (which uses the WP link manager).
+- Added the ability to add a default value for certain field types.
+- Added the ability to set a placeholder for certain fields.
+- Added the ability for groups to display a description.
+- Added the ability to limit capabilities for entire groups using `required_cap`.
 - Limit or exclude groups and fields using a custom callback.
+- Allow field types that save as multiples but do not display as cloneable or multiples.
+
+### Changed
+
+- Rewrote the `upload` field to use the media manager from WordPress 3.5+. Note the `upload` field is now `readonly` by default (but can be set to `false` when you set up the field).
+- Replaced chosen.js with select2.js.
+- Updated JavaScript to be up to standard with coding standards and be fully compatible with jQuery 1.9+.
+- Reformatted and cleaned up the CSS file.
+- Converted the plugin class to a singleton.
+- Made use of the `selected()` and `checked()` functions in WordPress instead of clumsy if statements.
+- Moved filtering of instance vars to `init` instead of on `construct` which runs too early.
+- Updated the examples file.
 - Adjusted the copyright to include 2013 and to list "The Contributors" instead of specific individuals.
 - Adjusted the list of contributors in the plugin.
 - Adjusted the plugin URL and removed the donate URL.
 - Adjusted files for code standards.
+
+### Fixed
+
 - Fixed PHP warning with empty values for date fields.
-- Moved filtering of instance vars to `init` instead of on `construct` which runs too early.
-- Added new field types: `number`, `email`, `telephone`, `datetimepicker`, `timepicker` and `link` (which uses the WP link manager).
-- Added the ability to add a default value for certain field types.
-- Added the ability to set a placeholder for certain fields.
-- Updated the examples file.
-- Rewrote the `upload` field to use the media manager from WordPress 3.5+. Note the `upload` field is now `readonly` by default (but can be set to `false` when you set up the field).
-- Updated JavaScript to be up to standard with coding standards and be fully compatible with jQuery 1.9+.
-- Replaced chosen.js with select2.js.
-- Reformatted and cleaned up the CSS file.
-- Added the ability for groups to display a description.
-- Added the ability to limit capabilities for entire groups using `required_cap`.
-- Converted the plugin class to a singleton.
 
 ## [0.7] - 2012-02-15
 
@@ -123,7 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release.
 
-[Unreleased]: https://github.com/Automattic/custom-metadata/compare/0.7...HEAD
+[0.8.0]: https://github.com/Automattic/custom-metadata/compare/0.7...0.8.0
 [0.7]: https://github.com/Automattic/custom-metadata/compare/0.6...0.7
 [0.6]: https://github.com/Automattic/custom-metadata/compare/0.5.7...0.6
 [0.5.7]: https://github.com/Automattic/custom-metadata/compare/0.5.5...0.5.7
