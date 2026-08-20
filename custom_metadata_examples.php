@@ -533,7 +533,8 @@ function x_init_custom_fields() {
  * @return void
  */
 function x_field_name2_callback( $field_slug, $field, $object_type, $object_id, $value ) {
-	echo sprintf( 'The value of field "%s" is %s. <br /><a href="http://icanhascheezburger.files.wordpress.com/2010/10/04dc84b6-3dde-45db-88ef-f7c242731ce3.jpg">Here\'s a LOLCat</a>', $field_slug, $value ? $value : 'not set' );
+	// Escape the dynamic values on output; the surrounding markup is our own, so it stays.
+	printf( 'The value of field "%s" is %s. <br /><a href="http://icanhascheezburger.files.wordpress.com/2010/10/04dc84b6-3dde-45db-88ef-f7c242731ce3.jpg">Here\'s a LOLCat</a>', esc_html( $field_slug ), $value ? esc_html( $value ) : 'not set' );
 }
 
 /**
@@ -549,8 +550,8 @@ function x_field_customhidden1_callback( $field_slug, $field, $value ) {
 	if ( ! $value ) $value = 'This is a secret hidden value! Don\'t tell anyone!';
 ?>
 	<hr />
-	<p>This is a hidden field rendered with a custom callback. The value is "<?php echo $value; ?>".</p>
-	<input type="hidden" name="<?php echo $field_slug; ?>" value="<?php echo $value; ?>" />
+	<p>This is a hidden field rendered with a custom callback. The value is "<?php echo esc_html( $value ); ?>".</p>
+	<input type="hidden" name="<?php echo esc_attr( $field_slug ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 	<hr />
 	<?php
 }

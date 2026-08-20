@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Security: escape stored metadata values when they are output in admin list-table columns, fixing a stored cross-site scripting (XSS) issue. Output rendered by a custom `display_column_callback` must be escaped by that callback.
+- Security: sanitize field values on save with a safe, field-type-aware default when a field has no `sanitize_callback`. Enabled by default; as a result, plain-text fields (such as `text` and `textarea`) no longer store raw HTML. Use a `wysiwyg` field for HTML, register a `sanitize_callback`, or filter `custom_metadata_manager_apply_default_sanitize` to opt out. See DEVELOPERS.md.
+- Security: require the current user to be able to edit the object (`edit_post`, `edit_comment` or `edit_user`) before saving its metadata, in addition to the existing nonce check.
 - Added the ability to group several fields as a `multifield`; see `x_add_metadata_multifield()`, props @greatislander, @rinatkhaziev and @PhilippSchreiber for their contributions there.
 - Allow field types that save as multiples but do not display as cloneable or multiples.
 - Added the `taxonomy_checkbox` and `taxonomy_multi_select` field types, props @greatislander.

@@ -74,7 +74,7 @@ $args = array(
 	'description'             => '',      // Description shown below the input.
 	'values'                  => array(), // Values for select and radio fields, as an associative array.
 	'display_callback'        => '',      // Callback to render the field.
-	'sanitize_callback'       => '',      // Callback to sanitise data before it is saved.
+	'sanitize_callback'       => '',      // Callback to sanitize data before it is saved. When empty, a safe field-type default is applied — see "Sanitization and escaping".
 	'display_column'          => false,   // Add the field as a column when viewing all posts.
 	'display_column_callback' => '',      // Callback to render output for the custom column.
 	'required_cap'            => '',      // The capability required to view and edit the field.
@@ -84,6 +84,45 @@ $args = array(
 	'readonly'                => false,   // Make the field read-only (works with text, textarea, password, upload and datepicker fields).
 );
 ~~~
+
+## Sanitization and escaping
+
+Custom Metadata Manager sanitizes values on input and escapes them on output, so untrusted field values cannot become stored cross-site scripting (XSS). Both happen automatically; you only need to think about them when you supply your own callbacks.
+
+### Input sanitization
+
+When a field has no `sanitize_callback`, the plugin applies a safe default based on the field type before saving:
+
+| Field type | Default sanitizer |
+| --- | --- |
+| `text`, `tel`, `checkbox`, `radio`, `select` (and any unrecognized type) | `sanitize_text_field()` |
+| `textarea` | `sanitize_textarea_field()` (newlines preserved) |
+| `wysiwyg` | `wp_kses_post()` (post-safe HTML kept; scripts, event handlers and bad protocols removed) |
+| `email` | `sanitize_email()` |
+| `number` | numeric cast (floats and negatives preserved) |
+| `link`, `upload` | `esc_url_raw()` |
+| `colorpicker` | `sanitize_hex_color()` |
+| `datepicker`, `datetimepicker`, `timepicker` | stored as a Unix timestamp |
+| `password` | stored verbatim |
+
+Multi-value fields (such as `multi_select` and the `taxonomy_*` types) are sanitized element by element.
+
+A consequence of this is that **plain-text fields no longer store raw HTML**. If you need to store markup, use a `wysiwyg` field, register your own `sanitize_callback`, or disable the default entirely:
+
+~~~php
+// Turn the built-in default sanitizer off globally (not recommended).
+add_filter( 'custom_metadata_manager_apply_default_sanitize', '__return_false' );
+~~~
+
+A field's own `sanitize_callback` always takes precedence over the default.
+
+### Output escaping
+
+Values shown in an admin list-table column (`display_column => true`) are escaped for you. If you render a column with a `display_column_callback`, or a field with a `display_callback`, **you are responsible for escaping your own output** — escape late, using `esc_html()`, `esc_attr()`, `esc_url()` or `wp_kses_post()` as appropriate for the context. When you read values elsewhere (for example in a theme template via `get_metadata()`), escape them on output as you would any stored value.
+
+### Who can save
+
+A metadata write requires both a valid nonce from the field's metabox **and** the current user being able to edit the object being saved (`edit_post`, `edit_comment` or `edit_user` as appropriate). The nonce proves where the request came from; it is not treated as authorization on its own.
 
 ## Include and exclude
 
