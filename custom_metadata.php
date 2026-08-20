@@ -3,7 +3,7 @@
  * Plugin Name:       Custom Metadata Manager
  * Plugin URI:        https://wordpress.org/plugins/custom-metadata/
  * Description:       An easy way to add custom fields to your object types (posts, pages, custom post types, users, comments).
- * Version:           0.8-dev
+ * Version:           0.8.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Automattic, Stresslimit & Contributors
