@@ -23,6 +23,11 @@
  * @package Automattic\CustomMetadata
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 add_action( 'init', 'x_init_custom_post_types' );
 /**
  * Registers a test post type just for the examples.
