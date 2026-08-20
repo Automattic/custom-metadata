@@ -280,7 +280,7 @@ class custom_metadata_manager {
 		$this->init_columns();
 
 		// Handle actions related to users.
-		if ( $object_type == 'user' ) {
+		if ( 'user' == $object_type ) {
 			global $user_id;
 
 			if ( empty( $user_id ) ) {
@@ -321,7 +321,7 @@ class custom_metadata_manager {
 		if ( post_type_exists( $object_type ) ) {
 			$column_header_name  = sprintf( '%s_posts', $object_type );
 			$column_content_name = ( 'page' != $object_type ) ? 'posts' : 'pages';
-		} elseif ( $object_type == 'comment' ) {
+		} elseif ( 'comment' == $object_type ) {
 			$column_header_name  = 'edit-comments';
 			$column_content_name = 'comments';
 		} else {
@@ -1123,14 +1123,14 @@ class custom_metadata_manager {
 
 
 			// save the attachment ID of the upload field as well.
-			if ( $field->field_type == 'upload' && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
+			if ( 'upload' == $field->field_type && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
 				$this->_save_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id, absint( $_POST[ $field_slug . '_attachment_id' ] ) );
 			}
 		} else {
 			$this->_delete_field_value( $field_slug, $field, $object_type, $object_id );
 
 			// delete the attachment ID of the upload field as well.
-			if ( $field->field_type == 'upload' && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
+			if ( 'upload' == $field->field_type && isset( $_POST[ $field_slug . '_attachment_id' ] ) ) {
 				$this->_delete_field_value( $field_slug . '_attachment_id', $field, $object_type, $object_id );
 			}
 		}
@@ -1191,7 +1191,7 @@ class custom_metadata_manager {
 	 * @param string $object_type Object type.
 	 * @return bool Whether the field is registered.
 	 */
-	public function is_registered_field( $field_slug, $group_slug = '', $object_type ) {
+	public function is_registered_field( $field_slug, $group_slug = '', $object_type = '' ) {
 		if ( $group_slug ) {
 			return $this->is_registered_group( $group_slug, $object_type ) && array_key_exists( $field_slug, $this->get_fields_in_group( $group_slug, $object_type ) );
 		} else {
@@ -1339,7 +1339,7 @@ class custom_metadata_manager {
 				continue;
 			}
 
-			if ( $multifield_slug == $_multifield || $multifield_slug == '_x_multifield_' . $_multifield ) {
+			if ( $multifield_slug == $_multifield || '_x_multifield_' . $_multifield == $multifield_slug ) {
 				$fields_in_multifield[ $_field_key ] = $group->fields[ $_field_key ];
 			}
 		}
@@ -1571,7 +1571,7 @@ class custom_metadata_manager {
 
 		$object_type = '';
 
-		if ( $pagenow == 'profile.php' || $pagenow == 'user-edit.php' || $pagenow == 'users.php' ) {
+		if ( 'profile.php' == $pagenow || 'user-edit.php' == $pagenow || 'users.php' == $pagenow ) {
 			return 'user';
 		}
 
@@ -2066,7 +2066,12 @@ class custom_metadata_manager {
 					printf( '<input type="hidden" name="%s" value="%s" class="custom-metadata-upload-id"/>', esc_attr( $field_id . '_attachment_id' ), esc_attr( $attachment_id ) );
 					break;
 				case 'taxonomy_select':
-					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					$terms = get_terms(
+						array(
+							'taxonomy'   => $field->taxonomy,
+							'hide_empty' => false,
+						) 
+					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
@@ -2082,7 +2087,12 @@ class custom_metadata_manager {
 					echo '</select>';
 					break;
 				case 'taxonomy_radio':
-					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					$terms = get_terms(
+						array(
+							'taxonomy'   => $field->taxonomy,
+							'hide_empty' => false,
+						) 
+					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
@@ -2126,7 +2136,12 @@ class custom_metadata_manager {
 					echo '</select>';
 					break;
 				case 'taxonomy_checkbox':
-					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					$terms = get_terms(
+						array(
+							'taxonomy'   => $field->taxonomy,
+							'hide_empty' => false,
+						) 
+					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
@@ -2140,7 +2155,12 @@ class custom_metadata_manager {
 					}
 					break;
 				case 'taxonomy_multi_select':
-					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
+					$terms = get_terms(
+						array(
+							'taxonomy'   => $field->taxonomy,
+							'hide_empty' => false,
+						) 
+					);
 					if ( empty( $terms ) ) {
 						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
