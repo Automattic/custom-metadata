@@ -680,7 +680,7 @@ function x_init_custom_fields() {
 		array(
 			'description' => 'This field is excluded from Post ID#2476',
 			'label'       => 'Excluded Field',
-			'exclude'     => 2476,
+			'exclude'     => 2476, // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Plugin field-visibility config key, not a WP_Query argument.
 		) 
 	);
 
@@ -701,7 +701,7 @@ function x_init_custom_fields() {
 		array(
 			'description' => 'This field is excluded using a custom callback; will be excluded from posts in the "aside" category',
 			'label'       => 'Excluded Field (with callback)',
-			'exclude'     => 'x_custom_exclude_callback',
+			'exclude'     => 'x_custom_exclude_callback', // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Plugin field-visibility config key, not a WP_Query argument.
 		) 
 	);
 
@@ -715,7 +715,7 @@ function x_init_custom_fields() {
 	 * @param string     $object_slug Slug of the object.
 	 * @return bool Whether the field should be excluded.
 	 */
-	function x_custom_exclude_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+	function x_custom_exclude_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Example callback showing the full signature the plugin provides.
 		// exclude from all posts that are in the aside category.
 		return in_category( 'aside', $object_id );
 	}
@@ -740,7 +740,7 @@ function x_init_custom_fields() {
 	 * @param string     $object_slug Slug of the object.
 	 * @return bool Whether the field should be included.
 	 */
-	function x_custom_include_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) {
+	function x_custom_include_callback( $thing_slug, $thing, $object_type, $object_id, $object_slug ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Example callback showing the full signature the plugin provides.
 		$post = get_post( $object_id );
 		return 'publish' != $post->post_status;
 	}

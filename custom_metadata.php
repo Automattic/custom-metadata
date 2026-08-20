@@ -284,7 +284,7 @@ class custom_metadata_manager {
 			global $user_id;
 
 			if ( empty( $user_id ) ) {
-				$user_id = get_current_user_id();
+				$user_id = get_current_user_id(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- $user_id is the WordPress-provided global on user admin screens.
 			}
 
 			// Editing another user's profile.
@@ -679,7 +679,7 @@ class custom_metadata_manager {
 	 * @param string $object_type Object type.
 	 * @return bool Whether the group is valid.
 	 */
-	public function _validate_metadata_group( $group_slug, $group, $object_type ) {
+	public function _validate_metadata_group( $group_slug, $group, $object_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Parameters are the inputs for the pending validation implementation (#153).
 		// Registration validation is not yet implemented; see https://github.com/Automattic/custom-metadata/issues/153.
 		return true;
 	}
@@ -693,7 +693,7 @@ class custom_metadata_manager {
 	 * @param array|string $object_types Object type(s) the field applies to.
 	 * @return bool Whether the field is valid.
 	 */
-	public function _validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) {
+	public function _validate_metadata_field( $field_slug, $field, $group_slug, $object_types ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Parameters are the inputs for the pending validation implementation (#153).
 		// Registration validation is not yet implemented; see https://github.com/Automattic/custom-metadata/issues/153.
 		return true;
 	}
@@ -1513,7 +1513,7 @@ class custom_metadata_manager {
 	 * @param string $object_type Object type.
 	 * @return bool Whether the group is restricted.
 	 */
-	public function is_restricted_group( $group_slug, $object_type ) {
+	public function is_restricted_group( $group_slug, $object_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Parameters are the inputs for the pending restriction logic (#152).
 		// Group restriction is not yet implemented; see https://github.com/Automattic/custom-metadata/issues/152.
 		return false;
 	}
@@ -1749,9 +1749,9 @@ class custom_metadata_manager {
 	 * callbacks, and (for taxonomy fields) by wp_set_object_terms() — none of which
 	 * the column escaping can reach.
 	 *
-	 * @param object $field the field object
-	 * @param mixed  $value the value to sanitize (a scalar, or an array for multi-value fields)
-	 * @return mixed the sanitized value
+	 * @param object $field The field object.
+	 * @param mixed  $value The value to sanitize (a scalar, or an array for multi-value fields).
+	 * @return mixed The sanitized value.
 	 */
 	public function _default_sanitize_field_value( $field, $value ) {
 		// Multi-value fields (multi_select, taxonomy_checkbox, taxonomy_multi_select, cloneable) arrive as arrays.
@@ -1996,18 +1996,18 @@ class custom_metadata_manager {
 					echo '</select>';
 					break;
 				case 'datepicker':
-					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : '';
+					$datepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y', $v ) ) : ''; // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Saved via strtotime() in server time and displayed the same way; gmdate() would break the round-trip.
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datepicker_value, $readonly_str, $placeholder_str );
 					break;
 				case 'colorpicker':
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), esc_attr( $v ), $readonly_str, $placeholder_str );
 					break;
 				case 'datetimepicker':
-					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : '';
+					$datetimepicker_value = ! empty( $v ) ? esc_attr( date( 'm/d/Y G:i', $v ) ) : ''; // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Saved via strtotime() in server time and displayed the same way; gmdate() would break the round-trip.
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $datetimepicker_value, $readonly_str, $placeholder_str );
 					break;
 				case 'timepicker':
-					$timepicker = ! empty( $v ) ? esc_attr( date( 'G:i', $v ) ) : '';
+					$timepicker = ! empty( $v ) ? esc_attr( date( 'G:i', $v ) ) : ''; // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- Saved via strtotime() in server time and displayed the same way; gmdate() would break the round-trip.
 					printf( '<input type="text" name="%s" value="%s"%s%s/>', esc_attr( $field_id ), $timepicker, $readonly_str, $placeholder_str );
 					break;
 				case 'wysiwyg':
@@ -2155,7 +2155,7 @@ class custom_metadata_manager {
 	 * @param mixed  $value Current field value.
 	 * @return void
 	 */
-	public function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) {
+	public function _display_field_description( $field_slug, $field, $object_type, $object_id, $value ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Signature matches the other _display_* callbacks.
 		if ( $field->description ) {
 			echo '<span class="description">' . $field->description . '</span>';
 		}
