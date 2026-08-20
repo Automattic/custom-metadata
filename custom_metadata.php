@@ -2068,6 +2068,7 @@ class custom_metadata_manager {
 				case 'taxonomy_select':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
+						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
@@ -2083,6 +2084,7 @@ class custom_metadata_manager {
 				case 'taxonomy_radio':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
+						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
@@ -2126,6 +2128,7 @@ class custom_metadata_manager {
 				case 'taxonomy_checkbox':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
+						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}
@@ -2139,6 +2142,7 @@ class custom_metadata_manager {
 				case 'taxonomy_multi_select':
 					$terms = get_terms( $field->taxonomy, array( 'hide_empty' => false ) );
 					if ( empty( $terms ) ) {
+						/* translators: %s: the taxonomy label. */
 						printf( __( 'There are no %s to select from yet.', 'custom-metadata' ), $field->taxonomy );
 						break;
 					}

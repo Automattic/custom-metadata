@@ -32,17 +32,17 @@ add_action( 'init', 'x_init_custom_post_types' );
 function x_init_custom_post_types() {
 
 	$labels = array(
-		'name'               => _x( 'Tests', 'post type general name' ),
-		'singular_name'      => _x( 'Test', 'post type singular name' ),
-		'add_new'            => _x( 'Add New', 'Test' ),
-		'add_new_item'       => __( 'Add New Test' ),
-		'edit_item'          => __( 'Edit Test' ),
-		'new_item'           => __( 'New Test' ),
-		'all_items'          => __( 'All Tests' ),
-		'view_item'          => __( 'View Test' ),
-		'search_items'       => __( 'Search Tests' ),
-		'not_found'          => __( 'No Tests found' ),
-		'not_found_in_trash' => __( 'No Tests found in Trash' ),
+		'name'               => _x( 'Tests', 'post type general name', 'custom-metadata' ),
+		'singular_name'      => _x( 'Test', 'post type singular name', 'custom-metadata' ),
+		'add_new'            => _x( 'Add New', 'Test', 'custom-metadata' ),
+		'add_new_item'       => __( 'Add New Test', 'custom-metadata' ),
+		'edit_item'          => __( 'Edit Test', 'custom-metadata' ),
+		'new_item'           => __( 'New Test', 'custom-metadata' ),
+		'all_items'          => __( 'All Tests', 'custom-metadata' ),
+		'view_item'          => __( 'View Test', 'custom-metadata' ),
+		'search_items'       => __( 'Search Tests', 'custom-metadata' ),
+		'not_found'          => __( 'No Tests found', 'custom-metadata' ),
+		'not_found_in_trash' => __( 'No Tests found in Trash', 'custom-metadata' ),
 		'parent_item_colon'  => '',
 		'menu_name'          => 'Tests',
 
