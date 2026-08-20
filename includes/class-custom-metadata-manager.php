@@ -1103,12 +1103,23 @@ class custom_metadata_manager {
 	/**
 	 * Determines whether a field is registered.
 	 *
+	 * The $object_type parameter carries a default only so it can follow the
+	 * optional $group_slug without tripping PHP 8.0's "optional parameter before
+	 * required" deprecation. It stays mandatory in practice: omitting it throws,
+	 * because the parameter order is fixed for backwards compatibility and cannot
+	 * be reordered without breaking external callers.
+	 *
 	 * @param string $field_slug Field slug.
 	 * @param string $group_slug Optional group slug to check within.
-	 * @param string $object_type Object type.
+	 * @param string $object_type Object type. Required despite the default.
+	 * @throws \InvalidArgumentException When $object_type is empty.
 	 * @return bool Whether the field is registered.
 	 */
 	public function is_registered_field( $field_slug, $group_slug = '', $object_type = '' ) {
+		if ( empty( $object_type ) ) {
+			throw new \InvalidArgumentException( '$object_type is required for ' . __METHOD__ . '().' );
+		}
+
 		if ( $group_slug ) {
 			return $this->is_registered_group( $group_slug, $object_type ) && array_key_exists( $field_slug, $this->get_fields_in_group( $group_slug, $object_type ) );
 		} else {
