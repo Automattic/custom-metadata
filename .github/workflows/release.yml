@@ -33,9 +33,49 @@ jobs:
           cd /tmp/dist
           zip -r "/tmp/${PLUGIN_SLUG}.zip" "${PLUGIN_SLUG}"
 
+      - name: Prepare release title and notes
+        id: prep
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -u
+
+          # Strip an optional leading "v" from the tag (v1.2.3 -> 1.2.3).
+          VERSION="${VERSION#v}"
+
+          # Title: "<Plugin Name> <version>" (e.g. "Custom Metadata Manager 1.2.3").
+          # The plugin name is read from the "Plugin Name:" header of the main plugin
+          # file, so the title carries context wherever the release is surfaced
+          # (Slack, email notifications, and so on) rather than a bare version number.
+          PLUGIN_NAME="$(grep -h 'Plugin Name:' -- *.php | head -n1 | sed -E 's/.*Plugin Name:[[:space:]]*//; s/[[:space:]]*$//')"
+          echo "title=${PLUGIN_NAME} ${VERSION}" >> "$GITHUB_OUTPUT"
+
+          # Notes: the CHANGELOG entry for this version, with the top
+          # "## [x.y.z] - date" heading dropped (the title already conveys it) and the
+          # "###" subsections promoted to "##" so they render as top-level sections.
+          awk -v ver="$VERSION" '
+            $0 ~ ("^## \\[?" ver "(\\]| |$)") { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md | sed -E 's/^### /## /' > notes.raw
+
+          # Trim leading and trailing blank lines.
+          awk 'NF { seen = 1 } seen' notes.raw | tac | awk 'NF { seen = 1 } seen' | tac > notes.md
+
+          if [ -s notes.md ]; then
+            echo "have_notes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_notes=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::No CHANGELOG entry found for ${VERSION}; falling back to auto-generated notes."
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
+          # Title with the plugin name, and body from the CHANGELOG when available;
+          # otherwise fall back to GitHub's auto-generated notes.
+          name: ${{ steps.prep.outputs.title }}
+          body_path: ${{ steps.prep.outputs.have_notes == 'true' && 'notes.md' || '' }}
+          generate_release_notes: ${{ steps.prep.outputs.have_notes != 'true' }}
           files: /tmp/*.zip
-          generate_release_notes: true
           draft: false
