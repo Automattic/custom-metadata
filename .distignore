@@ -1,0 +1,41 @@
+# A list of files and directories that should not be included in the plugin
+# distribution deployed to WordPress.org. Used by the deploy workflow and by
+# `rsync --exclude-from=".distignore"` when building release ZIPs.
+
+# Directories
+/.context/
+/.git/
+/.github/
+/.wordpress-org/
+/node_modules/
+/tests/
+/vendor/
+
+# Development configuration
+/.distignore
+/.editorconfig
+/.gitattributes
+/.gitignore
+/.phpcs.xml
+/.phpcs.xml.dist
+/.wp-env.json
+/.wp-env.override.json
+
+# Package management
+/composer.json
+/composer.lock
+
+# Documentation (not needed in the plugin distribution)
+/CHANGELOG.md
+/CONTRIBUTING.md
+/DEVELOPERS.md
+
+# Test configuration
+/phpunit.xml
+/phpunit.xml.dist
+
+# WordPress.com specific
+/wpcom-helper.php
+
+# Caches and logs
+*.log

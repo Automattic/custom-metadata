@@ -1,0 +1,82 @@
+name: Integration Tests
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpunit.xml.dist'
+      - '.wp-env.json'
+      - '.github/workflows/integration.yml'
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - '**.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpunit.xml.dist'
+      - '.wp-env.json'
+      - '.github/workflows/integration.yml'
+  workflow_dispatch:
+
+# Disable all permissions by default; grant minimal permissions per job.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: WP ${{ matrix.wp == 'master' && 'trunk' || matrix.wp }} on PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Lowest supported PHP and WordPress.
+          - php: '7.4'
+            wp: '6.4'
+          # Latest PHP and WordPress trunk.
+          - php: '8.3'
+            wp: 'master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+        with:
+          composer-options: --prefer-dist --no-progress
+
+      - name: Install the WordPress environment tooling
+        run: npm -g install @wordpress/env
+
+      - name: Pin wp-env PHP version to the matrix value
+        run: |
+          echo '{ "phpVersion": "${{ matrix.php }}" }' > .wp-env.override.json
+
+      - name: Start WordPress environment
+        run: wp-env start
+        env:
+          WP_ENV_CORE: WordPress/WordPress#${{ matrix.wp }}
+
+      - name: Run integration tests (single site)
+        run: composer test:integration
+
+      - name: Run integration tests (multisite)
+        run: composer test:integration-ms
