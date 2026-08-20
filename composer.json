@@ -50,6 +50,7 @@
 		"lint": "@php ./vendor/bin/parallel-lint --exclude vendor --exclude node_modules .",
 		"lint-ci": "@php ./vendor/bin/parallel-lint --exclude vendor --exclude node_modules --checkstyle .",
 		"test:integration": "wp-env run tests-cli --env-cwd=wp-content/plugins/custom-metadata ./vendor/bin/phpunit --testsuite integration",
-		"test:integration-ms": "wp-env run tests-cli --env-cwd=wp-content/plugins/custom-metadata /bin/bash -c 'WP_MULTISITE=1 ./vendor/bin/phpunit --testsuite integration'"
+		"test:integration-ms": "wp-env run tests-cli --env-cwd=wp-content/plugins/custom-metadata /bin/bash -c 'WP_MULTISITE=1 ./vendor/bin/phpunit --testsuite integration'",
+		"test:unit": "@php ./vendor/bin/phpunit --testsuite unit"
 	}
 }
