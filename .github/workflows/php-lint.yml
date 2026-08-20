@@ -57,4 +57,4 @@ jobs:
         run: composer lint-ci | cs2pr
 
       - name: PHP coding standards
-        run: composer cs -- --report=checkstyle | cs2pr
+        run: composer cs -- -q --report=checkstyle | cs2pr
